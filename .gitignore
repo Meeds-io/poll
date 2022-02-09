@@ -38,6 +38,9 @@ pom.xml.versionsBackup
 .factorypath
 *.log
 
+# hotswap-agent file
+hotswap-agent.properties
+
 # OS
 .DS_Store
 
@@ -45,9 +48,8 @@ pom.xml.versionsBackup
 *.swp
 *.log
 rebel.xml
-transaction.log
 rebel-remote.xml
 build
 npm-debug.log
-node_modules
-hotswap-agent.properties
+**/node_modules/
+/bin/
