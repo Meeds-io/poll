@@ -7,7 +7,7 @@
     <application-name>poll</application-name>
     <portlet-name>Poll</portlet-name>
     <skin-name>Enterprise</skin-name>
-    <css-path>/skin/less/poll.css</css-path>
+    <css-path>/skin/less/poll.less</css-path>
   </portlet-skin>
 
   <portlet>

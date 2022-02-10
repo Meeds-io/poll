@@ -6,7 +6,7 @@
 
     <portlet>
       <portlet-name>PollExtensions</portlet-name>
-      <display-name xml:lang="EN">Poll Application</display-name>
+      <display-name xml:lang="EN">Poll Application Extensions</display-name>
       <portlet-class>org.exoplatform.commons.api.portlet.GenericDispatchedViewPortlet</portlet-class>
       <init-param>
       <name>portlet-view-dispatched-file-path</name>

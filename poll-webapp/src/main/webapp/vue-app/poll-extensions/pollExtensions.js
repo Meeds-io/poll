@@ -3,8 +3,8 @@ export function initExtensions() {
     key: 'poll',
     rank: 40,
     resourceBundle: 'locale.portlet.Poll',
-    labelKey: 'activity.composer.poll.create',
-    description: 'activity.composer.poll.create.description',
+    labelKey: 'composer.poll.create',
+    description: 'composer.poll.create.description',
     iconClass: 'createPollComposerIcon',
     enabled: true,
     onExecute: () => {
