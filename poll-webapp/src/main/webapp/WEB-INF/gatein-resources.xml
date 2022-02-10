@@ -11,35 +11,6 @@
   </portlet-skin>
 
   <portlet>
-    <name>Poll</name>
-    <module>
-      <script>
-        <minify>false</minify>
-        <path>/js/poll.bundle.js</path>
-      </script>
-      <depends>
-        <module>commonVueComponents</module>
-      </depends>
-      <depends>
-        <module>extensionRegistry</module>
-      </depends>
-      <depends>
-        <module>vue</module>
-      </depends>
-      <depends>
-        <module>vuetify</module>
-      </depends>
-      <depends>
-        <module>eXoVueI18n</module>
-      </depends>
-      <depends>
-        <module>jquery</module>
-        <as>$</as>
-      </depends>
-    </module>
-  </portlet>
-
-  <portlet>
     <name>PollExtensions</name>
     <module>
       <script>
