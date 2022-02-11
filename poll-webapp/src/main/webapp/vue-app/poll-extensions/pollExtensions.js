@@ -22,11 +22,21 @@ export function initExtensions() {
     rank: 40,
     resourceBundle: 'locale.portlet.Poll',
     labelKey: 'composer.poll.create',
-    description: 'composer.poll.create.description',
+    description: 'composer.poll.create.drawer.description',
     iconClass: 'createPollComposerIcon',
     enabled: true,
-    onExecute: () => {
-      return null;
+    component: {
+      name: 'create-poll-drawer',
+      props: {
+      },
+      model: {
+        value: [],
+        default: []
+      },
+      events: []
+    },
+    onExecute: (createPollDrawerComponent) => {
+      createPollDrawerComponent.openDrawer();
     }
   });
 }
