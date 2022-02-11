@@ -1,3 +1,5 @@
 <script type="text/javascript">
-require(['PORTLET/poll/PollExtensions'], app => app.init());
+if (eXo.env.portal.spaceId) {
+  require(['PORTLET/poll/PollExtensions'], app => app.init());
+}
 </script>
