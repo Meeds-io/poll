@@ -23,7 +23,7 @@
               class="px-0"
               dense>
               <input
-                placeholder="Ask something..."
+                :placeholder="`${$t('composer.poll.create.question-field')}`"
                 type="text"
                 name="title"
                 class="ignore-vuetify-classes pa-6 px-3 mb-5 createPollTextField">
@@ -43,7 +43,7 @@
                 </v-btn>
               </div> 
               <input
-                :placeholder="`Option ${option.id}`"
+                :placeholder="$t('composer.poll.create.option-field', {0: option.id})"
                 type="text"
                 name="title"
                 class="ignore-vuetify-classes pa-6 px-3 mb-5 createPollTextField">
@@ -54,7 +54,7 @@
               dense>
               <div class="d-flex flex-row ">
                 <a class="text-subtitle-1 font-weight-bold" @click="addOption">
-                  + Add option
+                  {{$t('composer.poll.create.add-option')}}
                 </a>
               </div>
             </v-list-item>
@@ -69,14 +69,14 @@
           button
           large
           @click="cancelCreatePollDrawer">
-          Cancel
+          {{$t('composer.poll.cancel.action')}}
         </v-btn>
         <v-btn
           class="px-8 primary btn no-box-shadow"
           button
           large
           @click="onSubmit">
-          Create
+          {{$t('composer.poll.create.action')}}
         </v-btn>
       </div>
     </template>
