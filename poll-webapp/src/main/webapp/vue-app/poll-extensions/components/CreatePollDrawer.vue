@@ -6,14 +6,13 @@
     disable-pull-to-refresh
     @closed="resetCreatePollDrawer">
     <template slot="title">
-      <div class="attachmentsDrawerHeader">
+      <div class="createPollDrawerHeader">
         <span>{{ $t('composer.poll.create') }}</span>
       </div>
     </template>
     <template slot="content">
-      <div class="pt-0 pa-5 my-5">
+      <div class="pt-0 pa-5 my-5 createPollDrawerContent">
         <v-form
-          ref="agendaEventForm"
           class="flex"
           flat
           @submit.prevent="onSubmit">
@@ -27,8 +26,7 @@
                 placeholder="Ask something..."
                 type="text"
                 name="title"
-                class="ignore-vuetify-classes pa-6 px-3 mb-5"
-                style="width : 100%">
+                class="ignore-vuetify-classes pa-6 px-3 mb-5 createPollTextField">
             </v-list-item>
             
             <v-list-item
@@ -36,20 +34,19 @@
               :key="index"
               class="px-0 d-flex"
               dense>
-              <div class=" float-left mb-4 me-3 " style="width : 25px">
+              <div class=" float-left mb-4 me-3 removeOptionButton">
                 <v-btn
                   v-if="option.removable"
                   icon
                   @click="removeOption(option)">
-                  <i class="fas fa-trash-alt" style="color: #5f708a"></i>
+                  <i class="fas fa-trash-alt removeOptionButtonIcon"></i>
                 </v-btn>
               </div> 
               <input
                 :placeholder="`Option ${option.id}`"
                 type="text"
                 name="title"
-                class="ignore-vuetify-classes pa-6 px-3 mb-5"
-                style="width : 100%">
+                class="ignore-vuetify-classes pa-6 px-3 mb-5 createPollTextField">
             </v-list-item>
 
             <v-list-item
