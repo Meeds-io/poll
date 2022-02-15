@@ -4,6 +4,7 @@
     :drawer-width="drawerWidth"
     :right="!$vuetify.rtl"
     disable-pull-to-refresh
+    class="createPollDrawer"
     @closed="resetCreatePollDrawer">
     <template slot="title">
       <div class="createPollDrawerHeader">
@@ -17,16 +18,19 @@
           flat
           @submit.prevent="onSubmit">
           <v-list
-            class="d-flex flex-column "
+            class="d-flex flex-column"
             dense>
             <v-list-item
               class="px-0"
               dense>
-              <input
+              <v-textarea
+                auto-grow
+                outlined
+                rows="1"
+                row-height="15"
+                class="custom-textarea mb-3"
                 :placeholder="`${$t('composer.poll.create.question-field')}`"
-                type="text"
-                name="title"
-                class="ignore-vuetify-classes pa-6 px-3 mb-5 createPollTextField">
+                type="text" />
             </v-list-item>
             
             <v-list-item
@@ -39,14 +43,17 @@
                   v-if="option.removable"
                   icon
                   @click="removeOption(option)">
-                  <i class="fas fa-trash-alt removeOptionButtonIcon"></i>
+                  <em class="fas fa-trash-alt removeOptionButtonIcon"></em>
                 </v-btn>
               </div> 
-              <input
+              <v-textarea
+                auto-grow
+                outlined
+                rows="1"
+                row-height="15"
+                class="custom-textarea mb-3"
                 :placeholder="$t('composer.poll.create.option-field', {0: option.id})"
-                type="text"
-                name="title"
-                class="ignore-vuetify-classes pa-6 px-3 mb-5 createPollTextField">
+                type="text" />
             </v-list-item>
 
             <v-list-item
@@ -54,7 +61,7 @@
               dense>
               <div class="d-flex flex-row ">
                 <a class="text-subtitle-1 font-weight-bold" @click="addOption">
-                  {{$t('composer.poll.create.add-option')}}
+                  {{ $t('composer.poll.create.add-option') }}
                 </a>
               </div>
             </v-list-item>
@@ -69,14 +76,14 @@
           button
           large
           @click="cancelCreatePollDrawer">
-          {{$t('composer.poll.cancel.action')}}
+          {{ $t('composer.poll.cancel.action') }}
         </v-btn>
         <v-btn
           class="px-8 primary btn no-box-shadow"
           button
           large
           @click="onSubmit">
-          {{$t('composer.poll.create.action')}}
+          {{ $t('composer.poll.create.action') }}
         </v-btn>
       </div>
     </template>

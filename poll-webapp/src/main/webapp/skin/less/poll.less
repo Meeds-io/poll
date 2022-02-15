@@ -15,14 +15,33 @@
     }
   }
 }
-.createPollDrawerContent{
-  .createPollTextField{
-    width: 100%;
-  }
-  .removeOptionButton{
-    width: 25px;
-    .removeOptionButtonIcon{
-      color: #5f708a;
+
+.createPollDrawer{
+  .createPollDrawerContent{
+    .custom-textarea{
+      border: none;
+      padding: 0px;
+      textarea, textarea:active{
+          box-shadow: none !important;
+          padding-left: 0px;
+          border: none !important;
+        }
+      fieldset{
+        color: rgba(0, 0, 0, 0.12) !important;
+      }
+    }
+    // on focus fieldset above textarea
+    .v-text-field--outlined.v-input--is-focused fieldset{
+      border: 1px solid #a6bad6 !important;
+      box-shadow:  0 1px 1px rgba(0,0,0,.075), 0 0 5px !important;
+      transition-duration: 0.3s;
+      transition-property: border, box-shadow;
+    }
+    .removeOptionButton{
+      width: 25px;
+      .removeOptionButtonIcon{
+        color: #5f708a;
+      }
     }
   }
 }
