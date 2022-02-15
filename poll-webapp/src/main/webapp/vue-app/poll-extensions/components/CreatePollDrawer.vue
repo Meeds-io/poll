@@ -23,7 +23,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     :right="!$vuetify.rtl"
     disable-pull-to-refresh
     class="createPollDrawer"
-    @closed="resetCreatePollDrawer">
+    @closed="resetDrawer">
     <template slot="title">
       <div class="createPollDrawerHeader">
         <span>{{ $t('composer.poll.create') }}</span>
@@ -47,7 +47,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 rows="1"
                 row-height="15"
                 class="custom-textarea mb-3"
-                :placeholder="`${$t('composer.poll.create.question-field')}`"
+                :placeholder="`${$t('composer.poll.create.drawer.field.question')}`"
                 type="text" />
             </v-list-item>
             
@@ -79,7 +79,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               dense>
               <div class="d-flex flex-row ">
                 <a class="text-subtitle-1 font-weight-bold" @click="addOption">
-                  {{ $t('composer.poll.create.add-option') }}
+                  + {{ $t('composer.poll.create.drawer.option.add') }}
                 </a>
               </div>
             </v-list-item>
@@ -93,15 +93,15 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           class="mx-5 px-8 btn"
           button
           large
-          @click="cancelCreatePollDrawer">
-          {{ $t('composer.poll.cancel.action') }}
+          @click="cancelDrawer">
+          {{ $t('composer.poll.create.drawer.action.cancel') }}
         </v-btn>
         <v-btn
           class="px-8 primary btn no-box-shadow"
           button
           large
           @click="onSubmit">
-          {{ $t('composer.poll.create.action') }}
+          {{ $t('composer.poll.create.drawer.action.create') }}
         </v-btn>
       </div>
     </template>
@@ -113,8 +113,18 @@ export default {
 
   data(){
     return {
-      options: [{id: 1,removable: false,data: {}},
-        {id: 2,removable: false,data: {}}]
+      options: [
+        {
+          id: 1,
+          removable: false,
+          data: {}
+        },
+        {
+          id: 2,
+          removable: false,
+          data: {}
+        }
+      ]
     };
   },
 
@@ -127,29 +137,29 @@ export default {
     },
   },
   created(){
-    this.$root.$on('poll-message-composer-closed', () => this.cancelCreatePollDrawer());
+    this.$root.$on('poll-message-composer-closed', () => this.cancelDrawer());
 
   },
   methods: {
-    openCreatePollDrawer(){
+    openDrawer(){
       this.$refs.createPollDrawer.open();
       // listner is activated in Social module 'ExoActivityComposer.vue'
       // to inform that this drawer is opened and then prevent closing the activity composer drawer
       this.$root.$emit('poll-app-drawer-opened');
     },
-    cancelCreatePollDrawer(){
+    cancelDrawer(){
       this.$refs.createPollDrawer.close();
     },
     onSubmit(){
-      this.cancelCreatePollDrawer();
+      this.cancelDrawer();
     },
-    resetCreatePollDrawer() {
+    resetDrawer() {
       // listner is activated in Social module 'ExoActivityComposer.vue'
       // to prevent closing the activity composer drawer
       this.$root.$emit('poll-app-drawer-closed');
     },
     addOption(){
-      this.options.push({id: this.options.length+1,removable: true,data: {}});
+      this.options.push({id: this.options.length + 1, removable: true,data: {}});
     },
     removeOption(option){
       this.options.splice(this.options.indexOf(option), 1);
