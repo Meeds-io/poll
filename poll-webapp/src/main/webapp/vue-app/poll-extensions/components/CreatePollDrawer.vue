@@ -123,6 +123,11 @@ export default {
           id: 2,
           removable: false,
           data: {}
+        },
+        {
+          id: 3,
+          removable: true,
+          data: {}
         }
       ]
     };
