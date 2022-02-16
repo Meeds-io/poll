@@ -1,6 +1,8 @@
 @import "variables.less";
 @import "mixins.less";
 @images-path: "/poll/images";
+@grey-color : #5f708a;
+@border-textarea-color : #a6bad6;
 
 .composerActions {
   .actionItem {
@@ -32,7 +34,7 @@
     }
     // on focus fieldset above textarea
     .v-text-field--outlined.v-input--is-focused fieldset{
-      border: 1px solid #a6bad6 !important;
+      border: 1px solid @border-textarea-color !important;
       box-shadow:  0 1px 1px rgba(0,0,0,.075), 0 0 5px !important;
       transition-duration: 0.3s;
       transition-property: border, box-shadow;
@@ -40,7 +42,7 @@
     .removeOptionButton{
       width: 25px;
       .removeOptionButtonIcon{
-        color: #5f708a;
+        color: @grey-color
       }
     }
   }
