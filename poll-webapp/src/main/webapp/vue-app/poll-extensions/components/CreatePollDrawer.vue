@@ -19,10 +19,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 <template>
   <exo-drawer
     ref="createPollDrawer"
+    id="createPollDrawer"
     :drawer-width="drawerWidth"
     :right="!$vuetify.rtl"
     disable-pull-to-refresh
-    class="createPollDrawer"
     @closed="resetDrawer">
     <template slot="title">
       <div class="createPollDrawerHeader">
@@ -42,6 +42,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               class="px-0"
               dense>
               <v-textarea
+                counter
+                maxlength="1000"
                 auto-grow
                 outlined
                 rows="1"
@@ -65,6 +67,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 </v-btn>
               </div> 
               <v-textarea
+                counter
+                maxlength="1000"
                 auto-grow
                 outlined
                 rows="1"
