@@ -70,7 +70,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 rows="1"
                 row-height="15"
                 class="custom-textarea mb-3"
-                :placeholder="$t('composer.poll.create.option-field', {0: option.id})"
+                :placeholder="$t('composer.poll.create.drawer.field.option', {0: option.id})"
                 type="text" />
             </v-list-item>
 
@@ -136,16 +136,9 @@ export default {
       return !this.isMobile ? '33%' : '420';
     },
   },
-  created(){
-    this.$root.$on('poll-message-composer-closed', () => this.cancelDrawer());
-
-  },
   methods: {
     openDrawer(){
       this.$refs.createPollDrawer.open();
-      // listner is activated in Social module 'ExoActivityComposer.vue'
-      // to inform that this drawer is opened and then prevent closing the activity composer drawer
-      this.$root.$emit('poll-app-drawer-opened');
     },
     cancelDrawer(){
       this.$refs.createPollDrawer.close();
@@ -154,9 +147,7 @@ export default {
       this.cancelDrawer();
     },
     resetDrawer() {
-      // listner is activated in Social module 'ExoActivityComposer.vue'
-      // to prevent closing the activity composer drawer
-      this.$root.$emit('poll-app-drawer-closed');
+      this.cancelDrawer();
     },
     addOption(){
       this.options.push({id: this.options.length + 1, removable: true,data: {}});
