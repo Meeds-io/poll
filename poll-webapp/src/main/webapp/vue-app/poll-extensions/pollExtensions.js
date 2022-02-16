@@ -16,14 +16,6 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-import * as featureService from './featureService.js';
-
-let pollFeatureEnabled;
-
-featureService.isFeatureEnabled('poll').then(enabled => {
-  pollFeatureEnabled = enabled;
-});
-
 export function initExtensions() {
   extensionRegistry.registerExtension('ActivityComposer', 'activity-composer-action', {
     key: 'poll',
@@ -32,7 +24,7 @@ export function initExtensions() {
     labelKey: 'composer.poll.create',
     description: 'composer.poll.create.description',
     iconClass: 'createPollComposerIcon',
-    enabled: pollFeatureEnabled,
+    enabled: true,
     onExecute: () => {
       return null;
     }
