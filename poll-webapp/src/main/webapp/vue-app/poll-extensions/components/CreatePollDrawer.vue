@@ -22,8 +22,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     id="createPollDrawer"
     :drawer-width="drawerWidth"
     :right="!$vuetify.rtl"
-    disable-pull-to-refresh
-    @closed="resetDrawer">
+    disable-pull-to-refresh>
     <template slot="title">
       <div class="createPollDrawerHeader">
         <span>{{ $t('composer.poll.create') }}</span>
@@ -33,8 +32,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <div class="pt-0 pa-5 my-5 createPollDrawerContent">
         <v-form
           class="flex"
-          flat
-          @submit.prevent="onSubmit">
+          flat>
           <v-list
             class="d-flex flex-column"
             dense>
@@ -97,14 +95,14 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           class="mx-5 px-8 btn"
           button
           large
-          @click="cancelDrawer">
+          @click="closeDrawer">
           {{ $t('composer.poll.create.drawer.action.cancel') }}
         </v-btn>
         <v-btn
           class="px-8 primary btn no-box-shadow"
           button
           large
-          @click="onSubmit">
+          @click="createPoll">
           {{ $t('composer.poll.create.drawer.action.create') }}
         </v-btn>
       </div>
@@ -136,7 +134,6 @@ export default {
       ]
     };
   },
-
   computed: {
     isMobile() {
       return this.$vuetify.breakpoint.name === 'xs' || this.$vuetify.breakpoint.name === 'sm';
@@ -149,14 +146,15 @@ export default {
     openDrawer(){
       this.$refs.createPollDrawer.open();
     },
-    cancelDrawer(){
+    closeDrawer(){
+      this.$refs.createPollDrawer.close();
+      this.resetDrawer();
+    },
+    createPoll(){
       this.$refs.createPollDrawer.close();
     },
-    onSubmit(){
-      this.cancelDrawer();
-    },
-    resetDrawer() {
-      this.cancelDrawer();
+    resetDrawer(){
+      //reset drawer fields
     },
     addOption(){
       this.options.push({id: this.options.length + 1, removable: true,data: {}});
