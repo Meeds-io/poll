@@ -162,7 +162,7 @@ export default {
     removeOption(option){
       this.options.splice(this.options.indexOf(option), 1);
       this.options.forEach((element,index) => {
-        element.id = ++index;
+        element.id = index +1;
       });
     }
   }
