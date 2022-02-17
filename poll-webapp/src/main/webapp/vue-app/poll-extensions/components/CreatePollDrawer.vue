@@ -58,7 +58,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               :key="index"
               class="px-0 d-flex"
               dense>
-              <div class=" float-left mb-4 me-3 removeOptionButton">
+              <div class=" float-left mb-8 me-3 removeOptionButton">
                 <v-btn
                   v-if="option.removable"
                   icon
