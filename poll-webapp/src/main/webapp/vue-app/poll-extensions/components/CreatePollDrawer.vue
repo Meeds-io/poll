@@ -92,7 +92,7 @@ export default {
 
   data(){
     return {
-      MAX_LENGTH: 10,
+      MAX_LENGTH: 1000,
       poll: {},
       options: [
         {
