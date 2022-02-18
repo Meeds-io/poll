@@ -40,11 +40,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               class="px-0"
               dense>
               <extended-textarea
+                v-model.trim="poll.question"
                 rows="3"
                 row-height="15"
-                max-length="10"
+                :max-length="MAX_LENGTH"
                 :placeholder="$t('composer.poll.create.drawer.field.question')"
-                class="custom-poll-textarea pt-0 mb-3 "
+                class="custom-poll-textarea pt-0 mb-3"
                 />
             </v-list-item>
             
@@ -54,9 +55,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               class="px-0 d-flex"
               dense>
               <extended-textarea
+                v-model.trim="options[index].data"
                 rows="2"
                 row-height="15"
-                max-length="10"
+                :max-length="MAX_LENGTH"
                 class="custom-poll-textarea pt-0 mb-3"
                 :placeholder="$t(`composer.poll.create.drawer.field.option${!option.required ? '.optional' : ''}`, {0: option.id})"
                 />
@@ -79,6 +81,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           class="px-8 primary btn no-box-shadow"
           button
           large
+          :disabled="!checkPollFields"
           @click="createPoll">
           {{ $t('composer.poll.create.drawer.action.create') }}
         </v-btn>
@@ -92,26 +95,28 @@ export default {
 
   data(){
     return {
+      MAX_LENGTH: 1000,
+      poll: {},
       options: [
         {
           id: 1,
           required: true,
-          data: {}
+          data: null
         },
         {
           id: 2,
           required: true,
-          data: {}
+          data: null
         },
         {
           id: 3,
           required: false,
-          data: {}
+          data: null
         },
         {
           id: 4,
           required: false,
-          data: {}
+          data: null
         }
       ]
     };
@@ -122,6 +127,12 @@ export default {
     },
     drawerWidth() {
       return !this.isMobile ? '33%' : '420';
+    },
+    checkPollOptions(){
+      return this.options && this.options.length !== 0 && this.options.slice(0,2).every(option => option.data !== null && option.data !== '' && option.data.length <= this.MAX_LENGTH );
+    },
+    checkPollFields(){
+      return this.poll.question && this.poll.question !==null && this.poll.question.length <= this.MAX_LENGTH && this.checkPollOptions;
     },
   },
   methods: {
