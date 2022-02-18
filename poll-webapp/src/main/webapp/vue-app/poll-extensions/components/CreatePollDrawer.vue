@@ -125,11 +125,14 @@ export default {
     drawerWidth() {
       return !this.isMobile ? '33%' : '420';
     },
-    checkPollOptions(){
-      return this.options && this.options.length !== 0 && this.options.slice(0,2).every(option => option.data !== null && option.data !== '' && option.data.length <= this.MAX_LENGTH );
+    checkPollOptionalOptions(){
+      return this.options.slice(-2).every(option => !option.data || option.data.length <= this.MAX_LENGTH );
+    },
+    checkPollAllOptions(){
+      return this.options && this.options.length !== 0 && this.options.slice(0,2).every(option => option.data !== null && option.data !== '' && option.data.length <= this.MAX_LENGTH ) && this.checkPollOptionalOptions;
     },
     disableCreatePoll(){
-      return !(Object.values(this.poll).length !== 0 && this.poll.question && this.poll.question.length <= this.MAX_LENGTH && this.checkPollOptions);
+      return !(Object.values(this.poll).length !== 0 && this.poll.question && this.poll.question.length <= this.MAX_LENGTH && this.checkPollAllOptions);
     },
     questionPlaceholder(){
       return this.$t('composer.poll.create.drawer.field.question');
