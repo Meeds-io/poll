@@ -18,32 +18,10 @@
 
 #createPollDrawer{
   .createPollDrawerContent{
-    .custom-textarea{
-      border: none;
-      padding: 0px;
-      .v-counter.theme--light {
-        display: flex;
-        justify-content: flex-end;
-      }
-      textarea, textarea:active{
-          box-shadow: none !important;
-          padding-left: 0px;
-          border: none !important;
-        }
-      fieldset{
-        color: rgba(0, 0, 0, 0.12) !important;
-      }
-    }
-    // on focus fieldset above textarea
-    .v-text-field--outlined.v-input--is-focused fieldset{
-      box-shadow:  0 1px 1px rgba(0,0,0,.075), 0 0 5px !important;
-      transition-duration: 0.3s;
-      transition-property: border, box-shadow;
-    }
-    .removeOptionButton{
-      width: 25px;
-      .removeOptionButtonIcon{
-        color: @mediumGrey
+    .custom-poll-textarea{
+      textarea{
+        padding: 8px 8px;
+        box-shadow: none;
       }
     }
   }
