@@ -41,7 +41,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               dense>
               <extended-textarea
                 v-model.trim="poll.question"
-                rows="3"
+                rows="5"
                 row-height="15"
                 :max-length="MAX_LENGTH"
                 :placeholder="questionPlaceholder"
@@ -123,7 +123,7 @@ export default {
       return this.$vuetify.breakpoint.name === 'xs' || this.$vuetify.breakpoint.name === 'sm';
     },
     drawerWidth() {
-      return !this.isMobile ? '33%' : '420';
+      return !this.isMobile ? '100%' : '420';
     },
     checkPollOptionalOptions(){
       return this.options.slice(-2).every(option => !option.data || option.data.length <= this.MAX_LENGTH );
