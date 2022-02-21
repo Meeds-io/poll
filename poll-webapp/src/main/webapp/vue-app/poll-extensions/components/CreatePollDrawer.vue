@@ -26,7 +26,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     @closed="!pollCreated ? resetFields() : null">
     <template slot="title">
       <div class="createPollDrawerHeader">
-        <span>{{ $t('composer.poll.create') }}</span>
+        <span>{{ $t('composer.poll.create.drawer.label') }}</span>
       </div>
     </template>
     <template slot="content">
@@ -101,7 +101,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           large
           :disabled="disableCreatePoll"
           @click="createPoll">
-          {{ $t('composer.poll.create.drawer.action.create') }}
+          {{ $t(`composer.poll.create.drawer.action.${pollCreated ? 'update' : 'create'}`) }}
         </v-btn>
       </div>
     </template>
@@ -141,7 +141,13 @@ export default {
   },
   methods: {
     intializeDrawerFields(){
-      Object.assign(this.poll,{}),
+      document.dispatchEvent(new CustomEvent('poll-composer-button-text',{
+        detail: {
+          labelKey: 'composer.poll.create.drawer.label',
+          description: 'composer.poll.create.drawer.description' 
+        }
+      }));
+      this.poll = {};
       this.options = [
         {
           id: 1,
@@ -164,6 +170,7 @@ export default {
           data: null
         }
       ];
+      this.pollCreated = false;
 
     },
     resetFields(){
@@ -173,7 +180,6 @@ export default {
     openDrawer(){
       if (this.disableCreatePoll)
       {this.intializeDrawerFields();}
-      //this.pollCreated = false;
       this.$refs.createPollDrawer.open();
     },
     closeDrawer(addedPoll){
@@ -182,10 +188,16 @@ export default {
       this.$refs.createPollDrawer.close();
     },
     createPoll(){
-      if(!this.disableCreatePoll){
+      if (!this.disableCreatePoll) {
         this.poll.options = this.options;
         this.pollCreated = true;
         this.closeDrawer(this.poll);
+        document.dispatchEvent(new CustomEvent('poll-composer-button-text',{
+          detail: {
+            labelKey: 'composer.poll.update.drawer.label',
+            description: 'composer.poll.update.drawer.description' 
+          }
+        }));
       }
     },
   }

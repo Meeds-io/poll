@@ -16,27 +16,36 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-export function initExtensions() {
-  extensionRegistry.registerExtension('ActivityComposer', 'activity-composer-action', {
-    key: 'poll',
-    rank: 40,
-    resourceBundle: 'locale.portlet.Poll',
-    labelKey: 'composer.poll.create',
-    description: 'composer.poll.create.drawer.description',
-    iconClass: 'createPollComposerIcon',
-    enabled: true,
-    component: {
-      name: 'create-poll-drawer',
-      props: {
-      },
-      model: {
-        value: [],
-        default: []
-      },
-      events: []
+const pollActivityComposerPlugin = {
+  key: 'poll',
+  rank: 40,
+  resourceBundle: 'locale.portlet.Poll',
+  labelKey: 'composer.poll.create.drawer.label',
+  description: 'composer.poll.create.drawer.description',
+  iconClass: 'createPollComposerIcon',
+  enabled: true,
+  component: {
+    name: 'create-poll-drawer',
+    props: {
     },
-    onExecute: (createPollDrawerComponent) => {
-      createPollDrawerComponent.openDrawer();
-    }
+    model: {
+      value: [],
+      default: []
+    },
+    events: []
+  },
+  onExecute: (createPollDrawerComponent) => {
+    createPollDrawerComponent.openDrawer();
+  }
+};
+
+export function initExtensions() {
+  extensionRegistry.registerExtension('ActivityComposer', 'activity-composer-action', pollActivityComposerPlugin);
+
+  document.addEventListener('poll-composer-button-text',(data)=>{
+    pollActivityComposerPlugin.labelKey = data.detail.labelKey;
+    pollActivityComposerPlugin.description = data.detail.description;
+  
   });
+  
 }
