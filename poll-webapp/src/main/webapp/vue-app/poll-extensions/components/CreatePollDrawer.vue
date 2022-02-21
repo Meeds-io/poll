@@ -22,7 +22,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     id="createPollDrawer"
     :drawer-width="drawerWidth"
     :right="!$vuetify.rtl"
-    disable-pull-to-refresh>
+    disable-pull-to-refresh
+    @closed="!pollCreated ? resetFields() : null">
     <template slot="title">
       <div class="createPollDrawerHeader">
         <span>{{ $t('composer.poll.create') }}</span>
@@ -114,28 +115,8 @@ export default {
     return {
       MAX_LENGTH: 1000,
       poll: {},
-      options: [
-        {
-          id: 1,
-          required: true,
-          data: null
-        },
-        {
-          id: 2,
-          required: true,
-          data: null
-        },
-        {
-          id: 3,
-          required: false,
-          data: null
-        },
-        {
-          id: 4,
-          required: false,
-          data: null
-        }
-      ]
+      options: [],
+      pollCreated: false
     };
   },
   computed: {
@@ -159,19 +140,54 @@ export default {
     }
   },
   methods: {
+    intializeDrawerFields(){
+      Object.assign(this.poll,{}),
+      this.options = [
+        {
+          id: 1,
+          required: true,
+          data: null
+        },
+        {
+          id: 2,
+          required: true,
+          data: null
+        },
+        {
+          id: 3,
+          required: false,
+          data: null
+        },
+        {
+          id: 4,
+          required: false,
+          data: null
+        }
+      ];
+
+    },
+    resetFields(){
+      this.poll.question = null;
+      this.options = [];
+    },
     openDrawer(){
+      if (this.disableCreatePoll)
+      {this.intializeDrawerFields();}
+      //this.pollCreated = false;
       this.$refs.createPollDrawer.open();
     },
-    closeDrawer(){
+    closeDrawer(addedPoll){
+      if (!addedPoll)
+      {this.resetFields();}
       this.$refs.createPollDrawer.close();
-      this.resetDrawer();
     },
     createPoll(){
-      this.closeDrawer();
+      if(!this.disableCreatePoll){
+        this.poll.options = this.options;
+        this.pollCreated = true;
+        this.closeDrawer(this.poll);
+      }
     },
-    resetDrawer(){
-      //reset drawer fields
-    }
   }
 };
 </script>
