@@ -22,6 +22,9 @@ public class PollOptionEntity implements Serializable {
   @Column(name = "POLL_ID", nullable = false)
   private Long              pollId;
 
+  @Column(name = "POLL_OPTION_CONTENT", nullable = false)
+  private String              pollOption;
+
   public Long getId() {
     return id;
   }
@@ -36,5 +39,13 @@ public class PollOptionEntity implements Serializable {
 
   public void setPollId(Long pollId) {
     this.pollId = pollId;
+  }
+
+  public String getPollOption() {
+    return pollOption;
+  }
+
+  public void setPollOption(String pollOption) {
+    this.pollOption = pollOption;
   }
 }

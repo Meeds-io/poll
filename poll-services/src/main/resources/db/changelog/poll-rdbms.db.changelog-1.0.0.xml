@@ -63,6 +63,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.-->
             <column name="POLL_ID" type="BIGINT">
                 <constraints foreignKeyName="FK_OPTION_POLL" references="POLL(POLL_ID)" nullable="false" />
             </column>
+            <column name="POLL_OPTION_CONTENT" type="NVARCHAR(2000)">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
         <modifySql dbms="mysql">
             <append value=" ENGINE=INNODB CHARSET=UTF8 COLLATE utf8_general_ci"/>

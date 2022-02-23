@@ -1,6 +1,9 @@
 package org.exoplatform.poll.service;
 
 import org.exoplatform.poll.model.Poll;
+import org.exoplatform.poll.model.PollOption;
+
+import java.util.List;
 
 public interface PollService {
   /**
@@ -12,5 +15,5 @@ public interface PollService {
    * @throws IllegalAccessException when user is not authorized to create a poll
    *           for the designated owner defined in object
    */
-  Poll createPoll(Poll poll, long username) throws IllegalAccessException;
+  Poll createPoll(Poll poll, List<PollOption> pollOptions, long username) throws IllegalAccessException;
 }
