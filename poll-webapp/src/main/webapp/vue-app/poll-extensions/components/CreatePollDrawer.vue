@@ -51,7 +51,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <v-list-item
               v-for="(option, index) in options"
               :key="index"
-              class="px-0 d-flex"
+              class="px-0"
               dense>
               <extended-textarea
                 v-model.trim="options[index].data"
@@ -60,6 +60,26 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 :max-length="MAX_LENGTH"
                 class="custom-poll-textarea pt-0 mb-3"
                 :placeholder="$t(`composer.poll.create.drawer.field.option${!option.required ? '.optional' : ''}`, {0: option.id})" />
+            </v-list-item>
+
+            <v-list-item
+              class="px-0"
+              dense>
+              <label class="subtitle-1 font-weight-bold mb-3 mt-5">
+                {{ $t('composer.poll.create.drawer.field.duration.label') }}
+              </label>
+            </v-list-item>
+
+            <v-list-item
+              class="px-0"
+              dense>
+              <select
+                class="ignore-vuetify-classes poll-select-duration flex-grow-1">
+                <option value="1d">{{ $t('composer.poll.create.drawer.field.duration.oneDay') }}</option>
+                <option value="3d">{{ $t('composer.poll.create.drawer.field.duration.threeDays') }}</option>
+                <option value="1w" selected>{{ $t('composer.poll.create.drawer.field.duration.oneWeek') }}</option>
+                <option value="2w">{{ $t('composer.poll.create.drawer.field.duration.twoWeeks') }}</option>
+              </select>
             </v-list-item>
           </v-list>
         </v-form>
