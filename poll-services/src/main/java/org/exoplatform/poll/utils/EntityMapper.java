@@ -17,7 +17,12 @@ public class EntityMapper {
     if (pollEntity == null) {
       return null;
     }
-    return new Poll(pollEntity.getId(),pollEntity.getPollQuestion(),null,pollEntity.getStart_date(),pollEntity.getEnd_date(), pollEntity.getIdentityId());
+    return new Poll(pollEntity.getId(),
+                    pollEntity.getPollQuestion(),
+                    RestUtils.fromDate(pollEntity.getStart_date()),
+                    RestUtils.fromDate(pollEntity.getEnd_date()),
+                    pollEntity.getIdentityId(),
+                    pollEntity.getActivity_id());
   }
 
   public static PollEntity toEntity(Poll poll) {
@@ -27,8 +32,9 @@ public class EntityMapper {
     PollEntity pollEntity = new PollEntity();
     pollEntity.setId(poll.getId());
     pollEntity.setPollQuestion(poll.getQuestion());
-    pollEntity.setStart_date(poll.getStartDate());
-    pollEntity.setEnd_date(poll.getEndDate());
+    pollEntity.setStart_date(RestUtils.toDate(poll.getStartDate()));
+    pollEntity.setEnd_date(RestUtils.toDate(poll.getEndDate()));
+    pollEntity.setActivity_id(poll.getActivityId());
     pollEntity.setIdentityId(poll.getCreatorId());
     return pollEntity;
   }

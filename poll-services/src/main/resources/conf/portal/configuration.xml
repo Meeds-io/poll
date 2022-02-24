@@ -35,6 +35,10 @@
         <type>org.exoplatform.poll.storage.PollStorage</type>
     </component>
 
+    <component>
+        <type>org.exoplatform.poll.rest.PollRest</type>
+    </component>
+
     <external-component-plugins>
         <target-component>org.exoplatform.commons.api.persistence.DataInitializer</target-component>
         <component-plugin>

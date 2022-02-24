@@ -8,7 +8,6 @@ import org.exoplatform.services.log.Log;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class PollServiceImpl implements PollService {
   private static final Log LOG = ExoLogger.getLogger(PollServiceImpl.class);
@@ -27,13 +26,14 @@ public class PollServiceImpl implements PollService {
     if (poll == null) {
       throw new IllegalArgumentException("Poll is mandatory");
     }
-    List<PollOption> createdPollOptions = new ArrayList<>();
-    pollOptions.forEach(pollOption -> {
-      createdPollOptions.add(pollStorage.createPollOption(pollOption));
-    });
-    List<Long> polls = pollOptions.stream().map(PollOption::getId).collect(Collectors.toList());
-    poll.setOptions(polls);
     Poll createdPoll = pollStorage.createPoll(poll);
+    List<PollOption> createdOptions = new ArrayList<>();
+    pollOptions.forEach(pollOption -> {
+      pollOption.setId(0);
+      pollOption.setPollId(createdPoll.getId());
+      pollStorage.createPollOption(pollOption);
+      createdOptions.add(pollOption);
+    });
     return createdPoll;
   }
 }
