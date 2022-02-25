@@ -33,12 +33,7 @@ import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Path("/v1/poll")
 @Api(value = "/v1/poll", description = "Managing poll")
@@ -79,7 +74,7 @@ public class PollRest implements ResourceContainer {
     long userIdentityId = RestUtils.getCurrentUserIdentityId(identityManager);
     try {
       Poll poll = RestEntityBuilder.toPoll(pollEntity, timeZoneId);
-      List<PollOption> createdOptions = RestEntityBuilder.toPollOption(pollEntity.getDateOptions());
+      List<PollOption> createdOptions = RestEntityBuilder.toPollOption(pollEntity.getPollOptions());
       poll = pollService.createPoll(poll, createdOptions, userIdentityId);
       return Response.ok(poll).build();
     } catch (IllegalAccessException e) {

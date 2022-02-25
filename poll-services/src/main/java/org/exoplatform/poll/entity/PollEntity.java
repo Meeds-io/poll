@@ -39,13 +39,13 @@ public class PollEntity implements Serializable {
   private String            pollQuestion;
 
   @Column(name = "START_DATE", nullable = false)
-  private Date              start_date;
+  private Date              startDate;
 
   @Column(name = "END_DATE", nullable = false)
-  private Date              end_date;
+  private Date              endDate;
 
   @Column(name = "ACTIVITY_ID")
-  private Long              activity_id;
+  private Long              activityId;
 
   @Column(name = "IDENTITY_ID", nullable = false)
   private Long              identityId;
@@ -66,28 +66,28 @@ public class PollEntity implements Serializable {
     this.pollQuestion = pollQuestion;
   }
 
-  public Date getStart_date() {
-    return start_date;
+  public Date getStartDate() {
+    return startDate;
   }
 
-  public void setStart_date(Date start_date) {
-    this.start_date = start_date;
+  public void setStartDate(Date startDate) {
+    this.startDate = startDate;
   }
 
-  public Date getEnd_date() {
-    return end_date;
+  public Date getEndDate() {
+    return endDate;
   }
 
-  public void setEnd_date(Date end_date) {
-    this.end_date = end_date;
+  public void setEndDate(Date endDate) {
+    this.endDate = endDate;
   }
 
-  public Long getActivity_id() {
-    return activity_id;
+  public Long getActivityId() {
+    return activityId;
   }
 
-  public void setActivity_id(Long activity_id) {
-    this.activity_id = activity_id;
+  public void setActivityId(Long activityId) {
+    this.activityId = activityId;
   }
 
   public Long getIdentityId() {

@@ -70,19 +70,19 @@ public class PollStorageTest {
       PollOption pollOption = new PollOption();
       pollOption.setId(1L);
       pollOption.setPollId(poll.getId());
-      pollOption.setPollOption("pollOption");
+      pollOption.setDescription("pollOption");
 
 
       PollEntity pollEntity = new PollEntity();
       pollEntity.setId(1L);
       pollEntity.setPollQuestion("q1");
-      pollEntity.setStart_date(startDate);
-      pollEntity.setEnd_date(endDate);
+      pollEntity.setStartDate(startDate);
+      pollEntity.setEndDate(endDate);
       pollEntity.setIdentityId(1L);
 
       PollOptionEntity pollOptionEntity = new PollOptionEntity();
       pollOptionEntity.setPollId(pollEntity.getId());
-      pollOptionEntity.setPollOption(pollOption.getPollOption());
+      pollOptionEntity.setDescription(pollOption.getDescription());
       pollOptionEntity.setId(1L);
 
       when(pollDAO.create(anyObject())).thenReturn(pollEntity);

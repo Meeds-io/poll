@@ -23,6 +23,7 @@ import org.exoplatform.poll.entity.PollOptionEntity;
 import org.exoplatform.poll.model.Poll;
 import org.exoplatform.poll.model.PollOption;
 import org.exoplatform.poll.utils.EntityMapper;
+import org.exoplatform.poll.utils.RestUtils;
 
 public class PollStorage {
   private PollDAO       pollDAO;
@@ -37,6 +38,8 @@ public class PollStorage {
   public Poll createPoll(Poll poll) {
     PollEntity pollEntity = EntityMapper.toEntity(poll);
     pollEntity.setId(null);
+    pollEntity.setStartDate(RestUtils.toDate(poll.getStartDate()));
+    pollEntity.setEndDate(RestUtils.toDate(poll.getEndDate()));
     pollEntity = pollDAO.create(pollEntity);
     return EntityMapper.fromEntity(pollEntity);
   }
@@ -44,7 +47,7 @@ public class PollStorage {
   public PollOption createPollOption(PollOption pollOption) {
     PollOptionEntity pollOptionEntity = EntityMapper.optionToEntity(pollOption);
     pollOptionEntity.setId(null);
-    pollOptionEntity.setPollOption(pollOption.getPollOption());
+    pollOptionEntity.setDescription(pollOption.getDescription());
     pollOptionEntity = pollOptionDAO.create(pollOptionEntity);
     return EntityMapper.optionFromEntity(pollOptionEntity);
   }
