@@ -23,5 +23,15 @@ export function initExtensions() {
     vueComponent: Vue.options.components['create-poll-composer'],
     rank: 20,
   });
-  
+
+  extensionRegistry.registerComponent('ActivityContent', 'activity-content-extensions', {
+    id: 'poll',
+    isEnabled: (params) => {
+      const activity = params && params.activity;
+      return activity && activity.type === 'poll';
+    },
+    vueComponent: Vue.options.components['poll-activity'],
+    rank: 10,
+  });
+
 }

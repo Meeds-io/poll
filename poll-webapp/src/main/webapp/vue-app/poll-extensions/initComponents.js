@@ -18,11 +18,15 @@
  */
 import CreatePollDrawer from './components/CreatePollDrawer.vue';
 import CreatePollComposer from './components/CreatePollComposer.vue';
+import PollActivity from './components/PollActivity.vue';
+import CustomPollActivity from './components/CustomPollActivity.vue';
 
 const components = {
   'create-poll-drawer': CreatePollDrawer,
   'create-poll-composer': CreatePollComposer,
-};
+  'poll-activity': PollActivity,
+  'custom-poll-activity': CustomPollActivity,
+}
 
 for (const key in components) {
   Vue.component(key, components[key]);
