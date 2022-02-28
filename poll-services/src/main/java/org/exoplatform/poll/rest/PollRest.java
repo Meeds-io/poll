@@ -16,11 +16,21 @@
  */
 package org.exoplatform.poll.rest;
 
-import io.swagger.annotations.*;
+import java.util.List;
+
+import javax.annotation.security.RolesAllowed;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
 import org.exoplatform.common.http.HTTPStatus;
 import org.exoplatform.poll.model.Poll;
 import org.exoplatform.poll.model.PollOption;
-import org.exoplatform.poll.rest.model.PollEntity;
+import org.exoplatform.poll.rest.model.PollRestEntity;
 import org.exoplatform.poll.service.PollService;
 import org.exoplatform.poll.utils.RestEntityBuilder;
 import org.exoplatform.poll.utils.RestUtils;
@@ -29,11 +39,11 @@ import org.exoplatform.services.log.Log;
 import org.exoplatform.services.rest.resource.ResourceContainer;
 import org.exoplatform.social.core.manager.IdentityManager;
 
-import javax.annotation.security.RolesAllowed;
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.util.List;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 
 @Path("/v1/poll")
 @Api(value = "/v1/poll", description = "Managing poll")
@@ -54,34 +64,27 @@ public class PollRest implements ResourceContainer {
   @Produces(MediaType.APPLICATION_JSON)
   @RolesAllowed("users")
   @ApiOperation(value = "Create a new poll", httpMethod = "POST", response = Response.class, consumes = "application/json")
-  @ApiResponses(
-          value = {
-                  @ApiResponse(code = HTTPStatus.NO_CONTENT, message = "Request fulfilled"),
-                  @ApiResponse(code = HTTPStatus.BAD_REQUEST, message = "Invalid query input"),
-                  @ApiResponse(code = HTTPStatus.UNAUTHORIZED, message = "Unauthorized operation"),
-                  @ApiResponse(code = HTTPStatus.INTERNAL_ERROR, message = "Internal server error"),
-          }
-  )
-  public Response createPoll(
-                            @ApiParam(value = "IANA Time zone identitifer", required = false)
-                            @QueryParam("timeZoneId")
-                            String timeZoneId,
-                            @ApiParam(value = "Poll object to create", required = true)
-                                      PollEntity pollEntity) {
+  @ApiResponses(value = { @ApiResponse(code = HTTPStatus.NO_CONTENT, message = "Request fulfilled"),
+      @ApiResponse(code = HTTPStatus.BAD_REQUEST, message = "Invalid query input"),
+      @ApiResponse(code = HTTPStatus.UNAUTHORIZED, message = "Unauthorized operation"),
+      @ApiResponse(code = HTTPStatus.INTERNAL_ERROR, message = "Internal server error"), })
+  public Response createPoll(@ApiParam(value = "Poll object to create", required = true)
+                             PollRestEntity pollEntity) {
     if (pollEntity == null) {
       return Response.status(Response.Status.BAD_REQUEST).build();
     }
-    long userIdentityId = RestUtils.getCurrentUserIdentityId(identityManager);
+    long currentUserIdentityId = RestUtils.getCurrentUserIdentityId(identityManager);
     try {
-      Poll poll = RestEntityBuilder.toPoll(pollEntity, timeZoneId);
-      List<PollOption> createdOptions = RestEntityBuilder.toPollOption(pollEntity.getPollOptions());
-      poll = pollService.createPoll(poll, createdOptions, userIdentityId);
+      Poll poll = RestEntityBuilder.toPoll(pollEntity);
+      poll.setCreatorId(currentUserIdentityId);
+      List<PollOption> pollOptions = RestEntityBuilder.toPollOptions(pollEntity.getOptions());
+      poll = pollService.createPoll(poll, pollOptions, currentUserIdentityId);
       return Response.ok(poll).build();
     } catch (IllegalAccessException e) {
-      LOG.error("User '{}' attempts to update a non authorized event", e);
+      LOG.warn("User '{}' attempts to create a non authorized poll", e);
       return Response.status(Response.Status.UNAUTHORIZED).build();
     } catch (Exception e) {
-      return Response.status(Response.Status.UNAUTHORIZED).build();
+      return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
     }
   }
 }

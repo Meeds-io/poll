@@ -1,19 +1,3 @@
-/*
- * Copyright (C) 2022 eXo Platform SAS.
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Affero General Public License
- * as published by the Free Software Foundation; either version 3
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, see<http://www.gnu.org/licenses/>.
- */
 package org.exoplatform.poll.utils;
 
 import org.exoplatform.poll.entity.PollEntity;
@@ -29,46 +13,46 @@ public class EntityMapper {
   public EntityMapper() {
   }
 
-  public static Poll fromEntity(PollEntity pollEntity) {
+  public static Poll fromPollEntity(PollEntity pollEntity) {
     if (pollEntity == null) {
       return null;
     }
     return new Poll(pollEntity.getId(),
-                    pollEntity.getPollQuestion(),
-                    RestUtils.fromDate(pollEntity.getStartDate()),
+                    pollEntity.getQuestion(),
+                    RestUtils.fromDate(pollEntity.getCreatedDate()),
                     RestUtils.fromDate(pollEntity.getEndDate()),
-                    pollEntity.getIdentityId(),
+                    pollEntity.getCreatorId(),
                     pollEntity.getActivityId());
   }
 
-  public static PollEntity toEntity(Poll poll) {
+  public static PollEntity toPollEntity(Poll poll) {
     if (poll == null) {
       return null;
     }
     PollEntity pollEntity = new PollEntity();
     pollEntity.setId(poll.getId());
-    pollEntity.setPollQuestion(poll.getQuestion());
-    pollEntity.setStartDate(RestUtils.toDate(poll.getStartDate()));
+    pollEntity.setQuestion(poll.getQuestion());
+    pollEntity.setCreatedDate(RestUtils.toDate(poll.getCreatedDate()));
     pollEntity.setEndDate(RestUtils.toDate(poll.getEndDate()));
     pollEntity.setActivityId(poll.getActivityId());
-    pollEntity.setIdentityId(poll.getCreatorId());
+    pollEntity.setCreatorId(poll.getCreatorId());
     return pollEntity;
   }
 
-  public static PollOption optionFromEntity(PollOptionEntity pollOptionEntity) {
+  public static PollOption fromPollOptionEntity(PollOptionEntity pollOptionEntity) {
     if (pollOptionEntity == null) {
       return null;
     }
     return new PollOption(pollOptionEntity.getId(), pollOptionEntity.getPollId(), pollOptionEntity.getDescription());
   }
 
-  public static PollOptionEntity optionToEntity(PollOption pollOption) {
+  public static PollOptionEntity toPollOptionEntity(PollOption pollOption, Long pollEntityId) {
     if (pollOption == null) {
       return null;
     }
     PollOptionEntity pollOptionEntity = new PollOptionEntity();
     pollOptionEntity.setId(pollOption.getId());
-    pollOptionEntity.setPollId(pollOption.getPollId());
+    pollOptionEntity.setPollId(pollEntityId);
     return pollOptionEntity;
   }
 

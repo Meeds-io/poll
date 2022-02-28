@@ -63,7 +63,7 @@ public class PollStorageTest {
       Poll poll = new Poll();
       poll.setId(1L);
       poll.setQuestion("q1");
-      poll.setStartDate(startDate.toInstant().atZone(ZoneOffset.UTC));
+      poll.setCreatedDate(startDate.toInstant().atZone(ZoneOffset.UTC));
       poll.setEndDate(endDate.toInstant().atZone(ZoneOffset.UTC));
       poll.setCreatorId(1L);
 
@@ -75,10 +75,10 @@ public class PollStorageTest {
 
       PollEntity pollEntity = new PollEntity();
       pollEntity.setId(1L);
-      pollEntity.setPollQuestion("q1");
-      pollEntity.setStartDate(startDate);
+      pollEntity.setQuestion("q1");
+      pollEntity.setCreatedDate(startDate);
       pollEntity.setEndDate(endDate);
-      pollEntity.setIdentityId(1L);
+      pollEntity.setCreatorId(1L);
 
       PollOptionEntity pollOptionEntity = new PollOptionEntity();
       pollOptionEntity.setPollId(pollEntity.getId());
@@ -88,17 +88,12 @@ public class PollStorageTest {
       when(pollDAO.create(anyObject())).thenReturn(pollEntity);
       when(pollOptionDAO.create(anyObject())).thenReturn(pollOptionEntity);
       PowerMockito.mockStatic(EntityMapper.class);
-      when(EntityMapper.toEntity(poll)).thenReturn(pollEntity);
-      when(EntityMapper.fromEntity(pollEntity)).thenReturn(poll);
-      when(EntityMapper.optionToEntity(pollOption)).thenReturn(pollOptionEntity);
-      when(EntityMapper.optionFromEntity(pollOptionEntity)).thenReturn(pollOption);
-      PollOption pollOptionCreated = pollStorage.createPollOption(pollOption);
+      when(EntityMapper.toPollEntity(poll)).thenReturn(pollEntity);
+      when(EntityMapper.fromPollEntity(pollEntity)).thenReturn(poll);
+      when(EntityMapper.toPollOptionEntity(pollOption, pollEntity.getId())).thenReturn(pollOptionEntity);
+      when(EntityMapper.fromPollOptionEntity(pollOptionEntity)).thenReturn(pollOption);
 
-      assertNotNull(pollOptionCreated);
-      assertEquals(pollOptionCreated.getId(), 1l);
-      assertEquals(pollOption, pollOptionCreated);
-
-      Poll pollCreated = pollStorage.createPoll(poll);
+      Poll pollCreated = pollStorage.createPoll(poll, Arrays.asList(pollOption));
       assertNotNull(pollCreated);
       assertEquals(pollCreated.getId(), 1l);
       assertEquals(poll, pollCreated);

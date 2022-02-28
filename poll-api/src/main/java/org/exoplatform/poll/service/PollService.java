@@ -29,7 +29,6 @@ public interface PollService {
    * @param username User name creating poll
    * @return created {@link Poll} with generated technical identifier
    * @throws IllegalAccessException when user is not authorized to create a poll
-   *           for the designated owner defined in object
    */
   Poll createPoll(Poll poll, List<PollOption> pollOptions, long username) throws IllegalAccessException;
 }

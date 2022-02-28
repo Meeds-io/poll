@@ -21,7 +21,6 @@ import org.exoplatform.commons.api.persistence.ExoEntity;
 import javax.persistence.*;
 import java.io.Serializable;
 
-
 @Entity(name = "PollOption")
 @ExoEntity
 @Table(name = "POLL_OPTION")

@@ -16,21 +16,21 @@
  */
 package org.exoplatform.poll.model;
 
+import java.time.ZonedDateTime;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.ZonedDateTime;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Poll implements Cloneable {
+public class Poll {
   private long          id;
 
   private String        question;
 
-  private ZonedDateTime startDate;
+  private ZonedDateTime createdDate;
 
   private ZonedDateTime endDate;
 
@@ -38,12 +38,4 @@ public class Poll implements Cloneable {
 
   private long          activityId;
 
-    public Poll clone() { // NOSONAR
-        return new Poll(id,
-                        question,
-                        startDate,
-                        endDate,
-                        creatorId,
-                        activityId);
-    }
 }

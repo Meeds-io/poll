@@ -35,20 +35,20 @@ public class PollEntity implements Serializable {
   @Column(name = "POLL_ID", nullable = false)
   private Long              id;
 
-  @Column(name = "POLL_QUESTION")
-  private String            pollQuestion;
+  @Column(name = "QUESTION")
+  private String            question;
 
-  @Column(name = "START_DATE", nullable = false)
-  private Date              startDate;
+  @Column(name = "CREATED_DATE", nullable = false)
+  private Date              createdDate;
 
   @Column(name = "END_DATE", nullable = false)
   private Date              endDate;
 
+  @Column(name = "CREATOR_ID", nullable = false)
+  private Long              creatorId;
+
   @Column(name = "ACTIVITY_ID")
   private Long              activityId;
-
-  @Column(name = "IDENTITY_ID", nullable = false)
-  private Long              identityId;
 
   public Long getId() {
     return id;
@@ -58,20 +58,20 @@ public class PollEntity implements Serializable {
     this.id = id;
   }
 
-  public String getPollQuestion() {
-    return pollQuestion;
+  public String getQuestion() {
+    return question;
   }
 
-  public void setPollQuestion(String pollQuestion) {
-    this.pollQuestion = pollQuestion;
+  public void setQuestion(String question) {
+    this.question = question;
   }
 
-  public Date getStartDate() {
-    return startDate;
+  public Date getCreatedDate() {
+    return createdDate;
   }
 
-  public void setStartDate(Date startDate) {
-    this.startDate = startDate;
+  public void setCreatedDate(Date createdDate) {
+    this.createdDate = createdDate;
   }
 
   public Date getEndDate() {
@@ -82,19 +82,19 @@ public class PollEntity implements Serializable {
     this.endDate = endDate;
   }
 
+  public Long getCreatorId() {
+    return creatorId;
+  }
+
+  public void setCreatorId(Long creatorId) {
+    this.creatorId = creatorId;
+  }
+
   public Long getActivityId() {
     return activityId;
   }
 
   public void setActivityId(Long activityId) {
     this.activityId = activityId;
-  }
-
-  public Long getIdentityId() {
-    return identityId;
-  }
-
-  public void setIdentityId(Long identityId) {
-    this.identityId = identityId;
   }
 }

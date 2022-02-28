@@ -23,18 +23,11 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PollOption implements Cloneable {
-  private static final long serialVersionUID = -5987422596945648223L;
+public class PollOption {
 
-  private long              id;
+  private long   id;
 
-  private long              pollId;
+  private long   pollId;
 
-  private String            description;
-
-  public PollOption clone() { // NOSONAR
-    return new PollOption(id,
-                          pollId,
-                          description);
-  }
+  private String description;
 }
