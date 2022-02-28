@@ -23,9 +23,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         <div class="createPollComposerIcon"></div>
       </div>
       <div class="actionItemDescription">
-        <div class="actionLabel">{{ $t('composer.poll.create.drawer.label') }}</div>
+        <div :class="`actionLabel ${createdPollIcon}`"> {{ pollActionLabel }} </div>
         <div class="actionDescription">
-          <p>{{ $t('composer.poll.create.drawer.description') }}</p>
+          <p>{{ pollActionDescription }}</p>
         </div>
       </div>
     </div>
@@ -34,6 +34,27 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 </template>
 <script>
 export default {
+  data(){
+    return {
+      pollAction: 'create'
+    };
+  },
+  computed: {
+    pollActionLabel(){
+      return this.$t(`composer.poll.${this.pollAction}.drawer.label`);
+    },
+    pollActionDescription(){
+      return this.$t(`composer.poll.${this.pollAction}.drawer.description`);
+    },
+    createdPollIcon(){
+      return this.pollAction === 'update' ? 'createdPollIcon' : '';
+    }
+  },
+  mounted(){
+    this.$root.$on('poll-created',(state)=>{
+      this.pollAction = state ? 'update' : 'create';
+    });
+  },
   methods: {
     openCreatePollDrawer() {
       this.$refs.createPollDrawer.openDrawer();

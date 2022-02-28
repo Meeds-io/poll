@@ -75,6 +75,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               class="px-0"
               dense>
               <select
+                id="pollSelectedDuration"
+                @change="getSelectedDuration"
                 class="ignore-vuetify-classes poll-select-duration flex-grow-1">
                 <option value="1d">{{ $t('composer.poll.create.drawer.field.duration.oneDay') }}</option>
                 <option value="3d">{{ $t('composer.poll.create.drawer.field.duration.threeDays') }}</option>
@@ -93,7 +95,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           button
           large
           @click="closeDrawer">
-          {{ $t('composer.poll.create.drawer.action.cancel') }}
+          {{ closeButton }}
         </v-btn>
         <v-btn
           class="px-8 primary btn no-box-shadow"
@@ -101,7 +103,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           large
           :disabled="disableCreatePoll"
           @click="createPoll">
-          {{ $t(`composer.poll.create.drawer.action.${pollCreated ? 'update' : 'create'}`) }}
+          {{ submitButton }}
         </v-btn>
       </div>
     </template>
@@ -137,16 +139,16 @@ export default {
     },
     questionPlaceholder(){
       return this.$t('composer.poll.create.drawer.field.question');
+    },
+    submitButton(){
+      return this.$t(`composer.poll.create.drawer.action.${this.pollCreated ? 'update' : 'create'}`);
+    },
+    closeButton(){
+      return this.$t('composer.poll.create.drawer.action.cancel');
     }
   },
   methods: {
     intializeDrawerFields(){
-      document.dispatchEvent(new CustomEvent('poll-composer-button-text',{
-        detail: {
-          labelKey: 'composer.poll.create.drawer.label',
-          description: 'composer.poll.create.drawer.description' 
-        }
-      }));
       this.poll = {};
       this.options = [
         {
@@ -189,16 +191,19 @@ export default {
     },
     createPoll(){
       if (!this.disableCreatePoll) {
+        if (!this.poll.duration) {this.poll.duration = document.getElementById('pollSelectedDuration').value;}
+        
         this.poll.options = this.options;
         this.pollCreated = true;
+
+        this.$root.$emit('poll-created',true);
+        document.dispatchEvent(new CustomEvent('activity-composer-edited'));
+
         this.closeDrawer(this.poll);
-        document.dispatchEvent(new CustomEvent('poll-composer-button-text',{
-          detail: {
-            labelKey: 'composer.poll.update.drawer.label',
-            description: 'composer.poll.update.drawer.description' 
-          }
-        }));
       }
+    },
+    getSelectedDuration({ target }){
+      this.poll.duration = target.value;
     },
   }
 };
