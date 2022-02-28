@@ -17,9 +17,11 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 import CreatePollDrawer from './components/CreatePollDrawer.vue';
+import CreatePollComposer from './components/CreatePollComposer.vue';
 
 const components = {
   'create-poll-drawer': CreatePollDrawer,
+  'create-poll-composer': CreatePollComposer,
 };
 
 for (const key in components) {

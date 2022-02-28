@@ -19,6 +19,12 @@
 import {initExtensions} from './pollExtensions.js';
 import './initComponents.js';
 
+// getting language of the PLF
+const lang = eXo.env.portal.language || 'en';
+// init Vue app when locale resources are ready
+const url = `${eXo.env.portal.context}/${eXo.env.portal.rest}/i18n/bundle/locale.portlet.Poll-${lang}.json`;
+// init Vue app when locale resources are ready
+exoi18n.loadLanguageAsync(lang, url).then(i18n => new Vue({i18n}));
 
 export function init() {
   initExtensions();
