@@ -191,12 +191,14 @@ export default {
     },
     createPoll(){
       if (!this.disableCreatePoll) {
-        if (!this.poll.duration) {this.poll.duration = document.getElementById('pollSelectedDuration').value;}
+        if (!this.poll.duration) {
+          this.poll.duration = document.getElementById('pollSelectedDuration').value;
+        }
         
         this.poll.options = this.options;
         this.pollCreated = true;
 
-        this.$root.$emit('poll-created',true);
+        this.$root.$emit('poll-created', true);
         document.dispatchEvent(new CustomEvent('activity-composer-edited'));
 
         this.closeDrawer(this.poll);

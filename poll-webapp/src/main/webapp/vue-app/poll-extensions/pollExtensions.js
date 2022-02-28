@@ -21,7 +21,7 @@ export function initExtensions() {
   extensionRegistry.registerComponent('ActivityComposerFooterAction', 'activity-composer-footer-action', {
     id: 'createPollButton',
     vueComponent: Vue.options.components['create-poll-composer'],
-    rank: 40,
+    rank: 20,
   });
   
 }
