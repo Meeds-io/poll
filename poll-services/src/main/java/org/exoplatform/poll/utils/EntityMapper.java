@@ -22,8 +22,6 @@ import org.exoplatform.poll.entity.PollEntity;
 import org.exoplatform.poll.entity.PollOptionEntity;
 import org.exoplatform.poll.model.Poll;
 import org.exoplatform.poll.model.PollOption;
-import org.exoplatform.services.log.ExoLogger;
-import org.exoplatform.services.log.Log;
 
 public class EntityMapper {
 
