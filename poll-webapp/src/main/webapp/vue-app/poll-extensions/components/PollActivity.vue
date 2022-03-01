@@ -34,14 +34,15 @@ export default {
       options: {
         question: 'What\'s your favourite <strong>JS</strong> framework?',
         answers: [
-          { value: 1, text: 'Vue', votes: 53 ,selected: false },
-          { value: 2, text: 'React', votes: 35 ,selected: false },
-          { value: 3, text: 'Angular', votes: 30 ,selected: false },
-          { value: 4, text: 'Other', votes: 10 ,selected: false } 
+          { value: 1, text: 'Vue', votes: 53 ,selected: true, custom_class: 'my-3' },
+          { value: 2, text: 'React', votes: 35 ,selected: false, custom_class: 'my-3' },
+          { value: 3, text: 'Angular', votes: 30 ,selected: false, custom_class: 'my-3' },
+          { value: 4, text: 'Other', votes: 10 ,selected: false, custom_class: 'my-3' } 
         ],
         multiple: false,
         submitButtonText: 'submit',
-        showResults: false
+        showResults: false,
+        finalResults: false
       }
     };
   },

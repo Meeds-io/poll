@@ -55,6 +55,7 @@
   
   .vue-poll .qst {
       font-weight: normal;
+      font-size: 18px;
   }
   .vue-poll .ans-cnt {
        margin: 20px 0;   
@@ -69,7 +70,7 @@
 
   .vue-poll .ans-cnt .ans-no-vote {
       text-align: center;
-      border: 2px solid #77C7F7;
+      border: 2px solid @primaryColor;
       box-sizing: border-box;
       border-radius: 5px;
       cursor:pointer; 
@@ -80,14 +81,14 @@
   }
   
   .vue-poll .ans-cnt .ans-no-vote .txt {
-      color: #77C7F7;
+      color: @primaryColor;
       transition: color .2s ease-in-out;
       -webkit-transition: color .2s ease-in-out;
       -moz-transition: color .2s ease-in-out;
   }
   
   .vue-poll .ans-cnt .ans-no-vote.active {
-      background: #77C7F7;
+      background: @primaryColor;
   }
   
   .vue-poll .ans-cnt .ans-no-vote.active .txt {
@@ -131,7 +132,7 @@
   }
   
   .vue-poll .ans-cnt .ans .bg.selected {
-      background-color: #77C7F7;
+      background-color: @primaryColor;
   }
   
   .vue-poll .votes {

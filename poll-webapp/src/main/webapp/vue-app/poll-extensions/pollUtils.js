@@ -16,23 +16,25 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-import {initExtensions} from './pollExtensions.js';
-import './initComponents.js';
-import * as pollUtils from './pollUtils';
+export const getRemainingDate = {
+  inDays: (d1, d2) => {
+    const t2 = d2.getTime();
+    const t1 = d1.getTime();
 
-// getting language of the PLF
-const lang = eXo.env.portal.language || 'en';
-// init Vue app when locale resources are ready
-const url = `${eXo.env.portal.context}/${eXo.env.portal.rest}/i18n/bundle/locale.portlet.Poll-${lang}.json`;
-// init Vue app when locale resources are ready
-exoi18n.loadLanguageAsync(lang, url).then(i18n => new Vue({i18n}));
+    return parseInt((t2-t1)/(24*60*60*1000));
+  },
 
-if (!Vue.prototype.$pollUtils) {
-  window.Object.defineProperty(Vue.prototype, '$pollUtils', {
-    value: pollUtils,
-  });
-}
+  inHours: (d1, d2) => {
+    const t2 = d2.getTime();
+    const t1 = d1.getTime();
 
-export function init() {
-  initExtensions();
-}
+    return parseInt((t2-t1)/(60*60*1000));
+  },
+
+  inMunites: (d1, d2) => {
+    const t2 = d2.getTime();
+    const t1 = d1.getTime();
+
+    return parseInt((t2-t1)/(60*1000));
+  }
+};

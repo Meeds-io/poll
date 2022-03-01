@@ -26,7 +26,7 @@ const components = {
   'create-poll-composer': CreatePollComposer,
   'poll-activity': PollActivity,
   'custom-poll-activity': CustomPollActivity,
-}
+};
 
 for (const key in components) {
   Vue.component(key, components[key]);
