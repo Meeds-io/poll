@@ -31,16 +31,16 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     </div>
     <create-poll-drawer
       ref="createPollDrawer"
-      :activity-poll="activityPoll"
-      @poll-saved="savePoll" />
+      :saved-poll="savedPoll"
+      @poll-created="createPoll" />
   </div>
 </template>
 <script>
 export default {
-  data(){
+  data() {
     return {
       pollAction: 'create',
-      activityPoll: {}
+      savedPoll: {}
     };
   },
   computed: {
@@ -54,17 +54,12 @@ export default {
       return this.pollAction === 'update' ? 'createdPollIcon' : '';
     }
   },
-  mounted(){
-    this.$root.$on('poll-created',(state)=>{
-      this.pollAction = state ? 'update' : 'create';
-    });
-  },
   methods: {
     openCreatePollDrawer() {
       this.$refs.createPollDrawer.openDrawer();
     },
-    savePoll(poll){
-      Object.assign(this.activityPoll,poll);
+    createPoll(poll) {
+      Object.assign(this.savedPoll, poll);
       this.pollAction = 'update';
       document.dispatchEvent(new CustomEvent('activity-composer-edited'));
     }

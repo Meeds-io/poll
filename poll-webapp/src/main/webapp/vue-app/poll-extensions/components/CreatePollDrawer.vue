@@ -112,7 +112,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 <script>
 export default {
 
-  data(){
+  data() {
     return {
       MAX_LENGTH: 1000,
       poll: {},
@@ -121,8 +121,7 @@ export default {
     };
   },
   props: {
-    activityPoll: {
-      required: true,
+    savedPoll: {
       type: Object,
       default: null
     }
@@ -134,27 +133,27 @@ export default {
     drawerWidth() {
       return !this.isMobile ? '100%' : '420';
     },
-    checkPollOptionalOptions(){
+    checkPollOptionalOptions() {
       return this.options.slice(-2).every(option => !option.data || option.data.length <= this.MAX_LENGTH );
     },
-    checkPollAllOptions(){
+    checkPollAllOptions() {
       return this.options && this.options.length !== 0 && this.options.slice(0,2).every(option => option.data !== null && option.data !== '' && option.data.length <= this.MAX_LENGTH ) && this.checkPollOptionalOptions;
     },
-    disableCreatePoll(){
+    disableCreatePoll() {
       return !(Object.values(this.poll).length !== 0 && this.poll.question && this.poll.question.length <= this.MAX_LENGTH && this.checkPollAllOptions);
     },
-    questionPlaceholder(){
+    questionPlaceholder() {
       return this.$t('composer.poll.create.drawer.field.question');
     },
-    submitButton(){
+    submitButton() {
       return this.$t(`composer.poll.create.drawer.action.${this.pollCreated ? 'update' : 'create'}`);
     },
-    closeButton(){
+    closeButton() {
       return this.$t('composer.poll.create.drawer.action.cancel');
     }
   },
   methods: {
-    intializeDrawerFields(){
+    intializeDrawerFields() {
       this.poll = {};
       this.options = [
         {
@@ -181,20 +180,20 @@ export default {
       this.poll.duration = '1w';
       this.pollCreated = false;
     },
-    openDrawer(){
-      if (!Object.values(this.activityPoll).length){
+    openDrawer() {
+      if (!Object.values(this.savedPoll).length) {
         this.intializeDrawerFields();
       }
       else {
-        this.options = JSON.parse(JSON.stringify(this.activityPoll.options));
-        Object.assign(this.poll,JSON.parse(JSON.stringify(this.activityPoll)));
+        this.options = JSON.parse(JSON.stringify(this.savedPoll.options));
+        Object.assign(this.poll,JSON.parse(JSON.stringify(this.savedPoll)));
       }
       this.$refs.createPollDrawer.open();
     },
-    closeDrawer(){
+    closeDrawer() {
       this.$refs.createPollDrawer.close();
     },
-    createPoll(){
+    createPoll() {
       if (!this.disableCreatePoll) {
         if (!this.poll.duration) {
           this.poll.duration = document.getElementById('pollSelectedDuration').value;
@@ -202,7 +201,7 @@ export default {
         this.poll.options = this.options;
         this.pollCreated = true;
 
-        this.$emit('poll-saved',this.poll);
+        this.$emit('poll-created', this.poll);
         this.closeDrawer();
       }
     },
