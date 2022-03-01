@@ -32,5 +32,5 @@ public interface PollService {
    * @return created {@link Poll} with generated technical identifier
    * @throws IllegalAccessException when user is not authorized to create a poll
    */
-  Poll createPoll(Poll poll, List<PollOption> pollOptions, long username) throws IllegalAccessException;
+  Poll createPoll(Poll poll, List<PollOption> pollOptions, String spaceId, long username) throws IllegalAccessException;
 }

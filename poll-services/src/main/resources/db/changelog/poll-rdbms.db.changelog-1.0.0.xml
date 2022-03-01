@@ -15,7 +15,6 @@
     <changeSet author="poll" id="1.0.0-0" dbms="oracle,postgresql">
         <createSequence sequenceName="SEQ_POLL_ID" startValue="1"/>
         <createSequence sequenceName="SEQ_POLL_OPTION_ID" startValue="1"/>
-        <createSequence sequenceName="SEQ_POLL_VOTE_ID" startValue="1"/>
     </changeSet>
 
     <changeSet author="poll" id="1.0.0-1">
@@ -40,7 +39,7 @@
     <changeSet author="poll" id="1.0.0-2">
         <createTable tableName="POLL_OPTION">
             <column name="POLL_OPTION_ID" type="BIGINT" autoIncrement="${autoIncrement}" startWith="1">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_POLL"/>
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_POLL_OPTION"/>
             </column>
             <column name="POLL_ID" type="BIGINT">
                 <constraints foreignKeyName="FK_OPTION_POLL" references="POLL(POLL_ID)" nullable="false" />

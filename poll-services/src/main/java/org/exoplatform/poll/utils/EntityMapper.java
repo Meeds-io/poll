@@ -25,9 +25,6 @@ import org.exoplatform.poll.model.PollOption;
 
 public class EntityMapper {
 
-  public EntityMapper() {
-  }
-
   public static Poll fromPollEntity(PollEntity pollEntity) {
     if (pollEntity == null) {
       return null;
@@ -45,7 +42,7 @@ public class EntityMapper {
       return null;
     }
     PollEntity pollEntity = new PollEntity();
-    pollEntity.setId(poll.getId());
+    pollEntity.setId(poll.getId() == 0 ? null : poll.getId());
     pollEntity.setQuestion(poll.getQuestion());
     pollEntity.setCreatedDate(RestUtils.toDate(poll.getCreatedDate()));
     pollEntity.setEndDate(RestUtils.toDate(poll.getEndDate()));
@@ -66,8 +63,8 @@ public class EntityMapper {
       return null;
     }
     PollOptionEntity pollOptionEntity = new PollOptionEntity();
-    pollOptionEntity.setId(pollOption.getId());
     pollOptionEntity.setPollId(pollEntityId);
+    pollOptionEntity.setDescription(pollOption.getDescription());
     return pollOptionEntity;
   }
 

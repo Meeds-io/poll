@@ -46,6 +46,10 @@
         <type>org.exoplatform.commons.persistence.impl.EntityManagerService</type>
     </component>
 
+    <import>jar:/conf/exo.poll.service-dependencies-configuration.xml</import>
+    <import>jar:/conf/exo.poll.service-local-configuration.xml</import>
+    <import>jar:/conf/exo.poll.service-configuration.xml</import>
+
     <remove-configuration>org.exoplatform.services.naming.InitialContextInitializer</remove-configuration>
     <remove-configuration>org.exoplatform.commons.search.index.IndexingOperationProcessor</remove-configuration>
     <remove-configuration>org.exoplatform.commons.search.rest.IndexingManagementRestServiceV1</remove-configuration>

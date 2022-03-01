@@ -23,28 +23,40 @@ import java.util.List;
 import org.exoplatform.poll.model.Poll;
 import org.exoplatform.poll.model.PollOption;
 import org.exoplatform.poll.storage.PollStorage;
+import org.exoplatform.social.core.identity.model.Identity;
+import org.exoplatform.social.core.manager.IdentityManager;
+import org.exoplatform.social.core.space.model.Space;
+import org.exoplatform.social.core.space.spi.SpaceService;
 
 public class PollServiceImpl implements PollService {
 
-  private PollStorage pollStorage;
+  private PollStorage     pollStorage;
 
-  public PollServiceImpl(PollStorage pollStorage) {
+  private SpaceService    spaceService;
+
+  private IdentityManager identityManager;
+
+  public PollServiceImpl(PollStorage pollStorage, SpaceService spaceService, IdentityManager identityManager) {
     this.pollStorage = pollStorage;
+    this.spaceService = spaceService;
+    this.identityManager = identityManager;
   }
 
   @Override
-  public Poll createPoll(Poll poll, List<PollOption> pollOptions, long userIdentityId) throws IllegalAccessException {
-    //TODO to verify if needed
-    /*if (userIdentityId <= 0) {
-      throw new IllegalArgumentException("userIdentityId is mandatory");
+  public Poll createPoll(Poll poll, List<PollOption> pollOptions, String spaceId, long userIdentityId) throws IllegalAccessException {
+    Space space = spaceService.getSpaceById(spaceId);
+    if (!canCreatePoll(space, userIdentityId)) {
+      throw new IllegalAccessException("User " + userIdentityId + "is not allowed to create a poll with question " + poll.getQuestion());
     }
-    if (poll == null) {
-      throw new IllegalArgumentException("Poll is mandatory");
-    }*/
-    
-    //TODO check authorization -> IllegalAccessException
     Poll createdPoll = pollStorage.createPoll(poll, pollOptions);
-    //TODO create poll activity
     return createdPoll;
+  }
+
+  private boolean canCreatePoll(Space space, long currentIdentity) {
+    Identity identity = identityManager.getIdentity(String.valueOf(currentIdentity));
+    if (identity == null) {
+      return false;
+    }
+    return space != null && spaceService.isRedactor(space, identity.getRemoteId());
   }
 }

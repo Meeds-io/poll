@@ -19,6 +19,7 @@
 package org.exoplatform.poll.utils;
 
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -33,14 +34,10 @@ import org.exoplatform.poll.rest.model.PollRestEntity;
 import org.exoplatform.poll.rest.model.PollOptionRestEntity;
 
 public class RestEntityBuilder {
-  public static final DateTimeFormatter RFC_3339_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss[.SSS][XXX]")
-                                                                              .withResolverStyle(ResolverStyle.LENIENT);
 
-  public RestEntityBuilder() {
-  }
 
   public static final Poll toPoll(PollRestEntity pollEntity) throws ParseException {
-    ZonedDateTime createdDate = ZonedDateTime.parse(new Date().toString(), RFC_3339_FORMATTER.withZone(ZoneOffset.UTC));
+    ZonedDateTime createdDate = ZonedDateTime.ofInstant(new Date().toInstant(),ZoneOffset.UTC);
     ZonedDateTime endDate = null;
     switch (pollEntity.getDuration()) {
     case "1day":

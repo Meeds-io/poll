@@ -18,53 +18,59 @@
  */
 package org.exoplatform.poll.service;
 
-import org.exoplatform.poll.storage.PollStorage;
 import org.exoplatform.poll.model.Poll;
 import org.exoplatform.poll.model.PollOption;
-import org.junit.Before;
-import org.junit.Test;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.junit.Assert.*;
 
-public class PollServiceTest {
-  private PollService pollService;
-
-  private PollStorage pollStorage;
-
-  @Before
-  public void setUp() throws Exception { // NOSONAR
-    pollStorage = mock(PollStorage.class);
-    pollService = new PollServiceImpl(pollStorage);
-  }
+public class PollServiceTest extends BasePollTest {
 
   @Test
   public void testCreatePoll() throws IllegalAccessException {
     // Given
     ZonedDateTime startDate = new Date(System.currentTimeMillis()).toInstant().atZone(ZoneOffset.UTC);
     ZonedDateTime endDate = new Date(System.currentTimeMillis() + 1).toInstant().atZone(ZoneOffset.UTC);
-    Poll poll = new Poll(0, "q1", startDate, endDate, 1, 1);
+    Poll poll = new Poll();
+    poll.setQuestion("q1");
+    poll.setCreatedDate(startDate);
+    poll.setEndDate(endDate);
+    poll.setCreatorId(Long.parseLong(user1Identity.getId()));
     Poll createdPoll = new Poll(1, "q1", startDate, endDate, 1, 1);
-    PollOption pollOption = new PollOption(0, 0, "pollOption");
+    PollOption pollOption = new PollOption();
+    pollOption.setDescription("pollOption");
     List<PollOption> options = new ArrayList<>();
     options.add(pollOption);
     List<PollOption> pollOptionList = new ArrayList<>();
     pollOptionList.add(pollOption);
-    when(pollStorage.createPoll(poll, options)).thenReturn(createdPoll);
+    spaceService.addRedactor(space, user1Identity.getRemoteId());
 
     // When
-    Poll poll1 = pollService.createPoll(poll, pollOptionList, 1);
+    Poll pollStored = pollService.createPoll(poll, pollOptionList, space.getId(), Long.parseLong(user1Identity.getId()));
 
-    assertNotNull(poll1);
-    assertEquals(createdPoll.getId(), poll1.getId());
-    assertEquals(createdPoll.getQuestion(), poll1.getQuestion());
+    assertNotNull(pollStored);
+    assertEquals(createdPoll.getId(), pollStored.getId());
+    assertEquals(createdPoll.getQuestion(), pollStored.getQuestion());
+
+    // Given
+    Poll poll1 = new Poll();
+    poll1.setQuestion("q1");
+    poll1.setCreatedDate(startDate);
+    poll1.setEndDate(endDate);
+    poll1.setCreatorId(Long.parseLong(user2Identity.getId()));
+
+    // When
+    try {
+      pollService.createPoll(poll1, pollOptionList, space.getId(), Long.parseLong(user2Identity.getId()));
+      fail("Should fail when a non redactor member attempts to create a poll");
+    } catch (IllegalAccessException e) {
+      // Expected
+    }
   }
 }
