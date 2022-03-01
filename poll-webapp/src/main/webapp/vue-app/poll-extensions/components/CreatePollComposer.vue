@@ -29,14 +29,18 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </div>
       </div>
     </div>
-    <create-poll-drawer ref="createPollDrawer" />
+    <create-poll-drawer
+      ref="createPollDrawer"
+      :activity-poll="activityPoll"
+      @poll-saved="savePoll" />
   </div>
 </template>
 <script>
 export default {
   data(){
     return {
-      pollAction: 'create'
+      pollAction: 'create',
+      activityPoll: {}
     };
   },
   computed: {
@@ -59,6 +63,11 @@ export default {
     openCreatePollDrawer() {
       this.$refs.createPollDrawer.openDrawer();
     },
+    savePoll(poll){
+      Object.assign(this.activityPoll,poll);
+      this.pollAction = 'update';
+      document.dispatchEvent(new CustomEvent('activity-composer-edited'));
+    }
   },
 };
 </script> 

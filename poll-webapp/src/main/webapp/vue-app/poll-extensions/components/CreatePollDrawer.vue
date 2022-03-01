@@ -22,8 +22,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     id="createPollDrawer"
     :drawer-width="drawerWidth"
     :right="!$vuetify.rtl"
-    disable-pull-to-refresh
-    @closed="!pollCreated ? resetFields() : null">
+    disable-pull-to-refresh>
     <template slot="title">
       <div class="createPollDrawerHeader">
         <span>{{ $t('composer.poll.create.drawer.label') }}</span>
@@ -76,11 +75,11 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               dense>
               <select
                 id="pollSelectedDuration"
-                @change="getSelectedDuration"
+                v-model="poll.duration"
                 class="ignore-vuetify-classes poll-select-duration flex-grow-1">
                 <option value="1d">{{ $t('composer.poll.create.drawer.field.duration.oneDay') }}</option>
                 <option value="3d">{{ $t('composer.poll.create.drawer.field.duration.threeDays') }}</option>
-                <option value="1w" selected>{{ $t('composer.poll.create.drawer.field.duration.oneWeek') }}</option>
+                <option value="1w">{{ $t('composer.poll.create.drawer.field.duration.oneWeek') }}</option>
                 <option value="2w">{{ $t('composer.poll.create.drawer.field.duration.twoWeeks') }}</option>
               </select>
             </v-list-item>
@@ -120,6 +119,13 @@ export default {
       options: [],
       pollCreated: false
     };
+  },
+  props: {
+    activityPoll: {
+      required: true,
+      type: Object,
+      default: null
+    }
   },
   computed: {
     isMobile() {
@@ -172,21 +178,20 @@ export default {
           data: null
         }
       ];
+      this.poll.duration = '1w';
       this.pollCreated = false;
-
-    },
-    resetFields(){
-      this.poll.question = null;
-      this.options = [];
     },
     openDrawer(){
-      if (this.disableCreatePoll)
-      {this.intializeDrawerFields();}
+      if (!Object.values(this.activityPoll).length){
+        this.intializeDrawerFields();
+      }
+      else {
+        this.options = JSON.parse(JSON.stringify(this.activityPoll.options));
+        Object.assign(this.poll,JSON.parse(JSON.stringify(this.activityPoll)));
+      }
       this.$refs.createPollDrawer.open();
     },
-    closeDrawer(addedPoll){
-      if (!addedPoll)
-      {this.resetFields();}
+    closeDrawer(){
       this.$refs.createPollDrawer.close();
     },
     createPoll(){
@@ -194,18 +199,12 @@ export default {
         if (!this.poll.duration) {
           this.poll.duration = document.getElementById('pollSelectedDuration').value;
         }
-        
         this.poll.options = this.options;
         this.pollCreated = true;
 
-        this.$root.$emit('poll-created', true);
-        document.dispatchEvent(new CustomEvent('activity-composer-edited'));
-
-        this.closeDrawer(this.poll);
+        this.$emit('poll-saved',this.poll);
+        this.closeDrawer();
       }
-    },
-    getSelectedDuration({ target }){
-      this.poll.duration = target.value;
     },
   }
 };
