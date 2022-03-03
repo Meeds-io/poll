@@ -131,8 +131,6 @@ export default {
   data() {
     return {
       visibleResults: JSON.parse(this.showResults),
-      d1: new Date(),
-      d2: new Date('3/10/2022')
     };
   },
   computed: {
@@ -146,13 +144,7 @@ export default {
       return totalVotes;
     },
     totalVotesFormatted(){
-      return `${this.totalVotes.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') } votes`;
-    },
-    reminingTime() {
-      const days = this.$pollUtils.getRemainingDate.inDays(this.d1, this.d2);
-      const hours = this.$pollUtils.getRemainingDate.inHours(this.d1, this.d2)-this.$pollUtils.getRemainingDate.inDays(this.d1, this.d2)*24;
-      const minutes = this.$pollUtils.getRemainingDate.inMunites(this.d1, this.d2)-this.$pollUtils.getRemainingDate.inHours(this.d1, this.d2)*60;
-      return this.$t('activity.poll.remaining',{0: days, 1: hours, 2: minutes});
+      return `${this.totalVotes} votes`;
     },
     mostVotes() {
       let max = 0;

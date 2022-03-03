@@ -18,12 +18,14 @@
  */
 
 export function initExtensions() {
-  extensionRegistry.registerComponent('ActivityComposerFooterAction', 'activity-composer-footer-action', {
-    id: 'createPollButton',
-    vueComponent: Vue.options.components['create-poll-composer'],
-    rank: 20,
-  });
-
+  if (eXo.env.portal.spaceId && eXo.env.portal.spaceId !== '') {
+    extensionRegistry.registerComponent('ActivityComposerFooterAction', 'activity-composer-footer-action', {
+      id: 'createPollButton',
+      vueComponent: Vue.options.components['create-poll-composer'],
+      rank: 20,
+    });
+  }
+  
   extensionRegistry.registerComponent('ActivityContent', 'activity-content-extensions', {
     id: 'poll',
     isEnabled: (params) => {
@@ -33,5 +35,4 @@ export function initExtensions() {
     vueComponent: Vue.options.components['poll-activity-stream'],
     rank: 10,
   });
-
 }
