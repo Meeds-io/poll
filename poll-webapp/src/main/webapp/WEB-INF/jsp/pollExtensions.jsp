@@ -7,7 +7,7 @@ ExoFeatureService featureService = CommonsUtils.getService(ExoFeatureService.cla
 
 <script type="text/javascript">
   var pollFeatureEnabled = <%=featureService.isActiveFeature("poll")%>;
-  if (eXo.env.portal.spaceId && pollFeatureEnabled) {
+  if (pollFeatureEnabled) {
     require(['PORTLET/poll/PollExtensions'], app => app.init());
   }
 </script>
