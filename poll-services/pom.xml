@@ -8,7 +8,7 @@
   <artifactId>poll-services</artifactId>
   <name>eXo Poll - Services</name>
   <properties>
-    <exo.test.coverage.ratio>0.1</exo.test.coverage.ratio>
+    <exo.test.coverage.ratio>0.58</exo.test.coverage.ratio>
   </properties>
   <dependencies>
     <dependency>

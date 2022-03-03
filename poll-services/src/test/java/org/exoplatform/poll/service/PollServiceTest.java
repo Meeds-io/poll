@@ -55,7 +55,7 @@ public class PollServiceTest extends BasePollTest {
     Poll pollStored = pollService.createPoll(poll, pollOptionList, space.getId(), Long.parseLong(user1Identity.getId()));
 
     assertNotNull(pollStored);
-    assertEquals(createdPoll.getId(), pollStored.getId());
+    assertEquals(createdPoll.getCreatorId(), pollStored.getCreatorId());
     assertEquals(createdPoll.getQuestion(), pollStored.getQuestion());
 
     // Given
