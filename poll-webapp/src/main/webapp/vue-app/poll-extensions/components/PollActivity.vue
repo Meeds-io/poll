@@ -17,38 +17,217 @@ along with this program; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <div>
-    <v-card
-      class="border-color border-radius my-3 pa-5"
-      outlined>
-      <custom-poll-activity v-bind="options" @addvote="addVote" />
-    </v-card>
+  <div id="poll-activity">
+    <div class="poll-content">
+      <h3 class="question" v-sanitized-html="question"></h3>
+      <div class="answer-content">
+        <div
+          v-for="(answer,index) in calcAnswers"
+          :key="index"
+          :class="{ voteAnswer: true, [answer.class]: (answer.class) }">
+          <template v-if="!finalResults">
+            <div
+              v-if="!visibleResults"
+              :class="{ 'answer-no-vote no-select': true, active: answer.selected }"
+              @click.prevent="handleVote(answer)">
+              <span class="vote-content" v-sanitized-html="answer.text"></span>
+            </div>      
+
+            <div v-else>
+              <v-progress-linear
+                :value="answer.percent"
+                color="wight"
+                height="20"
+                :class="{ 'answer-voted': true, selected: answer.selected }"
+                rounded>
+                <template>
+                  <div class="flex d-flex">
+                    <span
+                      v-if="answer.percent"
+                      class="vote-percent"
+                      v-text="answer.percent"></span>                  
+                    <span class="vote-content" v-sanitized-html="answer.text"></span> 
+                  </div>
+                </template>
+              </v-progress-linear>
+            </div>
+            <span class="voteBackground" :style="{ width: visibleResults ? answer.percent : '0%' }"></span>
+          </template>
+
+          <template v-else>
+            <v-progress-linear
+              :value="answer.percent"
+              color="wight"
+              height="20"
+              class="answer-voted final"
+              rounded>
+              <template>
+                <div class="flex d-flex">
+                  <span
+                    v-if="answer.percent"
+                    class="vote-percent"
+                    v-text="answer.percent"></span>
+                  <span class="vote-content" v-sanitized-html="answer.text"></span> 
+                </div>
+              </template>
+            </v-progress-linear>
+            <span :class="{ voteBackground: true, selected: mostVotes == answer.votes }" :style="{ width: answer.percent }"></span>
+          </template>
+        </div>
+      </div>
+      <div
+        class="total-votes" 
+        v-if="showTotalVotes && (visibleResults || finalResults)" 
+        v-text="totalVotesFormatted">
+      </div>
+        
+      <template v-if="!finalResults && !visibleResults && multiple && totalSelections > 0">
+        <a
+          href="#"
+          @click.prevent="handleMultiple"
+          class="submit-vote"
+          v-text="submitButtonText"></a>
+      </template>
+    </div>
   </div>
 </template>
 
-<script> 
-    
+<script>
 export default {
+  props: {
+    question: {
+      type: String,
+      required: true
+    },
+    answers: {
+      type: Array,
+      required: true
+    },
+    showResults: {
+      type: Boolean,
+      default: false
+    },
+    showTotalVotes: {
+      type: Boolean,
+      default: true
+    },
+    finalResults: {
+      type: Boolean,
+      default: false
+    },
+    multiple: {
+      type: Boolean,
+      default: false
+    },
+    submitButtonText: {
+      type: String,
+      default: 'Submit'
+    },
+    customId: {
+      type: Number,
+      default: 0
+    }
+  },
   data() {
     return {
-      options: {
-        question: 'What\'s your favourite <strong>JS</strong> framework?',
-        answers: [
-          { value: 1, text: 'Vue', votes: 53 ,selected: true, custom_class: 'my-3' },
-          { value: 2, text: 'React', votes: 35 ,selected: false, custom_class: 'my-3' },
-          { value: 3, text: 'Angular', votes: 30 ,selected: false, custom_class: 'my-3' },
-          { value: 4, text: 'Other', votes: 10 ,selected: false, custom_class: 'my-3' } 
-        ],
-        multiple: false,
-        submitButtonText: 'submit',
-        showResults: false,
-        finalResults: false
-      }
+      visibleResults: JSON.parse(this.showResults),
+      d1: new Date(),
+      d2: new Date('3/10/2022')
     };
   },
+  computed: {
+    totalVotes() {
+      let totalVotes = 0;
+      this.answers.filter(answer => {
+        if (!isNaN(answer.votes) && answer.votes > 0){
+          totalVotes += parseInt(answer.votes);
+        }
+      });
+      return totalVotes;
+    },
+    totalVotesFormatted(){
+      return `${this.totalVotes.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') } votes`;
+    },
+    reminingTime() {
+      const days = this.$pollUtils.getRemainingDate.inDays(this.d1, this.d2);
+      const hours = this.$pollUtils.getRemainingDate.inHours(this.d1, this.d2)-this.$pollUtils.getRemainingDate.inDays(this.d1, this.d2)*24;
+      const minutes = this.$pollUtils.getRemainingDate.inMunites(this.d1, this.d2)-this.$pollUtils.getRemainingDate.inHours(this.d1, this.d2)*60;
+      return this.$t('activity.poll.remaining',{0: days, 1: hours, 2: minutes});
+    },
+    mostVotes() {
+      let max = 0;
+      this.answers.filter(answer => {
+        if (!isNaN(answer.votes) && answer.votes > 0 && answer.votes >= max){
+          max = answer.votes;
+        }
+      });
+      return max;
+    },
+    calcAnswers() {
+      if (this.totalVotes === 0) {
+        return this.answers.map(answer => {
+          answer.percent = '0%';
+          return answer;
+        });
+      }
+      return this.answers.filter(answer => {
+        if (!isNaN(answer.votes) && answer.votes > 0) {
+          answer.percent = `${Math.round( (parseInt(answer.votes)/this.totalVotes ) * 100)}%`;
+        }
+        else {
+          answer.percent =  '0%';
+        }
+        return answer;
+      });
+    },
+    totalSelections() {
+      return this.calcAnswers.filter(answer => answer.selected).length;
+    }
+  },
   methods: {
-    addVote(obj){
-      console.log(obj);
+    handleMultiple() {
+      const selectedAnswers = [];
+      this.calcAnswers.filter(answer => {
+        if (answer.selected){
+          answer.votes ++;
+          selectedAnswers.push({ value: answer.value, votes: answer.votes });
+        }
+      });
+
+      this.visibleResults = true;
+
+      const res = {
+        selectedAnswers: selectedAnswers ,
+        totalVotes: this.totalVotes 
+      };
+
+      if (this.customId) {
+        res.customId = this.customId;
+      }
+
+      this.$emit('submit-vote', res);
+    },
+    handleVote(answer) {
+      if (this.multiple) {
+        answer.selected = !answer.selected;
+        return;
+      }
+
+      answer.votes ++;
+      answer.selected = true;
+      this.visibleResults = true;
+
+      const res = {
+        value: answer.value,
+        votes: answer.votes,
+        totalVotes: this.totalVotes
+      };
+
+      if (this.customId) {
+        res.customId = this.customId;
+      }
+
+      this.$emit('submit-vote', res);
     }
   }
 };

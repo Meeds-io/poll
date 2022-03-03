@@ -36,15 +36,15 @@
   }
 }
 
-#custom-poll {
-  .vue-poll {
+#poll-activity {
+  .poll-content {
     font-family: 'Avenir', Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     color: #2c3e50;
   }
 
-  .vue-poll .noselect {
+  .poll-content .no-select {
       -webkit-touch-callout: none;
       -webkit-user-select: none;
       -khtml-user-select: none;
@@ -53,22 +53,22 @@
       user-select: none;
   }
   
-  .vue-poll .qst {
+  .poll-content .question {
       font-weight: normal;
       font-size: 18px;
   }
-  .vue-poll .ans-cnt {
+  .poll-content .answer-content {
        margin: 20px 0;   
   }
-  .vue-poll .ans-cnt .ans {
+  .poll-content .answer-content .voteAnswer {
       position: relative;
       margin-top: 10px;
   }
-  .vue-poll .ans-cnt .ans:first-child {
+  .poll-content .answer-content .answer:first-child {
       margin-top: 0;
   }
 
-  .vue-poll .ans-cnt .ans-no-vote {
+  .poll-content .answer-content .answer-no-vote {
       text-align: center;
       border: 2px solid @primaryColor;
       box-sizing: border-box;
@@ -80,43 +80,43 @@
       -moz-transition: background .2s ease-in-out;
   }
   
-  .vue-poll .ans-cnt .ans-no-vote .txt {
+  .poll-content .answer-content .answer-no-vote .vote-content {
       color: @primaryColor;
       transition: color .2s ease-in-out;
       -webkit-transition: color .2s ease-in-out;
       -moz-transition: color .2s ease-in-out;
   }
   
-  .vue-poll .ans-cnt .ans-no-vote.active {
+  .poll-content .answer-content .answer-no-vote.active {
       background: @primaryColor;
   }
   
-  .vue-poll .ans-cnt .ans-no-vote.active .txt {
+  .poll-content .answer-content .answer-no-vote.active .vote-content {
       color: #fff;
   }
   
-  .vue-poll .ans-cnt .ans-voted {
+  .poll-content .answer-content .answer-voted {
       padding: 5px 0;
   }
   
-  .vue-poll .ans-cnt .ans-voted .percent,
-  .vue-poll .ans-cnt .ans-voted .txt {
+  .poll-content .answer-content .answer-voted .vote-percent,
+  .poll-content .answer-content .answer-voted .vote-content {
       position: relative;
       z-index: 1;
   }
-  .vue-poll .ans-cnt .ans-voted .percent {
+  .poll-content .answer-content .answer-voted .vote-percent {
       font-weight: bold;
       min-width: 51px;
       display: inline-block;
       margin:0 10px;
   }
 
-  .vue-poll .ans-cnt .ans-voted.selected .txt:after {
+  .poll-content .answer-content .answer-voted.selected .vote-content:after {
     content:'✔';
     margin-left: 10px;
   }
 
-  .vue-poll .ans-cnt .ans .bg {
+  .poll-content .answer-content .voteAnswer .voteBackground {
       position: absolute;
       width: 0%;
       top: 0;
@@ -131,16 +131,16 @@
       -moz-transition: all .3s cubic-bezier(0.5,1.2,.5,1.2);
   }
   
-  .vue-poll .ans-cnt .ans .bg.selected {
+  .poll-content .answer-content .voteAnswer .voteBackground.selected {
       background-color: @primaryColor;
   }
   
-  .vue-poll .votes {
+  .poll-content .total-votes {
       font-size: 14px;
       color:#8899A6
   }
   
-  .vue-poll .submit {
+  .poll-content .submit-vote {
       display: block;
       text-align: center;
       margin: 0 auto;
@@ -150,5 +150,12 @@
       color:#fff;
       padding: 10px 25px;
       border-radius: 5px;
+  }
+}
+
+#poll-activity-stream{
+  .votes-remaining-state{
+    font-size: 14px;
+    color:#8899A6
   }
 }

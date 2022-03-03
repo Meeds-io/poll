@@ -30,7 +30,7 @@ export function initExtensions() {
       const activity = params && params.activity;
       return activity && activity.type === 'poll';
     },
-    vueComponent: Vue.options.components['poll-activity'],
+    vueComponent: Vue.options.components['poll-activity-stream'],
     rank: 10,
   });
 
