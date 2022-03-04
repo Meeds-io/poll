@@ -36,7 +36,7 @@ export default {
   data() {
     return {
       d1: new Date(),
-      d2: new Date('3/10/2022'),
+      d2: new Date('3/20/2022'),
       options: {
         question: 'What\'s your favourite <strong>JS</strong> framework?',
         answers: [
@@ -45,7 +45,6 @@ export default {
           { value: 3, text: 'Angular', votes: 30 ,selected: false, class: 'my-3' },
           { value: 4, text: 'Other', votes: 10 ,selected: false, class: 'my-3' } 
         ],
-        multiple: false,
         submitButtonText: 'submit',
         showResults: false,
         finalResults: false
@@ -61,8 +60,8 @@ export default {
     },
   },
   methods: {
-    submitVote(obj){
-      console.log(obj);
+    submitVote(){
+      return;
     }
   }
 };

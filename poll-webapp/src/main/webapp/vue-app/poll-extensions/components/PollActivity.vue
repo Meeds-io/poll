@@ -22,7 +22,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <h3 class="question" v-sanitized-html="question"></h3>
       <div class="answer-content">
         <div
-          v-for="(answer,index) in calcAnswers"
+          v-for="(answer, index) in answersPercent"
           :key="index"
           :class="{ voteAnswer: true, [answer.class]: (answer.class) }">
           <template v-if="!finalResults">
@@ -80,14 +80,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         v-if="showTotalVotes && (visibleResults || finalResults)" 
         v-text="totalVotesFormatted">
       </div>
-        
-      <template v-if="!finalResults && !visibleResults && multiple && totalSelections > 0">
-        <a
-          href="#"
-          @click.prevent="handleMultiple"
-          class="submit-vote"
-          v-text="submitButtonText"></a>
-      </template>
     </div>
   </div>
 </template>
@@ -112,10 +104,6 @@ export default {
       default: true
     },
     finalResults: {
-      type: Boolean,
-      default: false
-    },
-    multiple: {
       type: Boolean,
       default: false
     },
@@ -155,7 +143,7 @@ export default {
       });
       return max;
     },
-    calcAnswers() {
+    answersPercent() {
       if (this.totalVotes === 0) {
         return this.answers.map(answer => {
           answer.percent = '0%';
@@ -172,38 +160,9 @@ export default {
         return answer;
       });
     },
-    totalSelections() {
-      return this.calcAnswers.filter(answer => answer.selected).length;
-    }
   },
   methods: {
-    handleMultiple() {
-      const selectedAnswers = [];
-      this.calcAnswers.filter(answer => {
-        if (answer.selected){
-          answer.votes ++;
-          selectedAnswers.push({ value: answer.value, votes: answer.votes });
-        }
-      });
-
-      this.visibleResults = true;
-
-      const res = {
-        selectedAnswers: selectedAnswers ,
-        totalVotes: this.totalVotes 
-      };
-
-      if (this.customId) {
-        res.customId = this.customId;
-      }
-
-      this.$emit('submit-vote', res);
-    },
     handleVote(answer) {
-      if (this.multiple) {
-        answer.selected = !answer.selected;
-        return;
-      }
 
       answer.votes ++;
       answer.selected = true;
