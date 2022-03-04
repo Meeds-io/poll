@@ -46,10 +46,10 @@ public class PollServiceImpl implements PollService {
   public Poll createPoll(Poll poll, List<PollOption> pollOptions, String spaceId, long userIdentityId) throws IllegalAccessException {
     Space space = spaceService.getSpaceById(spaceId);
     if (!canCreatePoll(space, userIdentityId)) {
-      throw new IllegalAccessException("User " + userIdentityId + "is not allowed to create a poll with question " + poll.getQuestion());
+      throw new IllegalAccessException("User " + userIdentityId + "is not allowed to create a poll with question "
+          + poll.getQuestion());
     }
-    Poll createdPoll = pollStorage.createPoll(poll, pollOptions);
-    return createdPoll;
+    return pollStorage.createPoll(poll, pollOptions);
   }
 
   private boolean canCreatePoll(Space space, long currentIdentity) {

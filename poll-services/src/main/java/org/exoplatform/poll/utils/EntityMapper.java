@@ -25,6 +25,9 @@ import org.exoplatform.poll.model.PollOption;
 
 public class EntityMapper {
 
+  public EntityMapper() {
+  }
+
   public static Poll fromPollEntity(PollEntity pollEntity) {
     if (pollEntity == null) {
       return null;

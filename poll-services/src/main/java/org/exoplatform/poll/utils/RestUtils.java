@@ -28,6 +28,10 @@ import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvide
 import org.exoplatform.social.core.manager.IdentityManager;
 
 public class RestUtils {
+
+  public RestUtils() {
+  }
+
   public static final String getCurrentUser() {
     return ConversationState.getCurrent().getIdentity().getUserId();
   }

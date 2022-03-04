@@ -19,11 +19,8 @@
 package org.exoplatform.poll.utils;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.ResolverStyle;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -35,8 +32,10 @@ import org.exoplatform.poll.rest.model.PollOptionRestEntity;
 
 public class RestEntityBuilder {
 
+  public RestEntityBuilder() {
+  }
 
-  public static final Poll toPoll(PollRestEntity pollEntity) throws ParseException {
+  public static final Poll toPoll(PollRestEntity pollEntity) {
     ZonedDateTime createdDate = ZonedDateTime.ofInstant(new Date().toInstant(),ZoneOffset.UTC);
     ZonedDateTime endDate = null;
     switch (pollEntity.getDuration()) {

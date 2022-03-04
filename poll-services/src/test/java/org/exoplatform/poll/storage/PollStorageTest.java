@@ -26,6 +26,7 @@ import static org.mockito.Mockito.when;
 
 import java.time.ZoneOffset;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 
 import org.junit.Before;
@@ -97,9 +98,9 @@ public class PollStorageTest {
     when(EntityMapper.toPollOptionEntity(pollOption, pollEntity.getId())).thenReturn(pollOptionEntity);
     when(EntityMapper.fromPollOptionEntity(pollOptionEntity)).thenReturn(pollOption);
 
-    Poll pollCreated = pollStorage.createPoll(poll, Arrays.asList(pollOption));
+    Poll pollCreated = pollStorage.createPoll(poll, Collections.singletonList(pollOption));
     assertNotNull(pollCreated);
-    assertEquals(pollCreated.getId(), 1l);
+    assertEquals(1L, pollCreated.getId());
     assertEquals(poll, pollCreated);
   }
 }
