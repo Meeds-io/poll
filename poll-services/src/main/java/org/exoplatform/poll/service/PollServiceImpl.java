@@ -23,6 +23,7 @@ import java.util.List;
 import org.exoplatform.poll.model.Poll;
 import org.exoplatform.poll.model.PollOption;
 import org.exoplatform.poll.storage.PollStorage;
+import org.exoplatform.poll.utils.PollUtils;
 import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.space.model.Space;
@@ -45,18 +46,12 @@ public class PollServiceImpl implements PollService {
   @Override
   public Poll createPoll(Poll poll, List<PollOption> pollOptions, String spaceId, long userIdentityId) throws IllegalAccessException {
     Space space = spaceService.getSpaceById(spaceId);
-    if (!canCreatePoll(space, userIdentityId)) {
+    Identity identity = identityManager.getIdentity(String.valueOf(userIdentityId));
+    org.exoplatform.services.security.Identity userIdentity = PollUtils.getUserIdentity(identity.getRemoteId());
+    if (!spaceService.canRedactOnSpace(space, userIdentity)) {
       throw new IllegalAccessException("User " + userIdentityId + "is not allowed to create a poll with question "
           + poll.getQuestion());
     }
     return pollStorage.createPoll(poll, pollOptions);
-  }
-
-  private boolean canCreatePoll(Space space, long currentIdentity) {
-    Identity identity = identityManager.getIdentity(String.valueOf(currentIdentity));
-    if (identity == null) {
-      return false;
-    }
-    return space != null && spaceService.isRedactor(space, identity.getRemoteId());
   }
 }
