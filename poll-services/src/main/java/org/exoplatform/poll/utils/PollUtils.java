@@ -1,26 +1,31 @@
 package org.exoplatform.poll.utils;
 
-import org.exoplatform.container.ExoContainerContext;
-import org.exoplatform.services.security.Authenticator;
-import org.exoplatform.services.security.IdentityRegistry;
+import org.exoplatform.social.core.identity.model.Identity;
+import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
+import org.exoplatform.social.core.manager.IdentityManager;
+
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.util.Date;
 
 public class PollUtils {
-  public static org.exoplatform.services.security.Identity getUserIdentity(String username) {
-    IdentityRegistry identityRegistry = ExoContainerContext.getService(IdentityRegistry.class);
-    org.exoplatform.services.security.Identity identity = identityRegistry.getIdentity(username);
-    if (identity != null) {
-      return identity;
+
+  public static final long getCurrentUserIdentityId(IdentityManager identityManager, String currentUser) {
+    Identity identity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, currentUser);
+    return identity == null ? 0 : Long.parseLong(identity.getId());
+  }
+
+  public static Date toDate(ZonedDateTime datetime) {
+    if (datetime == null) {
+      return null;
     }
-    Authenticator authenticator = ExoContainerContext.getService(Authenticator.class);
-    try {
-      identity = authenticator.createIdentity(username);
-      if (identity != null) {
-        // To cache identity for next times
-        identityRegistry.register(identity);
-      }
-    } catch (Exception e) {
-      throw new IllegalStateException("Error occurred while retrieving security identity of user " + username);
+    return Date.from(datetime.toInstant());
+  }
+
+  public static ZonedDateTime fromDate(Date date) {
+    if (date == null) {
+      return null;
     }
-    return identity;
+    return date.toInstant().atZone(ZoneOffset.UTC);
   }
 }

@@ -30,11 +30,12 @@ import org.exoplatform.poll.model.Poll;
 import org.exoplatform.poll.model.PollOption;
 import org.exoplatform.poll.rest.model.PollRestEntity;
 import org.exoplatform.poll.service.PollService;
+import org.exoplatform.poll.utils.PollUtils;
 import org.exoplatform.poll.utils.RestEntityBuilder;
-import org.exoplatform.poll.utils.RestUtils;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.rest.resource.ResourceContainer;
+import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.social.core.manager.IdentityManager;
 
 import io.swagger.annotations.Api;
@@ -66,19 +67,18 @@ public class PollRest implements ResourceContainer {
       @ApiResponse(code = HTTPStatus.BAD_REQUEST, message = "Invalid query input"),
       @ApiResponse(code = HTTPStatus.UNAUTHORIZED, message = "Unauthorized operation"),
       @ApiResponse(code = HTTPStatus.INTERNAL_ERROR, message = "Internal server error"), })
-  public Response createPoll( @ApiParam(value = "space identifier", required = false)
-                              @QueryParam("spaceId") String spaceId,
-                              @ApiParam(value = "Poll object to create", required = true)
-                              PollRestEntity pollEntity) {
+  public Response createPoll(@ApiParam(value = "space identifier", required = false) @QueryParam("spaceId") String spaceId,
+                             @ApiParam(value = "Poll object to create", required = true) PollRestEntity pollEntity) {
     if (pollEntity == null) {
       return Response.status(Response.Status.BAD_REQUEST).build();
     }
-    long currentUserIdentityId = RestUtils.getCurrentUserIdentityId(identityManager);
+    org.exoplatform.services.security.Identity currentIdentity = ConversationState.getCurrent().getIdentity();
+    long currentUserIdentityId = PollUtils.getCurrentUserIdentityId(identityManager, currentIdentity.getUserId());
     try {
       Poll poll = RestEntityBuilder.toPoll(pollEntity);
       poll.setCreatorId(currentUserIdentityId);
       List<PollOption> pollOptions = RestEntityBuilder.toPollOptions(pollEntity.getOptions());
-      poll = pollService.createPoll(poll, pollOptions, spaceId, currentUserIdentityId);
+      poll = pollService.createPoll(poll, pollOptions, spaceId, currentIdentity);
       return Response.ok(poll).build();
     } catch (IllegalAccessException e) {
       LOG.warn("User '{}' attempts to create a non authorized poll", e);

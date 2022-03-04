@@ -37,6 +37,7 @@ public class PollServiceTest extends BasePollTest {
     // Given
     ZonedDateTime startDate = new Date(System.currentTimeMillis()).toInstant().atZone(ZoneOffset.UTC);
     ZonedDateTime endDate = new Date(System.currentTimeMillis() + 1).toInstant().atZone(ZoneOffset.UTC);
+    org.exoplatform.services.security.Identity identity = new org.exoplatform.services.security.Identity("testuser1");
     Poll poll = new Poll();
     poll.setQuestion("q1");
     poll.setCreatedDate(startDate);
@@ -52,13 +53,14 @@ public class PollServiceTest extends BasePollTest {
     spaceService.addRedactor(space, user1Identity.getRemoteId());
 
     // When
-    Poll pollStored = pollService.createPoll(poll, pollOptionList, space.getId(), Long.parseLong(user1Identity.getId()));
+    Poll pollStored = pollService.createPoll(poll, pollOptionList, space.getId(), identity);
 
     assertNotNull(pollStored);
     assertEquals(createdPoll.getCreatorId(), pollStored.getCreatorId());
     assertEquals(createdPoll.getQuestion(), pollStored.getQuestion());
 
     // Given
+    org.exoplatform.services.security.Identity identity1 = new org.exoplatform.services.security.Identity("testuser2");
     Poll poll1 = new Poll();
     poll1.setQuestion("q1");
     poll1.setCreatedDate(startDate);
@@ -67,7 +69,7 @@ public class PollServiceTest extends BasePollTest {
 
     // When
     try {
-      pollService.createPoll(poll1, pollOptionList, space.getId(), Long.parseLong(user2Identity.getId()));
+      pollService.createPoll(poll1, pollOptionList, space.getId(), identity1);
       fail("Should fail when a non redactor member attempts to create a poll");
     } catch (IllegalAccessException e) {
       // Expected
