@@ -33,4 +33,15 @@ public interface PollService {
    * @throws IllegalAccessException when user is not authorized to create a poll
    */
   Poll createPoll(Poll poll, List<PollOption> pollOptions, String spaceId, org.exoplatform.services.security.Identity currentIdentity) throws IllegalAccessException;
+
+  /**
+   * Retrieves a poll identified by its technical identifier.
+   * 
+   * @param pollId technical identifier of a challenge
+   * @param spaceId technical identifier of a space
+   * @param username User name accessing poll
+   * @return A {@link Poll} object
+   * @throws IllegalAccessException
+   */
+  Poll getPollById(Long pollId, String spaceId, long username) throws IllegalAccessException;
 }

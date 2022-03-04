@@ -47,4 +47,10 @@ public class PollStorage {
     }
     return EntityMapper.fromPollEntity(pollEntity);
   }
+
+  public Poll getPollById(Long pollId) {
+    PollEntity pollEntity = pollDAO.find(pollId);
+    return EntityMapper.fromPollEntity(pollEntity);
+  }
+
 }

@@ -30,15 +30,15 @@ import java.util.Date;
 
 public class PollDAOTest extends TestCase {
 
-  private Date            startDate  = new Date(System.currentTimeMillis());
+  private Date            startDate  = new Date(1508484583259L);
 
-  private Date            endDate    = new Date(System.currentTimeMillis() + 1);
+  private Date            endDate    = new Date(1508484583260L);
 
   private String          question   = "q1";
 
   private Long            creatorId  = 1L;
 
-  private Long            activityId = 1L;
+  private Long            activityId = 0L;
 
   private PortalContainer container;
 
@@ -63,6 +63,18 @@ public class PollDAOTest extends TestCase {
     pollEntity.setCreatorId(creatorId);
     pollEntity.setActivityId(activityId);
     PollEntity createdPollEntity = pollDAO.create(pollEntity);
+
+    assertNotNull(createdPollEntity);
+    assertNotNull(createdPollEntity.getId());
+    assertEquals(question, createdPollEntity.getQuestion());
+    assertEquals(startDate, createdPollEntity.getCreatedDate());
+    assertEquals(endDate, createdPollEntity.getEndDate());
+    assertEquals(creatorId, createdPollEntity.getCreatorId());
+    assertEquals(activityId, createdPollEntity.getActivityId());
+  }
+
+  public void testGetPollById() {
+    PollEntity createdPollEntity = pollDAO.find(1L);
 
     assertNotNull(createdPollEntity);
     assertNotNull(createdPollEntity.getId());

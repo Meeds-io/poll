@@ -23,6 +23,8 @@ import java.util.List;
 import org.exoplatform.poll.model.Poll;
 import org.exoplatform.poll.model.PollOption;
 import org.exoplatform.poll.storage.PollStorage;
+import org.exoplatform.social.core.identity.model.Identity;
+import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
 
@@ -32,9 +34,12 @@ public class PollServiceImpl implements PollService {
 
   private SpaceService    spaceService;
 
-  public PollServiceImpl(PollStorage pollStorage, SpaceService spaceService) {
+  private IdentityManager identityManager;
+
+  public PollServiceImpl(PollStorage pollStorage, SpaceService spaceService, IdentityManager identityManager) {
     this.pollStorage = pollStorage;
     this.spaceService = spaceService;
+    this.identityManager = identityManager;
   }
 
   @Override
@@ -49,4 +54,26 @@ public class PollServiceImpl implements PollService {
     }
     return pollStorage.createPoll(poll, pollOptions);
   }
+
+  @Override
+  public Poll getPollById(Long pollId, String spaceId, long userIdentityId) throws IllegalAccessException {
+    Space space = spaceService.getSpaceById(spaceId);
+    if (!canViewPoll(space, userIdentityId)) {
+      throw new IllegalAccessException("User " + userIdentityId + "is not allowed to access a poll with id " + pollId);
+    }
+    Poll poll = pollStorage.getPollById(pollId);
+    if (poll == null) {
+      return null;
+    }
+    return poll;
+  }
+  
+  private boolean canViewPoll(Space space, long currentIdentity) {
+    Identity identity = identityManager.getIdentity(String.valueOf(currentIdentity));
+    if (identity == null) {
+      return false;
+    }
+    return space != null && spaceService.isMember(space, identity.getRemoteId());
+  }
+  
 }

@@ -83,7 +83,29 @@
 		            </field>
 		          </object>
 		        </value>
-		      </collection>
+                <value>
+                  <object type="org.exoplatform.services.organization.OrganizationConfig$User">
+                    <field name="userName">
+                      <string>testuser3</string>
+                  </field>
+                    <field name="password">
+                      <string>testuser</string>
+                  </field>
+                    <field name="firstName">
+                      <string>Test</string>
+                  </field>
+                    <field name="lastName">
+                      <string>User</string>
+                  </field>
+                    <field name="email">
+                      <string>testuser3@localhost</string>
+                  </field>
+                    <field name="groups">
+                      <string>member:/platform/users</string>
+                  </field>
+                  </object>
+                </value>
+              </collection>
 		    </field>
 		  </object>
 		</object-param>

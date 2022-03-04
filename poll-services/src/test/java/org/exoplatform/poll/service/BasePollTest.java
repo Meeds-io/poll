@@ -25,6 +25,8 @@ public abstract class BasePollTest {
 
   protected Identity        user2Identity;
 
+  protected Identity        user3Identity;
+
   protected PortalContainer container;
 
   protected PollService     pollService;
@@ -51,6 +53,7 @@ public abstract class BasePollTest {
   protected void injectData() throws ObjectNotFoundException {
     user1Identity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, "testuser1");
     user2Identity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, "testuser2");
+    user3Identity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, "testuser3");
     String displayName = "testSpacePoll" + RandomUtils.nextInt();
     space = spaceService.getSpaceByDisplayName(displayName);
     if (space == null) {
