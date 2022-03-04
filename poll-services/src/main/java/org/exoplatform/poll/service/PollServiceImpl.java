@@ -23,7 +23,6 @@ import java.util.List;
 import org.exoplatform.poll.model.Poll;
 import org.exoplatform.poll.model.PollOption;
 import org.exoplatform.poll.storage.PollStorage;
-import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
 
@@ -33,12 +32,9 @@ public class PollServiceImpl implements PollService {
 
   private SpaceService    spaceService;
 
-  private IdentityManager identityManager;
-
-  public PollServiceImpl(PollStorage pollStorage, SpaceService spaceService, IdentityManager identityManager) {
+  public PollServiceImpl(PollStorage pollStorage, SpaceService spaceService) {
     this.pollStorage = pollStorage;
     this.spaceService = spaceService;
-    this.identityManager = identityManager;
   }
 
   @Override

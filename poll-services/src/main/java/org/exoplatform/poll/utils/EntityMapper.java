@@ -25,7 +25,7 @@ import org.exoplatform.poll.model.PollOption;
 
 public class EntityMapper {
 
-  public EntityMapper() {
+  private EntityMapper() {
   }
 
   public static Poll fromPollEntity(PollEntity pollEntity) {

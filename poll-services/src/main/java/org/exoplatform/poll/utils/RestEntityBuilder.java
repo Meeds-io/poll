@@ -18,7 +18,6 @@
  */
 package org.exoplatform.poll.utils;
 
-import java.text.ParseException;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Date;
@@ -32,7 +31,7 @@ import org.exoplatform.poll.rest.model.PollOptionRestEntity;
 
 public class RestEntityBuilder {
 
-  public RestEntityBuilder() {
+  private RestEntityBuilder() {
   }
 
   public static final Poll toPoll(PollRestEntity pollEntity) {
