@@ -1,20 +1,18 @@
 package org.exoplatform.poll.service;
 
 import org.apache.commons.lang3.RandomUtils;
+import org.hibernate.ObjectNotFoundException;
+import org.junit.After;
+import org.junit.Before;
+
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.container.component.RequestLifeCycle;
-import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
 import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
-import org.hibernate.ObjectNotFoundException;
-import org.junit.After;
-import org.junit.Before;
-
-import java.util.Collections;
 
 public abstract class BasePollTest {
   protected IdentityManager identityManager;

@@ -16,40 +16,40 @@
                xsi:schemaLocation="http://www.exoplatform.org/xml/ns/kernel_1_3.xsd http://www.exoplatform.org/xml/ns/kernel_1_3.xsd"
                xmlns="http://www.exoplatform.org/xml/ns/kernel_1_3.xsd">
 
-    <component>
-        <type>org.exoplatform.poll.dao.PollDAO</type>
-    </component>
+  <component>
+    <type>org.exoplatform.poll.dao.PollDAO</type>
+  </component>
 
-    <component>
-        <type>org.exoplatform.poll.dao.PollOptionDAO</type>
-    </component>
+  <component>
+    <type>org.exoplatform.poll.dao.PollOptionDAO</type>
+  </component>
 
-    <component>
-        <key>org.exoplatform.poll.service.PollService</key>
-        <type>org.exoplatform.poll.service.PollServiceImpl</type>
-    </component>
+  <component>
+    <key>org.exoplatform.poll.service.PollService</key>
+    <type>org.exoplatform.poll.service.PollServiceImpl</type>
+  </component>
 
-    <component>
-        <type>org.exoplatform.poll.storage.PollStorage</type>
-    </component>
+  <component>
+    <type>org.exoplatform.poll.storage.PollStorage</type>
+  </component>
 
-    <component>
-        <type>org.exoplatform.poll.rest.PollRest</type>
-    </component>
+  <component>
+    <type>org.exoplatform.poll.rest.PollRest</type>
+  </component>
 
-    <external-component-plugins>
-        <target-component>org.exoplatform.commons.api.persistence.DataInitializer</target-component>
-        <component-plugin>
-            <name>PollRDBMSChangeLogsPlugin</name>
-            <set-method>addChangeLogsPlugin</set-method>
-            <type>org.exoplatform.commons.persistence.impl.ChangeLogsPlugin</type>
-            <init-params>
-                <values-param>
-                    <name>changelogs</name>
-                    <description>Change logs of Poll RDBMS</description>
-                    <value>db/changelog/poll-rdbms.db.changelog-master.xml</value>
-                </values-param>
-            </init-params>
-        </component-plugin>
+  <external-component-plugins>
+    <target-component>org.exoplatform.commons.api.persistence.DataInitializer</target-component>
+    <component-plugin>
+      <name>PollRDBMSChangeLogsPlugin</name>
+        <set-method>addChangeLogsPlugin</set-method>
+        <type>org.exoplatform.commons.persistence.impl.ChangeLogsPlugin</type>
+        <init-params>
+          <values-param>
+            <name>changelogs</name>
+            <description>Change logs of Poll RDBMS</description>
+            <value>db/changelog/poll-rdbms.db.changelog-master.xml</value>
+          </values-param>
+        </init-params>
+      </component-plugin>
     </external-component-plugins>
 </configuration>

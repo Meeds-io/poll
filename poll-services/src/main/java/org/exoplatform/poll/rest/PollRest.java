@@ -45,7 +45,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
 @Path("/v1/poll")
-@Api(value = "/v1/poll", description = "Managing poll")
+@Api(value = "/v1/poll", description = "Managing poll") // NOSONAR
 public class PollRest implements ResourceContainer {
   private static final Log LOG = ExoLogger.getLogger(PollRest.class);
 

@@ -44,8 +44,6 @@ public class PollDAOTest extends TestCase {
 
   private PollDAO         pollDAO;
 
-  private PollOptionDAO   pollOptionDAO;
-
   @Override
   protected void setUp() throws Exception {
     RootContainer rootContainer = RootContainer.getInstance();
@@ -53,7 +51,6 @@ public class PollDAOTest extends TestCase {
 
     container = PortalContainer.getInstance();
     pollDAO = container.getComponentInstanceOfType(PollDAO.class);
-    pollOptionDAO = container.getComponentInstanceOfType(PollOptionDAO.class);
     ExoContainerContext.setCurrentContainer(container);
     begin();
   }
