@@ -100,7 +100,7 @@ public class PollServiceTest extends BasePollTest {
 
     // When
     Poll pollStored = pollService.createPoll(poll, pollOptionList, space.getId(), identity);
-    poll = pollService.getPollById(pollStored.getId(), space.getId(), Long.parseLong(user1Identity.getId()));
+    poll = pollService.getPollById(pollStored.getId());
 
     assertNotNull(poll);
     assertEquals(createdPoll.getQuestion(), poll.getQuestion());
@@ -109,9 +109,9 @@ public class PollServiceTest extends BasePollTest {
 
     // When
     try {
-      pollService.getPollById(pollStored.getId(), space.getId(), Long.parseLong(user3Identity.getId()));
-      fail("Should fail when a non member attempts to get a poll");
-    } catch (IllegalAccessException e) {
+      pollService.getPollById(5);
+      fail("Should fail when poll doesn't exist");
+    } catch (IllegalStateException e) {
       // Expected
     }
   }

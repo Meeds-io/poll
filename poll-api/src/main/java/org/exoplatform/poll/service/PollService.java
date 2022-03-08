@@ -38,10 +38,8 @@ public interface PollService {
    * Retrieves a poll identified by its technical identifier.
    * 
    * @param pollId technical identifier of a challenge
-   * @param spaceId technical identifier of a space
-   * @param username User name accessing poll
    * @return A {@link Poll} object
-   * @throws IllegalAccessException
+   * @throws IllegalStateException
    */
-  Poll getPollById(Long pollId, String spaceId, long username) throws IllegalAccessException;
+  Poll getPollById(long pollId) throws IllegalStateException;
 }

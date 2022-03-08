@@ -33,13 +33,10 @@ public class PollServiceImpl implements PollService {
   private PollStorage     pollStorage;
 
   private SpaceService    spaceService;
-
-  private IdentityManager identityManager;
-
+  
   public PollServiceImpl(PollStorage pollStorage, SpaceService spaceService, IdentityManager identityManager) {
     this.pollStorage = pollStorage;
     this.spaceService = spaceService;
-    this.identityManager = identityManager;
   }
 
   @Override
@@ -56,24 +53,11 @@ public class PollServiceImpl implements PollService {
   }
 
   @Override
-  public Poll getPollById(Long pollId, String spaceId, long userIdentityId) throws IllegalAccessException {
-    Space space = spaceService.getSpaceById(spaceId);
-    if (!canViewPoll(space, userIdentityId)) {
-      throw new IllegalAccessException("User " + userIdentityId + "is not allowed to access a poll with id " + pollId);
-    }
+  public Poll getPollById(long pollId) throws IllegalStateException {
     Poll poll = pollStorage.getPollById(pollId);
     if (poll == null) {
-      return null;
+      throw new IllegalStateException("Poll with id " + pollId + " not exist");
     }
     return poll;
   }
-  
-  private boolean canViewPoll(Space space, long currentIdentity) {
-    Identity identity = identityManager.getIdentity(String.valueOf(currentIdentity));
-    if (identity == null) {
-      return false;
-    }
-    return space != null && spaceService.isMember(space, identity.getRemoteId());
-  }
-  
 }
