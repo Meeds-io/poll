@@ -23,8 +23,6 @@ import java.util.List;
 import org.exoplatform.poll.model.Poll;
 import org.exoplatform.poll.model.PollOption;
 import org.exoplatform.poll.storage.PollStorage;
-import org.exoplatform.social.core.identity.model.Identity;
-import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
 
@@ -34,7 +32,7 @@ public class PollServiceImpl implements PollService {
 
   private SpaceService    spaceService;
   
-  public PollServiceImpl(PollStorage pollStorage, SpaceService spaceService, IdentityManager identityManager) {
+  public PollServiceImpl(PollStorage pollStorage, SpaceService spaceService) {
     this.pollStorage = pollStorage;
     this.spaceService = spaceService;
   }
@@ -56,7 +54,7 @@ public class PollServiceImpl implements PollService {
   public Poll getPollById(long pollId) throws IllegalStateException {
     Poll poll = pollStorage.getPollById(pollId);
     if (poll == null) {
-      throw new IllegalStateException("Poll with id " + pollId + " not exist");
+      throw new IllegalStateException("Poll with id " + pollId + " does not exist");
     }
     return poll;
   }
