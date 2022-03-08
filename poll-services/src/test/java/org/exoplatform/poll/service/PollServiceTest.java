@@ -35,6 +35,8 @@ public class PollServiceTest extends BasePollTest {
 
   private Date            endDate    = new Date(1508484583260L);
 
+  private final static String MESSAGE = "Activity title";
+
   @Test
   public void testCreatePoll() throws IllegalAccessException {
     // Given
@@ -56,7 +58,7 @@ public class PollServiceTest extends BasePollTest {
     spaceService.addRedactor(space, user1Identity.getRemoteId());
 
     // When
-    Poll pollStored = pollService.createPoll(poll, pollOptionList, space.getId(), identity);
+    Poll pollStored = pollService.createPoll(poll, pollOptionList, space.getId(), MESSAGE, identity);
 
     assertNotNull(pollStored);
     assertEquals(createdPoll.getCreatorId(), pollStored.getCreatorId());
@@ -72,7 +74,7 @@ public class PollServiceTest extends BasePollTest {
 
     // When
     try {
-      pollService.createPoll(poll1, pollOptionList, space.getId(), identity1);
+      pollService.createPoll(poll1, pollOptionList, space.getId(), MESSAGE, identity1);
       fail("Should fail when a non redactor member attempts to create a poll");
     } catch (IllegalAccessException e) {
       // Expected

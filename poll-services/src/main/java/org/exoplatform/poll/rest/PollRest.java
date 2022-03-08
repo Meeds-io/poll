@@ -68,6 +68,7 @@ public class PollRest implements ResourceContainer {
       @ApiResponse(code = HTTPStatus.UNAUTHORIZED, message = "Unauthorized operation"),
       @ApiResponse(code = HTTPStatus.INTERNAL_ERROR, message = "Internal server error"), })
   public Response createPoll(@ApiParam(value = "space identifier", required = false) @QueryParam("spaceId") String spaceId,
+                             @ApiParam(value = "activity message", required = false) @QueryParam("message") String message,
                              @ApiParam(value = "Poll object to create", required = true) PollRestEntity pollEntity) {
     if (pollEntity == null) {
       return Response.status(Response.Status.BAD_REQUEST).build();
@@ -78,7 +79,7 @@ public class PollRest implements ResourceContainer {
       Poll poll = RestEntityBuilder.toPoll(pollEntity);
       poll.setCreatorId(currentUserIdentityId);
       List<PollOption> pollOptions = RestEntityBuilder.toPollOptions(pollEntity.getOptions());
-      poll = pollService.createPoll(poll, pollOptions, spaceId, currentIdentity);
+      poll = pollService.createPoll(poll, pollOptions, spaceId, message, currentIdentity);
       return Response.ok(poll).build();
     } catch (IllegalAccessException e) {
       LOG.warn("User '{}' attempts to create a non authorized poll", e);

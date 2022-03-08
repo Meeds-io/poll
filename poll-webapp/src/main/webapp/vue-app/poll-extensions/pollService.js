@@ -16,8 +16,8 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-export const postPoll = (poll, spaceId) => {
-  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/v1/poll?spaceId=${spaceId || ''}`, {
+export const postPoll = (poll, message, spaceId) => {
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/v1/poll?spaceId=${spaceId || ''}&message=${'message' || ''}`, {
     headers: {
       'Content-Type': 'application/json'
     },

@@ -28,11 +28,14 @@ public interface PollService {
    * Creates a new poll
    *
    * @param poll {@link Poll} object to create
+   * @param pollOptions {@link Poll} options objects to create
+   * @param spaceId {@link Space} id related to the {@link Poll} to be created
+   * @param message Message of {@link Poll} activity to be created
    * @param currentIdentity User identity creating poll
    * @return created {@link Poll} with generated technical identifier
    * @throws IllegalAccessException when user is not authorized to create a poll
    */
-  Poll createPoll(Poll poll, List<PollOption> pollOptions, String spaceId, org.exoplatform.services.security.Identity currentIdentity) throws IllegalAccessException;
+  Poll createPoll(Poll poll, List<PollOption> pollOptions, String spaceId, String message, org.exoplatform.services.security.Identity currentIdentity) throws IllegalAccessException;
 
   /**
    * Retrieves a poll identified by its technical identifier.
