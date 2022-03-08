@@ -16,17 +16,14 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-export const postPoll = (message, activityType, spaceId) => {
-  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/v1/social/activities?spaceId=${spaceId || ''}`, {
+export const postPoll = (poll, spaceId) => {
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/v1/poll?spaceId=${spaceId || ''}`, {
     headers: {
       'Content-Type': 'application/json'
     },
     credentials: 'include',
     method: 'POST',
-    body: JSON.stringify({
-      'title': message,
-      'type': activityType,
-    })
+    body: JSON.stringify(poll)
   }).then(resp => {
     if (!resp || !resp.ok) {
       throw new Error('Response code indicates a server error', resp);

@@ -94,7 +94,17 @@ export default {
       document.dispatchEvent(new CustomEvent('activity-composer-edited'));
     },
     postPoll({detail: message}) {
-      this.$pollService.postPoll(message, 'poll', eXo.env.portal.spaceId)
+      console.log(this.savedPoll);
+      const poll = {
+        question: this.savedPoll.question,
+        options: this.savedPoll.options.map(option => {
+          return {
+            description: option.data,
+          };
+        }),
+        duration: this.savedPoll.duration,
+      };
+      this.$pollService.postPoll(poll, eXo.env.portal.spaceId)
         .then(() => {
           document.dispatchEvent(new CustomEvent('activity-created', {detail: this.activityId}));
           this.pollAction = 'create';
