@@ -21,7 +21,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <v-card
       class="border-color border-radius my-3 pa-5"
       outlined>
-      <poll-activity v-bind="options" @submit-vote="submitVote" />
+      <poll-activity :activity="activity" @submit-vote="submitVote" />
     </v-card>
     <div
       class="votes-remaining-state"
@@ -33,22 +33,16 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 <script> 
     
 export default {
+  props: {
+    activity: {
+      type: Object,
+      default: null,
+    },
+  },
   data() {
     return {
       d1: new Date(),
-      d2: new Date('3/20/2022'),
-      options: {
-        question: 'What\'s your favourite <strong>JS</strong> framework?',
-        answers: [
-          { value: 1, text: 'Vue', votes: 53 ,selected: false, class: 'my-3' },
-          { value: 2, text: 'React', votes: 35 ,selected: false, class: 'my-3' },
-          { value: 3, text: 'Angular', votes: 30 ,selected: false, class: 'my-3' },
-          { value: 4, text: 'Other', votes: 10 ,selected: false, class: 'my-3' } 
-        ],
-        submitButtonText: 'submit',
-        showResults: false,
-        finalResults: false
-      }
+      d2: new Date('3/20/2022')
     };
   },
   computed: {

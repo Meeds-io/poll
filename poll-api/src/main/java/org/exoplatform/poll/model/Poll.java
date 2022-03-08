@@ -40,4 +40,6 @@ public class Poll {
 
   private long          activityId;
 
+  private long          spaceId;
+
 }

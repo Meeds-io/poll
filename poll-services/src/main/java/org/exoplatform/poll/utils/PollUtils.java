@@ -27,7 +27,11 @@ import java.time.ZonedDateTime;
 import java.util.Date;
 
 public class PollUtils {
-
+  
+  public final static String POLL_ACTIVITY_TYPE = "poll";
+  
+  public final static String POLL_ID = "pollId";
+  
   private PollUtils() {
   }
 

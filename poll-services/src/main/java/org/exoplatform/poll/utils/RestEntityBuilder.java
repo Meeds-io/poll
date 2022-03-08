@@ -20,6 +20,7 @@ package org.exoplatform.poll.utils;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,9 +34,26 @@ public class RestEntityBuilder {
 
   private RestEntityBuilder() {
   }
+  
+  public static final PollRestEntity fromPoll(Poll poll, List<PollOption> pollOptions) {
+    PollRestEntity pollRestEntity = new PollRestEntity();
+    pollRestEntity.setQuestion(poll.getQuestion());
+    List<PollOptionRestEntity> pollOptionRestEntities = new ArrayList<PollOptionRestEntity>();
+    for (PollOption pollOption : pollOptions) {
+      PollOptionRestEntity pollOptionRestEntity = new PollOptionRestEntity();
+      pollOptionRestEntity.setDescription(pollOption.getDescription());
+      //TODO setVotes
+      pollOptionRestEntity.setVotes("0");
+      pollOptionRestEntities.add(pollOptionRestEntity);
+    }
+    pollRestEntity.setOptions(pollOptionRestEntities);
+    String remainingTime = "";
+    pollRestEntity.setRemainingTime(remainingTime);
+    return pollRestEntity;
+  }
 
   public static final Poll toPoll(PollRestEntity pollEntity) {
-    ZonedDateTime createdDate = ZonedDateTime.ofInstant(new Date().toInstant(),ZoneOffset.UTC);
+    ZonedDateTime createdDate = ZonedDateTime.ofInstant(new Date().toInstant(), ZoneOffset.UTC);
     ZonedDateTime endDate = null;
     switch (pollEntity.getDuration()) {
     case "1day":

@@ -39,4 +39,6 @@ public class PollRestEntity {
 
   private String                     duration;
 
+  private String                     message;
+
 }

@@ -37,7 +37,8 @@ public class EntityMapper {
                     PollUtils.fromDate(pollEntity.getCreatedDate()),
                     PollUtils.fromDate(pollEntity.getEndDate()),
                     pollEntity.getCreatorId(),
-                    pollEntity.getActivityId());
+                    pollEntity.getActivityId(),
+                    pollEntity.getSpaceId());
   }
 
   public static PollEntity toPollEntity(Poll poll) {
@@ -50,6 +51,7 @@ public class EntityMapper {
     pollEntity.setCreatedDate(PollUtils.toDate(poll.getCreatedDate()));
     pollEntity.setEndDate(PollUtils.toDate(poll.getEndDate()));
     pollEntity.setActivityId(poll.getActivityId());
+    pollEntity.setSpaceId(poll.getSpaceId());
     pollEntity.setCreatorId(poll.getCreatorId());
     return pollEntity;
   }

@@ -39,6 +39,8 @@ public class PollDAOTest extends TestCase {
   private Long            creatorId  = 1L;
 
   private Long            activityId = 0L;
+  
+  private Long            spaceId = 1L;
 
   private PortalContainer container;
 
@@ -62,6 +64,7 @@ public class PollDAOTest extends TestCase {
     pollEntity.setEndDate(endDate);
     pollEntity.setCreatorId(creatorId);
     pollEntity.setActivityId(activityId);
+    pollEntity.setSpaceId(spaceId);
     PollEntity createdPollEntity = pollDAO.create(pollEntity);
 
     assertNotNull(createdPollEntity);
@@ -71,6 +74,7 @@ public class PollDAOTest extends TestCase {
     assertEquals(endDate, createdPollEntity.getEndDate());
     assertEquals(creatorId, createdPollEntity.getCreatorId());
     assertEquals(activityId, createdPollEntity.getActivityId());
+    assertEquals(spaceId, createdPollEntity.getSpaceId());
   }
 
   public void testGetPollById() {
@@ -83,6 +87,7 @@ public class PollDAOTest extends TestCase {
     assertEquals(endDate, createdPollEntity.getEndDate());
     assertEquals(creatorId, createdPollEntity.getCreatorId());
     assertEquals(activityId, createdPollEntity.getActivityId());
+    assertEquals(spaceId, createdPollEntity.getSpaceId());
   }
 
   @Override

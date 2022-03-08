@@ -41,15 +41,31 @@
     <target-component>org.exoplatform.commons.api.persistence.DataInitializer</target-component>
     <component-plugin>
       <name>PollRDBMSChangeLogsPlugin</name>
-        <set-method>addChangeLogsPlugin</set-method>
-        <type>org.exoplatform.commons.persistence.impl.ChangeLogsPlugin</type>
-        <init-params>
-          <values-param>
-            <name>changelogs</name>
-            <description>Change logs of Poll RDBMS</description>
-            <value>db/changelog/poll-rdbms.db.changelog-master.xml</value>
-          </values-param>
-        </init-params>
-      </component-plugin>
-    </external-component-plugins>
+      <set-method>addChangeLogsPlugin</set-method>
+      <type>org.exoplatform.commons.persistence.impl.ChangeLogsPlugin</type>
+      <init-params>
+        <values-param>
+        <name>changelogs</name>
+          <description>Change logs of Poll RDBMS</description>
+          <value>db/changelog/poll-rdbms.db.changelog-master.xml</value>
+        </values-param>
+      </init-params>
+    </component-plugin>
+  </external-component-plugins>
+  
+  <external-component-plugins>
+    <target-component>org.exoplatform.social.core.manager.ActivityManager</target-component>
+    <component-plugin>
+      <name>PollActivityProcessor</name>
+      <set-method>addProcessorPlugin</set-method>
+      <type>org.exoplatform.poll.activity.processor.PollActivityProcessor</type>
+      <init-params>
+        <value-param>
+          <name>priority</name>
+          <description>priority of this processor (lower are executed first)</description>
+          <value>30</value>
+        </value-param>
+      </init-params>
+    </component-plugin>
+  </external-component-plugins>
 </configuration>

@@ -25,9 +25,11 @@ import java.util.Map;
 import org.exoplatform.poll.model.Poll;
 import org.exoplatform.poll.model.PollOption;
 import org.exoplatform.poll.storage.PollStorage;
+import org.exoplatform.poll.utils.PollUtils;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.activity.model.ExoSocialActivityImpl;
 import org.exoplatform.social.core.identity.model.Identity;
+import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
 import org.exoplatform.social.core.identity.provider.SpaceIdentityProvider;
 import org.exoplatform.social.core.manager.ActivityManager;
 import org.exoplatform.social.core.manager.IdentityManager;
@@ -35,9 +37,6 @@ import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
 
 public class PollServiceImpl implements PollService {
-
-  private final static String ACTIVITY_TYPE = "poll";
-  private final static String POLL_ID = "pollId";
 
   private PollStorage     pollStorage;
 
@@ -63,22 +62,38 @@ public class PollServiceImpl implements PollService {
                          org.exoplatform.services.security.Identity currentIdentity) throws IllegalAccessException {
     Space space = spaceService.getSpaceById(spaceId);
     if (!spaceService.canRedactOnSpace(space, currentIdentity)) {
-      throw new IllegalAccessException("User " + currentIdentity + "is not allowed to create a poll with question "
+      throw new IllegalAccessException("User " + currentIdentity.getUserId() + "is not allowed to create a poll with question "
           + poll.getQuestion());
     }
+    long currentUserIdentityId = PollUtils.getCurrentUserIdentityId(identityManager, currentIdentity.getUserId());
+    poll.setCreatorId(currentUserIdentityId);
+    poll.setSpaceId(Long.parseLong(spaceId));
     Poll createdPoll = pollStorage.createPoll(poll, pollOptions);
-    String activityId = postPollActivity(message,spaceId, currentIdentity, createdPoll.getId());
+    String activityId = postPollActivity(message, spaceId, currentIdentity, createdPoll.getId());
     return  createdPoll;
 
   }
 
   @Override
-  public Poll getPollById(long pollId) throws IllegalStateException {
+  public Poll getPollById(long pollId, org.exoplatform.services.security.Identity currentIdentity) throws IllegalAccessException {
     Poll poll = pollStorage.getPollById(pollId);
-    if (poll == null) {
-      throw new IllegalStateException("Poll with id " + pollId + " does not exist");
+    Space pollSpace = spaceService.getSpaceById(String.valueOf(poll.getSpaceId()));
+    if (!spaceService.isMember(pollSpace, currentIdentity.getUserId())) {
+      throw new IllegalAccessException("User " + currentIdentity.getUserId() + "is not allowed to get a poll with id "
+          + pollId);
     }
     return poll;
+  }
+  
+  @Override
+  public List<PollOption> getPollOptionsById(long pollId, org.exoplatform.services.security.Identity currentIdentity) throws IllegalAccessException {
+    Poll poll = pollStorage.getPollById(pollId);
+    Space pollSpace = spaceService.getSpaceById(String.valueOf(poll.getSpaceId()));
+    if (!spaceService.isMember(pollSpace, currentIdentity.getUserId())) {
+      throw new IllegalAccessException("User " + currentIdentity.getUserId() + "is not allowed to get options of poll with id "
+          + pollId);
+    }
+    return pollStorage.getPollOptionsById(pollId);
   }
   
   private String postPollActivity(String message,
@@ -87,13 +102,14 @@ public class PollServiceImpl implements PollService {
                                   long pollId) throws IllegalAccessException {
     Space space = spaceService.getSpaceById(spaceId);
     Identity spaceIdentity = identityManager.getOrCreateIdentity(SpaceIdentityProvider.NAME, space.getPrettyName());
+    Identity pollActvityCreatorIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, currentIdentity.getUserId());
 
     ExoSocialActivity activity = new ExoSocialActivityImpl();
     activity.setTitle(message);
-    activity.setType(ACTIVITY_TYPE);
-    activity.setUserId(currentIdentity.getUserId());
+    activity.setType(PollUtils.POLL_ACTIVITY_TYPE);
+    activity.setUserId(pollActvityCreatorIdentity.getId());
     Map<String, String> templateParams = new HashMap<>();
-    templateParams.put(POLL_ID, String.valueOf(pollId));
+    templateParams.put(PollUtils.POLL_ID, String.valueOf(pollId));
     activity.setTemplateParams(templateParams);
 
     activityManager.saveActivityNoReturn(spaceIdentity, activity);

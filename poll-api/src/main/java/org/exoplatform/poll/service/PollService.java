@@ -20,6 +20,7 @@ package org.exoplatform.poll.service;
 
 import org.exoplatform.poll.model.Poll;
 import org.exoplatform.poll.model.PollOption;
+import org.exoplatform.services.security.Identity;
 
 import java.util.List;
 
@@ -31,18 +32,29 @@ public interface PollService {
    * @param pollOptions {@link Poll} options objects to create
    * @param spaceId {@link Space} id related to the {@link Poll} to be created
    * @param message Message of {@link Poll} activity to be created
-   * @param currentIdentity User identity creating poll
+   * @param currentIdentity User identity creating the poll
    * @return created {@link Poll} with generated technical identifier
    * @throws IllegalAccessException when user is not authorized to create a poll
    */
-  Poll createPoll(Poll poll, List<PollOption> pollOptions, String spaceId, String message, org.exoplatform.services.security.Identity currentIdentity) throws IllegalAccessException;
+  Poll createPoll(Poll poll, List<PollOption> pollOptions, String spaceId, String message, Identity currentIdentity) throws IllegalAccessException;
 
   /**
    * Retrieves a poll identified by its technical identifier.
    * 
-   * @param pollId technical identifier of a challenge
+   * @param pollId technical identifier of a poll
+   * @param currentIdentity User identity getting the poll
    * @return A {@link Poll} object
-   * @throws IllegalStateException
+   * @throws IllegalAccessException when user is not authorized to get a poll
    */
-  Poll getPollById(long pollId) throws IllegalStateException;
+  Poll getPollById(long pollId, Identity currentIdentity) throws IllegalAccessException;
+  
+  /**
+   * Retrieves options of a poll identified by its technical identifier.
+   * 
+   * @param pollId technical identifier of a poll
+   * @param currentIdentity User identity getting the poll
+   * @return A {@link Poll} object
+   * @throws IllegalAccessException when user is not authorized to get a poll options
+   */
+  List<PollOption> getPollOptionsById(long pollId, Identity currentIdentity) throws IllegalAccessException;
 }

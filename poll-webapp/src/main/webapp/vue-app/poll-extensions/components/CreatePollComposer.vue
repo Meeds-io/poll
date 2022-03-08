@@ -81,7 +81,9 @@ export default {
     }
   },
   created() {
-    document.addEventListener('post-activity', this.postPoll);
+    document.addEventListener('post-activity', event => {
+      this.postPoll(event.detail);
+    });
   },
   methods: {
     openCreatePollDrawer() {
@@ -93,17 +95,19 @@ export default {
       this.activityType.push('poll');
       document.dispatchEvent(new CustomEvent('activity-composer-edited'));
     },
-    postPoll({detail: message}) {
+    postPoll(message) {
       const poll = {
         question: this.savedPoll.question,
-        options: this.savedPoll.options.map(option => {
-          return {
-            description: option.data,
-          };
-        }),
+        options: this.savedPoll.options.filter(option => option.data != null)
+          .map(option => {
+            return {
+              description: option.data,
+            };
+          }),
         duration: this.savedPoll.duration,
+        message: message
       };
-      this.$pollService.postPoll(poll, message, eXo.env.portal.spaceId)
+      this.$pollService.postPoll(poll, eXo.env.portal.spaceId)
         .then(() => {
           document.dispatchEvent(new CustomEvent('activity-created', {detail: this.activityId}));
           this.pollAction = 'create';

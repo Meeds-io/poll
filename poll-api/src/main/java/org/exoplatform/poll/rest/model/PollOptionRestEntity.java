@@ -30,6 +30,6 @@ public class PollOptionRestEntity {
 
   private String description;
 
-  private String totalVotes;
+  private String votes;
 
 }

@@ -42,13 +42,13 @@ public class PollServiceTest extends BasePollTest {
     // Given
     ZonedDateTime startDateTime = startDate.toInstant().atZone(ZoneOffset.UTC);
     ZonedDateTime endDateTime = endDate.toInstant().atZone(ZoneOffset.UTC);
-    org.exoplatform.services.security.Identity identity = new org.exoplatform.services.security.Identity("testuser1");
-      Poll poll = new Poll();
+    org.exoplatform.services.security.Identity testuser1Identity = new org.exoplatform.services.security.Identity("testuser1");
+    Poll poll = new Poll();
     poll.setQuestion("q1");
     poll.setCreatedDate(startDateTime);
     poll.setEndDate(endDateTime);
     poll.setCreatorId(Long.parseLong(user1Identity.getId()));
-    Poll createdPoll = new Poll(1, "q1", startDateTime, endDateTime, 1, 1);
+    Poll createdPoll = new Poll(1, "q1", startDateTime, endDateTime, 1, 1, 1);
     PollOption pollOption = new PollOption();
     pollOption.setDescription("pollOption");
     List<PollOption> options = new ArrayList<>();
@@ -58,23 +58,24 @@ public class PollServiceTest extends BasePollTest {
     spaceService.addRedactor(space, user1Identity.getRemoteId());
 
     // When
-    Poll pollStored = pollService.createPoll(poll, pollOptionList, space.getId(), MESSAGE, identity);
+    Poll pollStored = pollService.createPoll(poll, pollOptionList, space.getId(), MESSAGE, testuser1Identity);
 
     assertNotNull(pollStored);
     assertEquals(createdPoll.getCreatorId(), pollStored.getCreatorId());
     assertEquals(createdPoll.getQuestion(), pollStored.getQuestion());
 
     // Given
-    org.exoplatform.services.security.Identity identity1 = new org.exoplatform.services.security.Identity("testuser2");
+    org.exoplatform.services.security.Identity testuser2Identity = new org.exoplatform.services.security.Identity("testuser2");
     Poll poll1 = new Poll();
     poll1.setQuestion("q1");
     poll1.setCreatedDate(startDateTime);
     poll1.setEndDate(endDateTime);
     poll1.setCreatorId(Long.parseLong(user2Identity.getId()));
+    poll1.setSpaceId(1L);
 
     // When
     try {
-      pollService.createPoll(poll1, pollOptionList, space.getId(), MESSAGE, identity1);
+      pollService.createPoll(poll1, pollOptionList, space.getId(), MESSAGE, testuser2Identity);
       fail("Should fail when a non redactor member attempts to create a poll");
     } catch (IllegalAccessException e) {
       // Expected
@@ -85,13 +86,14 @@ public class PollServiceTest extends BasePollTest {
   public void testGetPollById() throws IllegalAccessException {
     ZonedDateTime startDateTime = startDate.toInstant().atZone(ZoneOffset.UTC);
     ZonedDateTime endDateTime = endDate.toInstant().atZone(ZoneOffset.UTC);
-    org.exoplatform.services.security.Identity identity = new org.exoplatform.services.security.Identity("testuser1");
+    org.exoplatform.services.security.Identity testuser1Identity = new org.exoplatform.services.security.Identity("testuser1");
     Poll poll = new Poll();
     poll.setQuestion("q1");
     poll.setCreatedDate(startDateTime);
     poll.setEndDate(endDateTime);
     poll.setCreatorId(Long.parseLong(user1Identity.getId()));
-    Poll createdPoll = new Poll(1, "q1", startDateTime, endDateTime, 1, 1);
+    poll.setSpaceId(1L);
+    Poll createdPoll = new Poll(1, "q1", startDateTime, endDateTime, 1, 1, 1);
     PollOption pollOption = new PollOption();
     pollOption.setDescription("pollOption");
     List<PollOption> options = new ArrayList<>();
@@ -101,20 +103,21 @@ public class PollServiceTest extends BasePollTest {
     spaceService.addRedactor(space, user1Identity.getRemoteId());
 
     // When
-    Poll pollStored = pollService.createPoll(poll, pollOptionList, space.getId(), identity);
-    poll = pollService.getPollById(pollStored.getId());
+    Poll pollStored = pollService.createPoll(poll, pollOptionList, space.getId(), MESSAGE, testuser1Identity);
+    poll = pollService.getPollById(pollStored.getId(), testuser1Identity);
 
     assertNotNull(poll);
     assertEquals(createdPoll.getQuestion(), poll.getQuestion());
     assertEquals(createdPoll.getCreatedDate(), poll.getCreatedDate());
     assertEquals(createdPoll.getEndDate(), poll.getEndDate());
-
-    // When
-    try {
-      pollService.getPollById(5);
-      fail("Should fail when poll doesn't exist");
-    } catch (IllegalStateException e) {
-      // Expected
-    }
+    
+//    // When
+//    try {
+//      org.exoplatform.services.security.Identity testuser3Identity = new org.exoplatform.services.security.Identity("testuser3");
+//      pollService.getPollById(pollStored.getId(), testuser3Identity);
+//      fail("Should fail when a non member attempts to get a poll");
+//    } catch (IllegalAccessException e) {
+//      // Expected
+//    }
   }
 }

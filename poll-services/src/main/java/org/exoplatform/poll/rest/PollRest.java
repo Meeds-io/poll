@@ -21,7 +21,11 @@ package org.exoplatform.poll.rest;
 import java.util.List;
 
 import javax.annotation.security.RolesAllowed;
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -30,12 +34,12 @@ import org.exoplatform.poll.model.Poll;
 import org.exoplatform.poll.model.PollOption;
 import org.exoplatform.poll.rest.model.PollRestEntity;
 import org.exoplatform.poll.service.PollService;
-import org.exoplatform.poll.utils.PollUtils;
 import org.exoplatform.poll.utils.RestEntityBuilder;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.rest.resource.ResourceContainer;
 import org.exoplatform.services.security.ConversationState;
+import org.exoplatform.services.security.Identity;
 import org.exoplatform.social.core.manager.IdentityManager;
 
 import io.swagger.annotations.Api;
@@ -51,11 +55,8 @@ public class PollRest implements ResourceContainer {
 
   private PollService      pollService;
 
-  private IdentityManager  identityManager;
-
   public PollRest(PollService pollService, IdentityManager identityManager) {
     this.pollService = pollService;
-    this.identityManager = identityManager;
   }
 
   @POST
@@ -69,17 +70,15 @@ public class PollRest implements ResourceContainer {
       @ApiResponse(code = HTTPStatus.INTERNAL_ERROR, message = "Internal server error"), })
   public Response createPoll(@ApiParam(value = "space identifier", required = false) @QueryParam("spaceId") String spaceId,
                              @ApiParam(value = "activity message", required = false) @QueryParam("message") String message,
-                             @ApiParam(value = "Poll object to create", required = true) PollRestEntity pollEntity) {
-    if (pollEntity == null) {
+                             @ApiParam(value = "Poll object to create", required = true) PollRestEntity pollRestEntity) {
+    if (pollRestEntity == null) {
       return Response.status(Response.Status.BAD_REQUEST).build();
     }
-    org.exoplatform.services.security.Identity currentIdentity = ConversationState.getCurrent().getIdentity();
-    long currentUserIdentityId = PollUtils.getCurrentUserIdentityId(identityManager, currentIdentity.getUserId());
+    Identity currentIdentity = ConversationState.getCurrent().getIdentity();
     try {
-      Poll poll = RestEntityBuilder.toPoll(pollEntity);
-      poll.setCreatorId(currentUserIdentityId);
-      List<PollOption> pollOptions = RestEntityBuilder.toPollOptions(pollEntity.getOptions());
-      poll = pollService.createPoll(poll, pollOptions, spaceId, message, currentIdentity);
+      Poll poll = RestEntityBuilder.toPoll(pollRestEntity);
+      List<PollOption> pollOptions = RestEntityBuilder.toPollOptions(pollRestEntity.getOptions());
+      poll = pollService.createPoll(poll, pollOptions, spaceId, pollRestEntity.getMessage(), currentIdentity);
       return Response.ok(poll).build();
     } catch (IllegalAccessException e) {
       LOG.warn("User '{}' attempts to create a non authorized poll", e);

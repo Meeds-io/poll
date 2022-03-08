@@ -61,4 +61,9 @@
       <append value=" ENGINE=INNODB CHARSET=UTF8 COLLATE utf8_general_ci"/>
     </modifySql>
   </changeSet>
+  <changeSet author="poll" id="1.0.0-2">
+    <addColumn tableName="POLL">
+      <column name="SPACE_ID" type="BIGINT"/>
+    </addColumn>
+  </changeSet>
 </databaseChangeLog>

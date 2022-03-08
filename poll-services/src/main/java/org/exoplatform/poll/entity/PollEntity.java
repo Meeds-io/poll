@@ -51,6 +51,9 @@ public class PollEntity implements Serializable {
 
   @Column(name = "ACTIVITY_ID")
   private Long              activityId;
+  
+  @Column(name = "SPACE_ID")
+  private Long              spaceId;
 
   public Long getId() {
     return id;
@@ -98,5 +101,13 @@ public class PollEntity implements Serializable {
 
   public void setActivityId(Long activityId) {
     this.activityId = activityId;
+  }
+
+  public Long getSpaceId() {
+    return spaceId;
+  }
+
+  public void setSpaceId(Long spaceId) {
+    this.spaceId = spaceId;
   }
 }
