@@ -16,30 +16,22 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-import {initExtensions} from './pollExtensions.js';
-import './initComponents.js';
-import * as pollUtils from './pollUtils.js';
-import * as pollService from './pollService.js';
-
-// getting language of the PLF
-const lang = eXo.env.portal.language || 'en';
-// init Vue app when locale resources are ready
-const url = `${eXo.env.portal.context}/${eXo.env.portal.rest}/i18n/bundle/locale.portlet.Poll-${lang}.json`;
-// init Vue app when locale resources are ready
-exoi18n.loadLanguageAsync(lang, url).then(i18n => new Vue({i18n}));
-
-if (!Vue.prototype.$pollUtils) {
-  window.Object.defineProperty(Vue.prototype, '$pollUtils', {
-    value: pollUtils,
+export const postPoll = (message, activityType, spaceId) => {
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/v1/social/activities?spaceId=${spaceId || ''}`, {
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    credentials: 'include',
+    method: 'POST',
+    body: JSON.stringify({
+      'title': message,
+      'type': activityType,
+    })
+  }).then(resp => {
+    if (!resp || !resp.ok) {
+      throw new Error('Response code indicates a server error', resp);
+    } else {
+      return resp.json();
+    }
   });
-}
-
-if (!Vue.prototype.$pollService) {
-  window.Object.defineProperty(Vue.prototype, '$pollService', {
-    value: pollService,
-  });
-}
-
-export function init() {
-  initExtensions();
-}
+};

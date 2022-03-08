@@ -43,16 +43,45 @@ export default {
       savedPoll: {}
     };
   },
+  props: {
+    activityId: {
+      type: String,
+      default: null,
+    },
+    message: {
+      type: String,
+      default: null,
+    },
+    maxMessageLength: {
+      type: Number,
+      default: 0,
+    },
+    templateParams: {
+      type: Object,
+      default: null,
+    },
+    files: {
+      type: Array,
+      default: null,
+    },
+    activityType: {
+      type: Array,
+      default: null,
+    },
+  },
   computed: {
-    pollActionLabel(){
+    pollActionLabel() {
       return this.$t(`composer.poll.${this.pollAction}.drawer.label`);
     },
-    pollActionDescription(){
+    pollActionDescription() {
       return this.$t(`composer.poll.${this.pollAction}.drawer.description`);
     },
-    createdPollIcon(){
+    createdPollIcon() {
       return this.pollAction === 'update' ? 'createdPollIcon' : '';
     }
+  },
+  created() {
+    document.addEventListener('post-activity', this.postPoll);
   },
   methods: {
     openCreatePollDrawer() {
@@ -61,7 +90,22 @@ export default {
     createPoll(poll) {
       Object.assign(this.savedPoll, poll);
       this.pollAction = 'update';
+      this.activityType.push('poll');
       document.dispatchEvent(new CustomEvent('activity-composer-edited'));
+    },
+    postPoll({detail: message}) {
+      this.$pollService.postPoll(message, 'poll', eXo.env.portal.spaceId)
+        .then(() => {
+          document.dispatchEvent(new CustomEvent('activity-created', {detail: this.activityId}));
+          this.pollAction = 'create';
+          this.savedPoll = {};
+        })
+        .catch(error => {
+          console.error(`Error when posting message: ${error}`);
+        })
+        .finally(() => {
+          document.dispatchEvent(new CustomEvent('activity-composer-closed'));
+        });
     }
   },
 };
