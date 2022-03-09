@@ -27,9 +27,9 @@ import org.exoplatform.social.core.manager.IdentityManager;
 
 public class PollUtils {
   
-  public final static String POLL_ACTIVITY_TYPE = "poll";
+  public static final String POLL_ACTIVITY_TYPE = "poll";
   
-  public final static String POLL_ID = "pollId";
+  public static final String POLL_ID = "pollId";
   
   private PollUtils() {
   }

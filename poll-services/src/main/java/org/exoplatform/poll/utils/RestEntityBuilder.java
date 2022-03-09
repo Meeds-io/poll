@@ -32,13 +32,13 @@ import org.exoplatform.poll.rest.model.PollOptionRestEntity;
 
 public class RestEntityBuilder {
   
-  private final static String ONE_DAY_DURATION = "1day";
+  private static final String ONE_DAY_DURATION = "1day";
   
-  private final static String THREE_DAYS_DURATION = "3days";
+  private static final String THREE_DAYS_DURATION = "3days";
   
-  private final static String ONE_WEEK_DURATION = "1week";
+  private static final String ONE_WEEK_DURATION = "1week";
   
-  private final static String TWO_WEEKS_DURATION = "2weeks";
+  private static final String TWO_WEEKS_DURATION = "2weeks";
 
   private RestEntityBuilder() {
   }
@@ -46,7 +46,7 @@ public class RestEntityBuilder {
   public static final PollRestEntity fromPoll(Poll poll, List<PollOption> pollOptions) {
     PollRestEntity pollRestEntity = new PollRestEntity();
     pollRestEntity.setQuestion(poll.getQuestion());
-    List<PollOptionRestEntity> pollOptionRestEntities = new ArrayList<PollOptionRestEntity>();
+    List<PollOptionRestEntity> pollOptionRestEntities = new ArrayList<>();
     for (PollOption pollOption : pollOptions) {
       PollOptionRestEntity pollOptionRestEntity = new PollOptionRestEntity();
       pollOptionRestEntity.setDescription(pollOption.getDescription());

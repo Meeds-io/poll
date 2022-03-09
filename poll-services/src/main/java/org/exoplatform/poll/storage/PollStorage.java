@@ -56,7 +56,7 @@ public class PollStorage {
   
   public List<PollOption> getPollOptionsById(Long pollId) {
     List<PollOptionEntity> pollOptionEntities = pollOptionDAO.findPollOptionsById(pollId);
-    return pollOptionEntities.stream().map(pollOptionEntity -> EntityMapper.fromPollOptionEntity(pollOptionEntity)).collect(Collectors.toList());
+    return pollOptionEntities.stream().map(EntityMapper::fromPollOptionEntity).collect(Collectors.toList());
   }
 
   public Poll updatePoll(Poll poll) {

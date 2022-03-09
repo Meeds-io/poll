@@ -21,11 +21,18 @@ package org.exoplatform.poll.rest;
 import java.util.List;
 
 import javax.annotation.security.RolesAllowed;
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang3.StringUtils;
+
 import org.exoplatform.common.http.HTTPStatus;
 import org.exoplatform.poll.model.Poll;
 import org.exoplatform.poll.model.PollOption;
@@ -37,7 +44,6 @@ import org.exoplatform.services.log.Log;
 import org.exoplatform.services.rest.resource.ResourceContainer;
 import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.services.security.Identity;
-import org.exoplatform.social.core.manager.IdentityManager;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -52,7 +58,7 @@ public class PollRest implements ResourceContainer {
 
   private PollService      pollService;
 
-  public PollRest(PollService pollService, IdentityManager identityManager) {
+  public PollRest(PollService pollService) {
     this.pollService = pollService;
   }
 
@@ -62,7 +68,6 @@ public class PollRest implements ResourceContainer {
   @RolesAllowed("users")
   @ApiOperation(value = "Create a new poll", httpMethod = "POST", response = Response.class, consumes = "application/json")
   @ApiResponses(value = { @ApiResponse(code = HTTPStatus.NO_CONTENT, message = "Request fulfilled"),
-      @ApiResponse(code = HTTPStatus.BAD_REQUEST, message = "Invalid query input"),
       @ApiResponse(code = HTTPStatus.UNAUTHORIZED, message = "Unauthorized operation"),
       @ApiResponse(code = HTTPStatus.INTERNAL_ERROR, message = "Internal server error"), })
   public Response createPoll(@ApiParam(value = "space identifier", required = false) @QueryParam("spaceId") String spaceId,
@@ -86,25 +91,25 @@ public class PollRest implements ResourceContainer {
   }
 
   @GET
-  @Path("{idPoll}")
+  @Path("{id}")
   @RolesAllowed("users")
   @Produces(MediaType.APPLICATION_JSON)
-  @ApiOperation(value = "Get a poll", httpMethod = "GET", response = Response.class, notes = "This gets the poll with the given id if the authenticated user is a member of the space or a spaces super manager.")
+  @ApiOperation(value = "Get a poll", httpMethod = "GET", response = Response.class, notes = "This gets the poll with the given id if the authenticated user is a member of the space.")
   @ApiResponses(value = { @ApiResponse(code = HTTPStatus.NO_CONTENT, message = "Request fulfilled"),
           @ApiResponse(code = HTTPStatus.BAD_REQUEST, message = "Invalid query input"),
           @ApiResponse(code = HTTPStatus.UNAUTHORIZED, message = "Unauthorized operation"),
           @ApiResponse(code = HTTPStatus.INTERNAL_ERROR, message = "Internal server error"), })
-  public Response getPollById(@ApiParam(value = "Poll id", required = true) @PathParam("idPoll") String idPoll) {
+  public Response getPollById(@ApiParam(value = "Poll id", required = true) @PathParam("id") String pollId) {
     try {
-      if (StringUtils.isBlank(idPoll)) {
+      if (StringUtils.isBlank(pollId)) {
         return Response.status(Response.Status.BAD_REQUEST).build();
       }
       Identity currentIdentity = ConversationState.getCurrent().getIdentity();
-      Poll poll = pollService.getPollById(Long.parseLong(idPoll),currentIdentity);
+      Poll poll = pollService.getPollById(Long.parseLong(pollId), currentIdentity);
       if (poll == null) {
         return Response.status(Response.Status.NOT_FOUND).build();
       }
-      List<PollOption> pollOptions = pollService.getPollOptionsById(Long.parseLong(idPoll), currentIdentity);
+      List<PollOption> pollOptions = pollService.getPollOptionsById(Long.parseLong(pollId), currentIdentity);
       PollRestEntity pollRestEntity = RestEntityBuilder.fromPoll(poll, pollOptions);
       return Response.ok(pollRestEntity).build();
     } catch (IllegalAccessException e) {

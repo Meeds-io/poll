@@ -69,10 +69,7 @@ public class PollServiceImpl implements PollService {
     poll.setCreatorId(currentUserIdentityId);
     poll.setSpaceId(Long.parseLong(spaceId));
     Poll createdPoll = pollStorage.createPoll(poll, pollOptions);
-    String activityId = postPollActivity(message, spaceId, currentIdentity, createdPoll.getId());
-    createdPoll.setActivityId(Long.parseLong(activityId));
-    return pollStorage.updatePoll(createdPoll);
-
+    return postPollActivity(message, spaceId, currentIdentity, createdPoll);
   }
 
   @Override
@@ -97,10 +94,10 @@ public class PollServiceImpl implements PollService {
     return pollStorage.getPollOptionsById(pollId);
   }
   
-  private String postPollActivity(String message,
+  private Poll postPollActivity(String message,
                                   String spaceId,
                                   org.exoplatform.services.security.Identity currentIdentity,
-                                  long pollId) throws IllegalAccessException {
+                                  Poll createdPoll) {
     Space space = spaceService.getSpaceById(spaceId);
     Identity spaceIdentity = identityManager.getOrCreateIdentity(SpaceIdentityProvider.NAME, space.getPrettyName());
     Identity pollActvityCreatorIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, currentIdentity.getUserId());
@@ -110,10 +107,11 @@ public class PollServiceImpl implements PollService {
     activity.setType(PollUtils.POLL_ACTIVITY_TYPE);
     activity.setUserId(pollActvityCreatorIdentity.getId());
     Map<String, String> templateParams = new HashMap<>();
-    templateParams.put(PollUtils.POLL_ID, String.valueOf(pollId));
+    templateParams.put(PollUtils.POLL_ID, String.valueOf(createdPoll.getId()));
     activity.setTemplateParams(templateParams);
 
     activityManager.saveActivityNoReturn(spaceIdentity, activity);
-    return activity.getId();
+    createdPoll.setActivityId(Long.parseLong(activity.getId()));
+    return pollStorage.updatePoll(createdPoll);
   }
 }
