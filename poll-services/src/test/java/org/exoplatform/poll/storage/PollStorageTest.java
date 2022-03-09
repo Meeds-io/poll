@@ -24,7 +24,6 @@ import static org.mockito.ArgumentMatchers.anyObject;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.time.ZoneOffset;
 import java.util.Collections;
 import java.util.Date;
 
@@ -63,13 +62,13 @@ public class PollStorageTest {
   @PrepareForTest({ EntityMapper.class })
   @Test
   public void testCreatePoll() throws Exception { // NOSONAR
-    Date startDate = new Date(System.currentTimeMillis());
+    Date createdDate = new Date(System.currentTimeMillis());
     Date endDate = new Date(System.currentTimeMillis() + 1);
     Poll poll = new Poll();
     poll.setId(1L);
     poll.setQuestion("q1");
-    poll.setCreatedDate(startDate.toInstant().atZone(ZoneOffset.UTC));
-    poll.setEndDate(endDate.toInstant().atZone(ZoneOffset.UTC));
+    poll.setCreatedDate(createdDate);
+    poll.setEndDate(endDate);
     poll.setCreatorId(1L);
 
     PollOption pollOption = new PollOption();
@@ -80,7 +79,7 @@ public class PollStorageTest {
     PollEntity pollEntity = new PollEntity();
     pollEntity.setId(1L);
     pollEntity.setQuestion("q1");
-    pollEntity.setCreatedDate(startDate);
+    pollEntity.setCreatedDate(createdDate);
     pollEntity.setEndDate(endDate);
     pollEntity.setCreatorId(1L);
 

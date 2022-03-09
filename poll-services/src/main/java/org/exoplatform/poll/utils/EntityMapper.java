@@ -34,8 +34,8 @@ public class EntityMapper {
     }
     return new Poll(pollEntity.getId(),
                     pollEntity.getQuestion(),
-                    PollUtils.fromDate(pollEntity.getCreatedDate()),
-                    PollUtils.fromDate(pollEntity.getEndDate()),
+                    pollEntity.getCreatedDate(),
+                    pollEntity.getEndDate(),
                     pollEntity.getCreatorId(),
                     pollEntity.getActivityId(),
                     pollEntity.getSpaceId());
@@ -48,8 +48,8 @@ public class EntityMapper {
     PollEntity pollEntity = new PollEntity();
     pollEntity.setId(poll.getId() == 0 ? null : poll.getId());
     pollEntity.setQuestion(poll.getQuestion());
-    pollEntity.setCreatedDate(PollUtils.toDate(poll.getCreatedDate()));
-    pollEntity.setEndDate(PollUtils.toDate(poll.getEndDate()));
+    pollEntity.setCreatedDate(poll.getCreatedDate());
+    pollEntity.setEndDate(poll.getEndDate());
     pollEntity.setActivityId(poll.getActivityId());
     pollEntity.setSpaceId(poll.getSpaceId());
     pollEntity.setCreatorId(poll.getCreatorId());

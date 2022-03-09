@@ -18,13 +18,12 @@
  */
 package org.exoplatform.poll.utils;
 
+import java.time.ZonedDateTime;
+import java.util.Date;
+
 import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
 import org.exoplatform.social.core.manager.IdentityManager;
-
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.util.Date;
 
 public class PollUtils {
   
@@ -45,12 +44,5 @@ public class PollUtils {
       return null;
     }
     return Date.from(datetime.toInstant());
-  }
-
-  public static ZonedDateTime fromDate(Date date) {
-    if (date == null) {
-      return null;
-    }
-    return date.toInstant().atZone(ZoneOffset.UTC);
   }
 }

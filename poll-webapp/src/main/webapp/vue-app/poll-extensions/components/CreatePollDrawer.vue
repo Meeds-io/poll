@@ -78,9 +78,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 v-model="poll.duration"
                 class="ignore-vuetify-classes poll-select-duration flex-grow-1">
                 <option value="1day">{{ $t('composer.poll.create.drawer.field.duration.oneDay') }}</option>
-                <option value="3day">{{ $t('composer.poll.create.drawer.field.duration.threeDays') }}</option>
+                <option value="3days">{{ $t('composer.poll.create.drawer.field.duration.threeDays') }}</option>
                 <option value="1week">{{ $t('composer.poll.create.drawer.field.duration.oneWeek') }}</option>
-                <option value="2week">{{ $t('composer.poll.create.drawer.field.duration.twoWeeks') }}</option>
+                <option value="2weeks">{{ $t('composer.poll.create.drawer.field.duration.twoWeeks') }}</option>
               </select>
             </v-list-item>
           </v-list>

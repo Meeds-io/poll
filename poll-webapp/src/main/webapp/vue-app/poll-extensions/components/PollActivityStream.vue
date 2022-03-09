@@ -39,17 +39,13 @@ export default {
       default: null,
     },
   },
-  data() {
-    return {
-      d1: new Date(),
-      d2: new Date('3/20/2022')
-    };
-  },
   computed: {
     reminingTime() {
-      const days = this.$pollUtils.getRemainingDate.inDays(this.d1, this.d2);
-      const hours = this.$pollUtils.getRemainingDate.inHours(this.d1, this.d2)-this.$pollUtils.getRemainingDate.inDays(this.d1, this.d2)*24;
-      const minutes = this.$pollUtils.getRemainingDate.inMunites(this.d1, this.d2)-this.$pollUtils.getRemainingDate.inHours(this.d1, this.d2)*60;
+      const nowDateTime = new Date().getTime();
+      const endDateTime = this.activity.poll.endDateTime;
+      const days = this.$pollUtils.getRemainingDate.inDays(nowDateTime, endDateTime);
+      const hours = this.$pollUtils.getRemainingDate.inHours(nowDateTime, endDateTime) - this.$pollUtils.getRemainingDate.inDays(nowDateTime, endDateTime)*24;
+      const minutes = this.$pollUtils.getRemainingDate.inMinutes(nowDateTime, endDateTime) - this.$pollUtils.getRemainingDate.inHours(nowDateTime, endDateTime)*60;
       return this.$t('activity.poll.remaining',{0: days, 1: hours, 2: minutes});
     },
   },

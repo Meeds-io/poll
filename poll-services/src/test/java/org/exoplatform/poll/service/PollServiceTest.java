@@ -18,20 +18,21 @@
  */
 package org.exoplatform.poll.service;
 
-import org.exoplatform.poll.model.Poll;
-import org.exoplatform.poll.model.PollOption;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import org.exoplatform.poll.model.Poll;
+import org.exoplatform.poll.model.PollOption;
 
 public class PollServiceTest extends BasePollTest {
-  private Date            startDate  = new Date(1508484583259L);
+  private Date            createdDate  = new Date(1508484583259L);
 
   private Date            endDate    = new Date(1508484583260L);
 
@@ -40,15 +41,13 @@ public class PollServiceTest extends BasePollTest {
   @Test
   public void testCreatePoll() throws IllegalAccessException {
     // Given
-    ZonedDateTime startDateTime = startDate.toInstant().atZone(ZoneOffset.UTC);
-    ZonedDateTime endDateTime = endDate.toInstant().atZone(ZoneOffset.UTC);
     org.exoplatform.services.security.Identity testuser1Identity = new org.exoplatform.services.security.Identity("testuser1");
     Poll poll = new Poll();
     poll.setQuestion("q1");
-    poll.setCreatedDate(startDateTime);
-    poll.setEndDate(endDateTime);
+    poll.setCreatedDate(createdDate);
+    poll.setEndDate(endDate);
     poll.setCreatorId(Long.parseLong(user1Identity.getId()));
-    Poll createdPoll = new Poll(1, "q1", startDateTime, endDateTime, 1, 1, 1);
+    Poll createdPoll = new Poll(1, "q1", createdDate, endDate, 1, 1, 1);
     PollOption pollOption = new PollOption();
     pollOption.setDescription("pollOption");
     List<PollOption> options = new ArrayList<>();
@@ -68,8 +67,8 @@ public class PollServiceTest extends BasePollTest {
     org.exoplatform.services.security.Identity testuser2Identity = new org.exoplatform.services.security.Identity("testuser2");
     Poll poll1 = new Poll();
     poll1.setQuestion("q1");
-    poll1.setCreatedDate(startDateTime);
-    poll1.setEndDate(endDateTime);
+    poll1.setCreatedDate(createdDate);
+    poll1.setEndDate(endDate);
     poll1.setCreatorId(Long.parseLong(user2Identity.getId()));
     poll1.setSpaceId(1L);
 
@@ -84,16 +83,14 @@ public class PollServiceTest extends BasePollTest {
 
   @Test
   public void testGetPollById() throws IllegalAccessException {
-    ZonedDateTime startDateTime = startDate.toInstant().atZone(ZoneOffset.UTC);
-    ZonedDateTime endDateTime = endDate.toInstant().atZone(ZoneOffset.UTC);
     org.exoplatform.services.security.Identity testuser1Identity = new org.exoplatform.services.security.Identity("testuser1");
     Poll poll = new Poll();
     poll.setQuestion("q1");
-    poll.setCreatedDate(startDateTime);
-    poll.setEndDate(endDateTime);
+    poll.setCreatedDate(createdDate);
+    poll.setEndDate(endDate);
     poll.setCreatorId(Long.parseLong(user1Identity.getId()));
     poll.setSpaceId(1L);
-    Poll createdPoll = new Poll(1, "q1", startDateTime, endDateTime, 1, 1, 1);
+    Poll createdPoll = new Poll(1, "q1", createdDate, endDate, 1, 1, 1);
     PollOption pollOption = new PollOption();
     pollOption.setDescription("pollOption");
     List<PollOption> options = new ArrayList<>();

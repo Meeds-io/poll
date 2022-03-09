@@ -17,24 +17,15 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 export const getRemainingDate = {
-  inDays: (d1, d2) => {
-    const t2 = d2.getTime();
-    const t1 = d1.getTime();
-
+  inDays: (t1, t2) => {
     return parseInt((t2-t1)/(24*60*60*1000));
   },
 
-  inHours: (d1, d2) => {
-    const t2 = d2.getTime();
-    const t1 = d1.getTime();
-
+  inHours: (t1, t2) => {
     return parseInt((t2-t1)/(60*60*1000));
   },
 
-  inMunites: (d1, d2) => {
-    const t2 = d2.getTime();
-    const t1 = d1.getTime();
-
+  inMinutes: (t1, t2) => {
     return parseInt((t2-t1)/(60*1000));
   }
 };

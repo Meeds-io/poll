@@ -18,7 +18,7 @@
  */
 package org.exoplatform.poll.model;
 
-import java.time.ZonedDateTime;
+import java.util.Date;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -28,18 +28,18 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Poll {
-  private long          id;
+  private long   id;
 
-  private String        question;
+  private String question;
 
-  private ZonedDateTime createdDate;
+  private Date   createdDate;
 
-  private ZonedDateTime endDate;
+  private Date   endDate;
 
-  private long          creatorId;
+  private long   creatorId;
 
-  private long          activityId;
+  private long   activityId;
 
-  private long          spaceId;
+  private long   spaceId;
 
 }
