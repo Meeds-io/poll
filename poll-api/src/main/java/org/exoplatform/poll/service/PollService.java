@@ -30,7 +30,7 @@ public interface PollService {
    *
    * @param poll {@link Poll} object to create
    * @param pollOptions {@link Poll} options objects to create
-   * @param spaceId {@link Space} id related to the {@link Poll} to be created
+   * @param spaceId {@link String} id related to the {@link Poll} to be created
    * @param message Message of {@link Poll} activity to be created
    * @param currentIdentity User identity creating the poll
    * @return created {@link Poll} with generated technical identifier

@@ -21,7 +21,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <v-card
       class="border-color border-radius my-3 pa-5"
       outlined>
-      <poll-activity :activity="activity" @submit-vote="submitVote" />
+      <poll-activity :poll="poll" @submit-vote="submitVote" />
     </v-card>
     <div
       class="votes-remaining-state"
@@ -39,6 +39,9 @@ export default {
       default: null,
     },
   },
+  data: () => ({
+    poll: null
+  }),
   computed: {
     reminingTime() {
       const nowDateTime = new Date().getTime();
@@ -48,9 +51,40 @@ export default {
       const minutes = this.$pollUtils.getRemainingDate.inMinutes(nowDateTime, endDateTime) - this.$pollUtils.getRemainingDate.inHours(nowDateTime, endDateTime)*60;
       return this.$t('activity.poll.remaining',{0: days, 1: hours, 2: minutes});
     },
+    templateParams() {
+      return this.activity && this.activity.templateParams;
+    },
+    pollId() {
+      return this.templateParams && this.templateParams.pollId;
+    },
+    activityId() {
+      return this.activity && this.activity.id;
+    },
+  },
+  created() {
+    if (this.pollId) {
+      this.retrievePoll();
+    }
   },
   methods: {
-    submitVote(){
+    retrievePoll() {
+      if (this.activity.poll) {
+        this.poll = this.activity.poll;
+      } else {
+        this.$pollService.getPollById(this.pollId)
+          .then(poll => {
+            this.poll = poll;
+            if (!this.poll) {
+              this.$root.$emit('activity-extension-abort', this.activityId);
+            }
+            this.activity.poll = poll;
+          })
+          .catch(() => {
+            this.$root.$emit('activity-extension-abort', this.activityId);
+          });
+      }
+    },
+    submitVote() {
       return;
     }
   }

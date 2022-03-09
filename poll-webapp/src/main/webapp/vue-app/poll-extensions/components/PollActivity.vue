@@ -19,10 +19,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 <template>
   <div id="poll-activity">
     <div class="poll-content">
-      <h3 class="question" v-sanitized-html="activity.poll.question"></h3>
+      <h3 class="question" v-sanitized-html="poll.question"></h3>
       <div class="answer-content">
         <div
-          v-for="(answer, index) in activity.poll.options"
+          v-for="(answer, index) in poll.options"
           :key="index"
           :class="{ voteAnswer: true, [answer.class]: (answer.class) }">
           <template v-if="!finalResults">
@@ -87,7 +87,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 <script>
 export default {
   props: {
-    activity: {
+    poll: {
       type: Object,
       default: null,
     },
@@ -115,7 +115,6 @@ export default {
   data() {
     return {
       visibleResults: JSON.parse(this.showResults),
-      poll: {}
     };
   },
   computed: {

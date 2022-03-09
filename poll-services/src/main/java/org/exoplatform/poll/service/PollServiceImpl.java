@@ -70,7 +70,8 @@ public class PollServiceImpl implements PollService {
     poll.setSpaceId(Long.parseLong(spaceId));
     Poll createdPoll = pollStorage.createPoll(poll, pollOptions);
     String activityId = postPollActivity(message, spaceId, currentIdentity, createdPoll.getId());
-    return  createdPoll;
+    createdPoll.setActivityId(Long.parseLong(activityId));
+    return pollStorage.updatePoll(createdPoll);
 
   }
 

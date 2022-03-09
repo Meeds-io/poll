@@ -21,14 +21,11 @@ package org.exoplatform.poll.rest;
 import java.util.List;
 
 import javax.annotation.security.RolesAllowed;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang3.StringUtils;
 import org.exoplatform.common.http.HTTPStatus;
 import org.exoplatform.poll.model.Poll;
 import org.exoplatform.poll.model.PollOption;
@@ -82,6 +79,36 @@ public class PollRest implements ResourceContainer {
       return Response.ok(poll).build();
     } catch (IllegalAccessException e) {
       LOG.warn("User '{}' attempts to create a non authorized poll", e);
+      return Response.status(Response.Status.UNAUTHORIZED).build();
+    } catch (Exception e) {
+      return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+    }
+  }
+
+  @GET
+  @Path("{idPoll}")
+  @RolesAllowed("users")
+  @Produces(MediaType.APPLICATION_JSON)
+  @ApiOperation(value = "Get a poll", httpMethod = "GET", response = Response.class, notes = "This gets the poll with the given id if the authenticated user is a member of the space or a spaces super manager.")
+  @ApiResponses(value = { @ApiResponse(code = HTTPStatus.NO_CONTENT, message = "Request fulfilled"),
+          @ApiResponse(code = HTTPStatus.BAD_REQUEST, message = "Invalid query input"),
+          @ApiResponse(code = HTTPStatus.UNAUTHORIZED, message = "Unauthorized operation"),
+          @ApiResponse(code = HTTPStatus.INTERNAL_ERROR, message = "Internal server error"), })
+  public Response getPollById(@ApiParam(value = "Poll id", required = true) @PathParam("idPoll") String idPoll) {
+    try {
+      if (StringUtils.isBlank(idPoll)) {
+        return Response.status(Response.Status.BAD_REQUEST).build();
+      }
+      Identity currentIdentity = ConversationState.getCurrent().getIdentity();
+      Poll poll = pollService.getPollById(Long.parseLong(idPoll),currentIdentity);
+      if (poll == null) {
+        return Response.status(Response.Status.NOT_FOUND).build();
+      }
+      List<PollOption> pollOptions = pollService.getPollOptionsById(Long.parseLong(idPoll), currentIdentity);
+      PollRestEntity pollRestEntity = RestEntityBuilder.fromPoll(poll, pollOptions);
+      return Response.ok(pollRestEntity).build();
+    } catch (IllegalAccessException e) {
+      LOG.warn("User '{}' attempts to get a non authorized poll", e);
       return Response.status(Response.Status.UNAUTHORIZED).build();
     } catch (Exception e) {
       return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();

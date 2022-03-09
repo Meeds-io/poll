@@ -59,4 +59,10 @@ public class PollStorage {
     return pollOptionEntities.stream().map(pollOptionEntity -> EntityMapper.fromPollOptionEntity(pollOptionEntity)).collect(Collectors.toList());
   }
 
+  public Poll updatePoll(Poll poll) {
+    PollEntity pollEntity = EntityMapper.toPollEntity(poll);
+    pollEntity = pollDAO.update(pollEntity);
+    return EntityMapper.fromPollEntity(pollEntity);
+  }
+
 }

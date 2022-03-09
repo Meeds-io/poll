@@ -32,3 +32,16 @@ export const postPoll = (poll, spaceId) => {
     }
   });
 };
+
+export const getPollById = (pollId) => {
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/v1/poll/${pollId}`, {
+    credentials: 'include',
+    method: 'GET',
+  }).then(resp => {
+    if (!resp || !resp.ok) {
+      throw new Error('Response code indicates a server error', resp);
+    } else {
+      return resp.json();
+    }
+  });
+};
