@@ -84,6 +84,11 @@ export default {
     document.addEventListener('post-activity', event => {
       this.postPoll(event.detail);
     });
+    document.addEventListener('message-composer-opened', () => {
+      if (this.pollAction === 'update') {
+        document.dispatchEvent(new CustomEvent('activity-composer-edited'));
+      }
+    });
   },
   methods: {
     openCreatePollDrawer() {
