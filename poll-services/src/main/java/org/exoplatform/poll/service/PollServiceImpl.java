@@ -100,12 +100,12 @@ public class PollServiceImpl implements PollService {
                                   Poll createdPoll) {
     Space space = spaceService.getSpaceById(spaceId);
     Identity spaceIdentity = identityManager.getOrCreateIdentity(SpaceIdentityProvider.NAME, space.getPrettyName());
-    Identity pollActvityCreatorIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, currentIdentity.getUserId());
+    Identity pollActivityCreatorIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, currentIdentity.getUserId());
 
     ExoSocialActivity activity = new ExoSocialActivityImpl();
     activity.setTitle(message);
     activity.setType(PollUtils.POLL_ACTIVITY_TYPE);
-    activity.setUserId(pollActvityCreatorIdentity.getId());
+    activity.setUserId(pollActivityCreatorIdentity.getId());
     Map<String, String> templateParams = new HashMap<>();
     templateParams.put(PollUtils.POLL_ID, String.valueOf(createdPoll.getId()));
     activity.setTemplateParams(templateParams);

@@ -39,7 +39,10 @@ public class PollDAOTest extends TestCase {
   private Long            creatorId  = 1L;
 
   private Long            activityId = 0L;
-  
+
+  private Long            activityId2 = 1L;
+
+
   private Long            spaceId = 1L;
 
   private PortalContainer container;
@@ -77,8 +80,15 @@ public class PollDAOTest extends TestCase {
     assertEquals(spaceId, createdPollEntity.getSpaceId());
   }
 
-  public void testGetPollById() {
-    PollEntity createdPollEntity = pollDAO.find(1L);
+  public void testUpdatePoll() {
+    PollEntity pollEntity = new PollEntity();
+    pollEntity.setQuestion(question);
+    pollEntity.setCreatedDate(startDate);
+    pollEntity.setEndDate(endDate);
+    pollEntity.setCreatorId(creatorId);
+    pollEntity.setActivityId(activityId);
+    pollEntity.setSpaceId(spaceId);
+    PollEntity createdPollEntity = pollDAO.create(pollEntity);
 
     assertNotNull(createdPollEntity);
     assertNotNull(createdPollEntity.getId());
@@ -87,6 +97,25 @@ public class PollDAOTest extends TestCase {
     assertEquals(endDate, createdPollEntity.getEndDate());
     assertEquals(creatorId, createdPollEntity.getCreatorId());
     assertEquals(activityId, createdPollEntity.getActivityId());
+    assertEquals(spaceId, createdPollEntity.getSpaceId());
+
+    createdPollEntity.setActivityId(activityId2);
+    PollEntity updatedPollEntity = pollDAO.update(createdPollEntity);
+
+    assertEquals(activityId2, updatedPollEntity.getActivityId());
+
+  }
+
+  public void testGetPollById() {
+    PollEntity createdPollEntity = pollDAO.find(activityId2);
+
+    assertNotNull(createdPollEntity);
+    assertNotNull(createdPollEntity.getId());
+    assertEquals(question, createdPollEntity.getQuestion());
+    assertEquals(startDate, createdPollEntity.getCreatedDate());
+    assertEquals(endDate, createdPollEntity.getEndDate());
+    assertEquals(creatorId, createdPollEntity.getCreatorId());
+    assertEquals(activityId2, createdPollEntity.getActivityId());
     assertEquals(spaceId, createdPollEntity.getSpaceId());
   }
 

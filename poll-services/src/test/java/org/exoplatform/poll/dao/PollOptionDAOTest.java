@@ -91,7 +91,6 @@ public class PollOptionDAOTest extends TestCase {
     PollOptionEntity pollOptionEntity = new PollOptionEntity();
     pollOptionEntity.setPollId(createdPollEntity.getId());
     pollOptionEntity.setDescription(description);
-    pollOptionEntity.setId(1L);
 
     PollOptionEntity createdPollOption = pollOptionDAO.create(pollOptionEntity);
 
