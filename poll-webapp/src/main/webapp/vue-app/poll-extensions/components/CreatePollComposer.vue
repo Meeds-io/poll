@@ -86,6 +86,7 @@ export default {
     });
     document.addEventListener('message-composer-opened', () => {
       if (this.pollAction === 'update') {
+        this.activityType.push('poll');
         document.dispatchEvent(new CustomEvent('activity-composer-edited'));
       }
     });
