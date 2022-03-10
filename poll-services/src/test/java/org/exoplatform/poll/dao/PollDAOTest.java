@@ -80,6 +80,19 @@ public class PollDAOTest extends TestCase {
     assertEquals(spaceId, createdPollEntity.getSpaceId());
   }
 
+  public void testGetPollById() {
+    PollEntity createdPollEntity = pollDAO.find(activityId2);
+
+    assertNotNull(createdPollEntity);
+    assertNotNull(createdPollEntity.getId());
+    assertEquals(question, createdPollEntity.getQuestion());
+    assertEquals(startDate, createdPollEntity.getCreatedDate());
+    assertEquals(endDate, createdPollEntity.getEndDate());
+    assertEquals(creatorId, createdPollEntity.getCreatorId());
+    assertNotNull(createdPollEntity.getActivityId());
+    assertEquals(spaceId, createdPollEntity.getSpaceId());
+  }
+
   public void testUpdatePoll() {
     PollEntity pollEntity = new PollEntity();
     pollEntity.setQuestion(question);
@@ -104,19 +117,6 @@ public class PollDAOTest extends TestCase {
 
     assertEquals(activityId2, updatedPollEntity.getActivityId());
 
-  }
-
-  public void testGetPollById() {
-    PollEntity createdPollEntity = pollDAO.find(activityId2);
-
-    assertNotNull(createdPollEntity);
-    assertNotNull(createdPollEntity.getId());
-    assertEquals(question, createdPollEntity.getQuestion());
-    assertEquals(startDate, createdPollEntity.getCreatedDate());
-    assertEquals(endDate, createdPollEntity.getEndDate());
-    assertEquals(creatorId, createdPollEntity.getCreatorId());
-    assertEquals(activityId2, createdPollEntity.getActivityId());
-    assertEquals(spaceId, createdPollEntity.getSpaceId());
   }
 
   @Override

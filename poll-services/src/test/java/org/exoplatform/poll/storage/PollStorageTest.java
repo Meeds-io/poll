@@ -83,6 +83,23 @@ public class PollStorageTest {
 
   @PrepareForTest({ EntityMapper.class })
   @Test
+  public void testGetPollById() throws Exception { // NOSONAR
+
+    Poll poll = createPoll();
+    PollEntity pollEntity = createPollEntity();
+
+    when(pollDAO.find(anyObject())).thenReturn(pollEntity);
+    PowerMockito.mockStatic(EntityMapper.class);
+    when(EntityMapper.toPollEntity(poll)).thenReturn(pollEntity);
+    when(EntityMapper.fromPollEntity(pollEntity)).thenReturn(poll);
+
+    Poll retrievedPoll = pollStorage.getPollById(poll.getId());
+    assertNotNull(retrievedPoll);
+    assertEquals(retrievedPoll, poll);
+  }
+
+  @PrepareForTest({ EntityMapper.class })
+  @Test
   public void testUpdatePoll() throws Exception { // NOSONAR
 
     Poll poll = createPoll();
@@ -97,23 +114,6 @@ public class PollStorageTest {
     Poll pollUpdated = pollStorage.updatePoll(poll);
     assertNotNull(pollUpdated);
     assertEquals(1L, pollUpdated.getActivityId());
-  }
-
-  @PrepareForTest({ EntityMapper.class })
-  @Test
-  public void testGetPollById() throws Exception { // NOSONAR
-
-    Poll poll = createPoll();
-    PollEntity pollEntity = createPollEntity();
-
-    when(pollDAO.find(anyObject())).thenReturn(pollEntity);
-    PowerMockito.mockStatic(EntityMapper.class);
-    when(EntityMapper.toPollEntity(poll)).thenReturn(pollEntity);
-    when(EntityMapper.fromPollEntity(pollEntity)).thenReturn(poll);
-
-    Poll retrievedPoll = pollStorage.getPollById(poll.getId());
-    assertNotNull(retrievedPoll);
-    assertEquals(retrievedPoll, poll);
   }
 
   protected Poll createPoll() {
