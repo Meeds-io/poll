@@ -75,6 +75,7 @@ export default {
     if (this.pollId) {
       this.retrievePoll();
     }
+    console.log(this.poll);
   },
   methods: {
     retrievePoll() {

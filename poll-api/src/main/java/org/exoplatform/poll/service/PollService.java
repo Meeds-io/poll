@@ -20,6 +20,7 @@ package org.exoplatform.poll.service;
 
 import org.exoplatform.poll.model.Poll;
 import org.exoplatform.poll.model.PollOption;
+import org.exoplatform.poll.model.PollVote;
 import org.exoplatform.services.security.Identity;
 import org.exoplatform.social.core.activity.model.ActivityFile;
 
@@ -58,4 +59,15 @@ public interface PollService {
    * @throws IllegalAccessException when user is not authorized to get a poll options
    */
   List<PollOption> getPollOptionsById(long pollId, Identity currentIdentity) throws IllegalAccessException;
+
+  /**
+   * Add a vote
+   *
+   * @param pollVote {@link PollVote} object to create
+   * @param spaceId {@link Space} id related to the {@link PollVote} to be added
+   * @param currentIdentity User identity creating the poll
+   * @return created {@link PollVote} with generated technical identifier
+   * @throws IllegalAccessException when user is not authorized to add a vote
+   */
+  PollVote addVote(PollVote pollVote, String spaceId, Identity currentIdentity) throws IllegalAccessException;
 }

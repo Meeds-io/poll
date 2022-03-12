@@ -27,6 +27,7 @@ import static org.mockito.Mockito.when;
 import java.util.Collections;
 import java.util.Date;
 
+import org.exoplatform.poll.dao.PollVoteDAO;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -52,11 +53,13 @@ public class PollStorageTest {
 
   private PollOptionDAO pollOptionDAO;
 
+  private PollVoteDAO pollVoteDAO;
+
   @Before
   public void setUp() throws Exception { // NOSONAR
     pollDAO = mock(PollDAO.class);
     pollOptionDAO = mock(PollOptionDAO.class);
-    pollStorage = new PollStorage(pollDAO, pollOptionDAO);
+    pollStorage = new PollStorage(pollDAO, pollOptionDAO, pollVoteDAO);
   }
 
   @PrepareForTest({ EntityMapper.class })

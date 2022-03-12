@@ -27,8 +27,10 @@ import java.util.stream.Collectors;
 
 import org.exoplatform.poll.model.Poll;
 import org.exoplatform.poll.model.PollOption;
+import org.exoplatform.poll.model.PollVote;
 import org.exoplatform.poll.rest.model.PollRestEntity;
 import org.exoplatform.poll.rest.model.PollOptionRestEntity;
+import org.exoplatform.poll.rest.model.PollVoteRestEntity;
 
 public class RestEntityBuilder {
   
@@ -46,10 +48,12 @@ public class RestEntityBuilder {
   public static final PollRestEntity fromPoll(Poll poll, List<PollOption> pollOptions) {
     PollRestEntity pollRestEntity = new PollRestEntity();
     pollRestEntity.setQuestion(poll.getQuestion());
+    pollRestEntity.setId(poll.getId());
     List<PollOptionRestEntity> pollOptionRestEntities = new ArrayList<>();
     for (PollOption pollOption : pollOptions) {
       PollOptionRestEntity pollOptionRestEntity = new PollOptionRestEntity();
       pollOptionRestEntity.setDescription(pollOption.getDescription());
+      pollOptionRestEntity.setId(pollOption.getId());
       //TODO setVotes
       pollOptionRestEntity.setVotes("0");
       pollOptionRestEntities.add(pollOptionRestEntity);
@@ -92,5 +96,13 @@ public class RestEntityBuilder {
       pollOption.setDescription(pollOptionEntity.getDescription());
       return pollOption;
     }).collect(Collectors.toList());
+  }
+
+  public static final PollVote toPollVote(PollVoteRestEntity pollVoteRestEntity) {
+    Date voteDate = new Date();
+    PollVote pollVote = new PollVote();
+    pollVote.setPollOptionId(pollVoteRestEntity.getPollOptionId());
+    pollVote.setVoteDate(voteDate);
+    return pollVote;
   }
 }

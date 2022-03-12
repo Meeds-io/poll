@@ -25,6 +25,10 @@
   </component>
 
   <component>
+    <type>org.exoplatform.poll.dao.PollVoteDAO</type>
+  </component>
+
+  <component>
     <key>org.exoplatform.poll.service.PollService</key>
     <type>org.exoplatform.poll.service.PollServiceImpl</type>
   </component>

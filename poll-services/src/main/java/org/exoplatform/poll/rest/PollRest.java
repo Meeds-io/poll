@@ -36,7 +36,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.exoplatform.common.http.HTTPStatus;
 import org.exoplatform.poll.model.Poll;
 import org.exoplatform.poll.model.PollOption;
+import org.exoplatform.poll.model.PollVote;
 import org.exoplatform.poll.rest.model.PollRestEntity;
+import org.exoplatform.poll.rest.model.PollVoteRestEntity;
 import org.exoplatform.poll.service.PollService;
 import org.exoplatform.poll.utils.RestEntityBuilder;
 import org.exoplatform.services.log.ExoLogger;
@@ -114,6 +116,34 @@ public class PollRest implements ResourceContainer {
       return Response.ok(pollRestEntity).build();
     } catch (IllegalAccessException e) {
       LOG.warn("User '{}' attempts to get a non authorized poll", e);
+      return Response.status(Response.Status.UNAUTHORIZED).build();
+    } catch (Exception e) {
+      return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+    }
+  }
+
+  @POST
+  @Path("/vote")
+  @Produces(MediaType.APPLICATION_JSON)
+  @RolesAllowed("users")
+  @ApiOperation(value = "Vote in a created poll", httpMethod = "POST", response = Response.class)
+  @ApiResponses(value = { @ApiResponse(code = HTTPStatus.NO_CONTENT, message = "Request fulfilled"),
+          @ApiResponse(code = HTTPStatus.UNAUTHORIZED, message = "Unauthorized operation"),
+          @ApiResponse(code = HTTPStatus.INTERNAL_ERROR, message = "Internal server error"), })
+  public Response addVote(@ApiParam(value = "space identifier", required = false) @QueryParam("spaceId") String spaceId,
+                          @ApiParam(value = "Poll id", required = true) @QueryParam("optionId") String optionId) {
+    if (optionId == null || optionId.isBlank() || spaceId == null || spaceId.isBlank()) {
+      return Response.status(Response.Status.BAD_REQUEST).build();
+    }
+    Identity currentIdentity = ConversationState.getCurrent().getIdentity();
+    try {
+      PollVoteRestEntity pollVoteRestEntity = new PollVoteRestEntity();
+      pollVoteRestEntity.setPollOptionId(Long.parseLong(optionId));
+      PollVote pollVote = RestEntityBuilder.toPollVote(pollVoteRestEntity);
+      pollVote = pollService.addVote(pollVote, spaceId, currentIdentity);
+      return Response.ok(pollVote).build();
+    } catch (IllegalAccessException e) {
+      LOG.warn("User '{}' attempts to vote in a non authorized poll", e);
       return Response.status(Response.Status.UNAUTHORIZED).build();
     } catch (Exception e) {
       return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();

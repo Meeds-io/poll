@@ -24,6 +24,7 @@ import java.util.Map;
 
 import org.exoplatform.poll.model.Poll;
 import org.exoplatform.poll.model.PollOption;
+import org.exoplatform.poll.model.PollVote;
 import org.exoplatform.poll.storage.PollStorage;
 import org.exoplatform.poll.utils.PollUtils;
 import org.exoplatform.social.core.activity.model.ActivityFile;
@@ -118,4 +119,17 @@ public class PollServiceImpl implements PollService {
     createdPoll.setActivityId(Long.parseLong(activity.getId()));
     return pollStorage.updatePoll(createdPoll);
   }
+  @Override
+  public PollVote addVote(PollVote pollVote,
+                          String spaceId,
+                          org.exoplatform.services.security.Identity currentIdentity) throws IllegalAccessException {
+    Space space = spaceService.getSpaceById(spaceId);
+    if (!spaceService.canRedactOnSpace(space, currentIdentity)) {
+      throw new IllegalAccessException("User " + currentIdentity.getUserId() + "is not allowed to vote");
+    }
+    long currentUserIdentityId = PollUtils.getCurrentUserIdentityId(identityManager, currentIdentity.getUserId());
+    pollVote.setVoterId(currentUserIdentityId);
+    return pollStorage.addVote(pollVote);
+  }
+
 }
