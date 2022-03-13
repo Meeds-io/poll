@@ -132,4 +132,27 @@ public class PollServiceImpl implements PollService {
     return pollStorage.addVote(pollVote);
   }
 
+  @Override
+  public List<Integer> getPollVotesById(long pollId, org.exoplatform.services.security.Identity currentIdentity) throws IllegalAccessException {
+    Poll poll = pollStorage.getPollById(pollId);
+    Space pollSpace = spaceService.getSpaceById(String.valueOf(poll.getSpaceId()));
+    if (!spaceService.isMember(pollSpace, currentIdentity.getUserId())) {
+      throw new IllegalAccessException("User " + currentIdentity.getUserId() + "is not allowed to get total votes of each option of poll with id "
+              + pollId);
+    }
+    return pollStorage.getPollVotesById(pollId);
+  }
+
+  @Override
+  public List<Boolean> checkVoted(long pollId, org.exoplatform.services.security.Identity currentIdentity) throws IllegalAccessException {
+    Poll poll = pollStorage.getPollById(pollId);
+    Space pollSpace = spaceService.getSpaceById(String.valueOf(poll.getSpaceId()));
+    if (!spaceService.isMember(pollSpace, currentIdentity.getUserId())) {
+      throw new IllegalAccessException("User " + currentIdentity.getUserId() + "is not allowed to get total votes of each option of poll with id "
+              + pollId);
+    }
+    long currentUserIdentityId = PollUtils.getCurrentUserIdentityId(identityManager, currentIdentity.getUserId());
+    return pollStorage.checkVoted(pollId, currentUserIdentityId);
+  }
+
 }

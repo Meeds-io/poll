@@ -25,6 +25,7 @@ import org.exoplatform.services.security.Identity;
 import org.exoplatform.social.core.activity.model.ActivityFile;
 
 import java.util.List;
+import java.util.Map;
 
 public interface PollService {
   /**
@@ -70,4 +71,24 @@ public interface PollService {
    * @throws IllegalAccessException when user is not authorized to add a vote
    */
   PollVote addVote(PollVote pollVote, String spaceId, Identity currentIdentity) throws IllegalAccessException;
+
+  /**
+   * Retrieves total votes of each option of a poll identified by its technical identifier.
+   *
+   * @param pollId technical identifier of a poll
+   * @param currentIdentity User identity trying to vote
+   * @return A {@link Integer} object
+   * @throws IllegalAccessException when user is not authorized to get total votes
+   */
+  List<Integer> getPollVotesById(long pollId, Identity currentIdentity) throws IllegalAccessException;
+
+  /**
+   * Retrieves total votes of each option of a poll identified by its technical identifier.
+   *
+   * @param pollId technical identifier of a poll
+   * @param currentIdentity User identity trying to vote
+   * @return A {@link Boolean} object
+   * @throws IllegalAccessException when user is not authorized to get total votes
+   */
+  List<Boolean> checkVoted(long pollId, Identity currentIdentity) throws IllegalAccessException;
 }

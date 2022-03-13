@@ -18,12 +18,15 @@
  */
 package org.exoplatform.poll.activity.processor;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.exoplatform.container.xml.InitParams;
 import org.exoplatform.poll.model.Poll;
 import org.exoplatform.poll.model.PollOption;
+import org.exoplatform.poll.model.PollVote;
 import org.exoplatform.poll.rest.model.PollRestEntity;
 import org.exoplatform.poll.service.PollService;
 import org.exoplatform.poll.utils.PollUtils;
@@ -62,7 +65,9 @@ public class PollActivityProcessor extends BaseActivityProcessorPlugin {
       try {
         Poll poll = pollService.getPollById(Long.parseLong(pollId), currentIdentity);
         List<PollOption> pollOptions = pollService.getPollOptionsById(Long.parseLong(pollId), currentIdentity);
-        pollRestEntity = RestEntityBuilder.fromPoll(poll, pollOptions);
+        List<Integer> pollTotalVotes = pollService.getPollVotesById(Long.parseLong(pollId), currentIdentity);
+        List<Boolean> pollOptionsSelected = pollService.checkVoted(Long.parseLong(pollId), currentIdentity);
+        pollRestEntity = RestEntityBuilder.fromPoll(poll, pollOptions, pollTotalVotes, pollOptionsSelected);
       } catch (IllegalAccessException e) {
         LOG.warn("User {} attempt to access unauthorized poll with id {}",
                  currentIdentity.getUserId(),

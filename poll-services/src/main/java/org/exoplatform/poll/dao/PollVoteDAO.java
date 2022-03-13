@@ -19,7 +19,31 @@
 package org.exoplatform.poll.dao;
 
 import org.exoplatform.commons.persistence.impl.GenericDAOJPAImpl;
+import org.exoplatform.poll.entity.PollOptionEntity;
 import org.exoplatform.poll.entity.PollVoteEntity;
 
+import javax.persistence.TypedQuery;
+import java.util.Collections;
+import java.util.List;
+
+import org.exoplatform.poll.model.PollVote;
+import org.exoplatform.services.security.Identity;
+
+
 public class PollVoteDAO extends GenericDAOJPAImpl<PollVoteEntity, Long> {
+
+    public int getTotalVotesByOption(Long pollOptionId) {
+        TypedQuery<Long> query = getEntityManager().createNamedQuery("PollVote.getTotalVotesByOption",
+                Long.class);
+        query.setParameter("pollOptionId", pollOptionId);
+        return query.getSingleResult().intValue();
+    }
+
+    public Boolean checkVoted(Long pollOptionId, long userId) {
+        TypedQuery<Long> query = getEntityManager().createNamedQuery("PollVote.checkVoted",
+                Long.class);
+        query.setParameter("pollOptionId", pollOptionId);
+        query.setParameter("userId", userId);
+        return query.getSingleResult().intValue() != 0 ;
+    }
 }

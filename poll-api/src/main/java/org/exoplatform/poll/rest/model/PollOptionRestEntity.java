@@ -26,10 +26,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PollOptionRestEntity {
-  private long   id;
+  private long        id;
 
-  private String description;
+  private String      description;
 
-  private String votes;
+  private long        votes;
+
+  private boolean     selected;
 
 }

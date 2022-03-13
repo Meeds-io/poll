@@ -18,7 +18,10 @@
  */
 package org.exoplatform.poll.storage;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.exoplatform.poll.dao.PollDAO;
@@ -31,6 +34,7 @@ import org.exoplatform.poll.model.Poll;
 import org.exoplatform.poll.model.PollOption;
 import org.exoplatform.poll.model.PollVote;
 import org.exoplatform.poll.utils.EntityMapper;
+import org.exoplatform.services.security.Identity;
 
 public class PollStorage {
   private PollDAO       pollDAO;
@@ -76,6 +80,24 @@ public class PollStorage {
     PollVoteEntity pollVoteEntity = EntityMapper.toPollVoteEntity(pollVote);
     pollVoteEntity = pollVoteDAO.create(pollVoteEntity);
     return EntityMapper.fromPollVoteEntity(pollVoteEntity);
+  }
+
+  public List<Integer> getPollVotesById(Long pollId) {
+    List<PollOptionEntity> pollOptionEntities = pollOptionDAO.findPollOptionsById(pollId);
+    List<Integer> optionsTotalVotes = new ArrayList<>();
+    for (PollOptionEntity pollOptionEntity : pollOptionEntities) {
+      optionsTotalVotes.add(pollVoteDAO.getTotalVotesByOption(pollOptionEntity.getId()));
+    }
+    return optionsTotalVotes;
+  }
+
+  public List<Boolean> checkVoted(Long pollId, Long userId) {
+    List<PollOptionEntity> pollOptionEntities = pollOptionDAO.findPollOptionsById(pollId);
+    List<Boolean> optionsVoted = new ArrayList<>();
+    for (PollOptionEntity pollOptionEntity : pollOptionEntities) {
+      optionsVoted.add(pollVoteDAO.checkVoted(pollOptionEntity.getId(), userId));
+    }
+    return optionsVoted;
   }
 
 

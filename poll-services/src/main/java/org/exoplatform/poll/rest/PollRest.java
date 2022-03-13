@@ -19,6 +19,7 @@
 package org.exoplatform.poll.rest;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.Consumes;
@@ -112,7 +113,9 @@ public class PollRest implements ResourceContainer {
         return Response.status(Response.Status.NOT_FOUND).build();
       }
       List<PollOption> pollOptions = pollService.getPollOptionsById(Long.parseLong(pollId), currentIdentity);
-      PollRestEntity pollRestEntity = RestEntityBuilder.fromPoll(poll, pollOptions);
+      List<Integer> pollTotalVotes = pollService.getPollVotesById(Long.parseLong(pollId), currentIdentity);
+      List<Boolean> pollOptionsSelected = pollService.checkVoted(Long.parseLong(pollId), currentIdentity);
+      PollRestEntity pollRestEntity = RestEntityBuilder.fromPoll(poll, pollOptions, pollTotalVotes, pollOptionsSelected);
       return Response.ok(pollRestEntity).build();
     } catch (IllegalAccessException e) {
       LOG.warn("User '{}' attempts to get a non authorized poll", e);

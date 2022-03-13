@@ -45,19 +45,32 @@ public class RestEntityBuilder {
   private RestEntityBuilder() {
   }
   
-  public static final PollRestEntity fromPoll(Poll poll, List<PollOption> pollOptions) {
+  public static final PollRestEntity fromPoll(Poll poll,
+                                              List<PollOption> pollOptions,
+                                              List<Integer> pollTotalVotes,
+                                              List<Boolean> pollOptionsVoted) {
     PollRestEntity pollRestEntity = new PollRestEntity();
     pollRestEntity.setQuestion(poll.getQuestion());
     pollRestEntity.setId(poll.getId());
     List<PollOptionRestEntity> pollOptionRestEntities = new ArrayList<>();
-    for (PollOption pollOption : pollOptions) {
+
+    for (int i = 0; i < pollOptions.size(); i++) {
+      PollOptionRestEntity pollOptionRestEntity = new PollOptionRestEntity();
+      pollOptionRestEntity.setDescription(pollOptions.get(i).getDescription());
+      pollOptionRestEntity.setId(pollOptions.get(i).getId());
+      pollOptionRestEntity.setVotes(pollTotalVotes.get(i));
+      pollOptionRestEntity.setSelected(pollOptionsVoted.get(i));
+      pollOptionRestEntities.add(pollOptionRestEntity);
+    }
+
+    /*for (PollOption pollOption : pollOptions) {
       PollOptionRestEntity pollOptionRestEntity = new PollOptionRestEntity();
       pollOptionRestEntity.setDescription(pollOption.getDescription());
       pollOptionRestEntity.setId(pollOption.getId());
       //TODO setVotes
       pollOptionRestEntity.setVotes("0");
       pollOptionRestEntities.add(pollOptionRestEntity);
-    }
+    }*/
     pollRestEntity.setOptions(pollOptionRestEntities);
     pollRestEntity.setEndDateTime(poll.getEndDate().getTime());
     return pollRestEntity;
