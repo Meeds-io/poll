@@ -18,15 +18,12 @@
  */
 package org.exoplatform.poll.activity.processor;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.exoplatform.container.xml.InitParams;
 import org.exoplatform.poll.model.Poll;
 import org.exoplatform.poll.model.PollOption;
-import org.exoplatform.poll.model.PollVote;
 import org.exoplatform.poll.rest.model.PollRestEntity;
 import org.exoplatform.poll.service.PollService;
 import org.exoplatform.poll.utils.PollUtils;

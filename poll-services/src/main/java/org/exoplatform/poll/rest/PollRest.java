@@ -19,7 +19,6 @@
 package org.exoplatform.poll.rest;
 
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.Consumes;

@@ -19,9 +19,7 @@
 package org.exoplatform.poll.storage;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.exoplatform.poll.dao.PollDAO;
@@ -34,7 +32,6 @@ import org.exoplatform.poll.model.Poll;
 import org.exoplatform.poll.model.PollOption;
 import org.exoplatform.poll.model.PollVote;
 import org.exoplatform.poll.utils.EntityMapper;
-import org.exoplatform.services.security.Identity;
 
 public class PollStorage {
   private PollDAO       pollDAO;

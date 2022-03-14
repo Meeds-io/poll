@@ -18,16 +18,11 @@
  */
 package org.exoplatform.poll.dao;
 
+import javax.persistence.TypedQuery;
+
 import org.exoplatform.commons.persistence.impl.GenericDAOJPAImpl;
-import org.exoplatform.poll.entity.PollOptionEntity;
 import org.exoplatform.poll.entity.PollVoteEntity;
 
-import javax.persistence.TypedQuery;
-import java.util.Collections;
-import java.util.List;
-
-import org.exoplatform.poll.model.PollVote;
-import org.exoplatform.services.security.Identity;
 
 
 public class PollVoteDAO extends GenericDAOJPAImpl<PollVoteEntity, Long> {

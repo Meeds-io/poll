@@ -63,14 +63,6 @@ public class RestEntityBuilder {
       pollOptionRestEntities.add(pollOptionRestEntity);
     }
 
-    /*for (PollOption pollOption : pollOptions) {
-      PollOptionRestEntity pollOptionRestEntity = new PollOptionRestEntity();
-      pollOptionRestEntity.setDescription(pollOption.getDescription());
-      pollOptionRestEntity.setId(pollOption.getId());
-      //TODO setVotes
-      pollOptionRestEntity.setVotes("0");
-      pollOptionRestEntities.add(pollOptionRestEntity);
-    }*/
     pollRestEntity.setOptions(pollOptionRestEntities);
     pollRestEntity.setEndDateTime(poll.getEndDate().getTime());
     return pollRestEntity;
