@@ -129,7 +129,11 @@ public class PollServiceImpl implements PollService {
     }
     long currentUserIdentityId = PollUtils.getCurrentUserIdentityId(identityManager, currentIdentity.getUserId());
     pollVote.setVoterId(currentUserIdentityId);
-    return pollStorage.addVote(pollVote);
+    PollVote pollVoted = pollStorage.addVote(pollVote);
+    if(pollVoted != null) {
+      updatePollActivity("10");
+    }
+    return pollVoted;
   }
 
   @Override
@@ -153,6 +157,13 @@ public class PollServiceImpl implements PollService {
     }
     long currentUserIdentityId = PollUtils.getCurrentUserIdentityId(identityManager, currentIdentity.getUserId());
     return pollStorage.checkVoted(pollId, currentUserIdentityId);
+  }
+
+  private void updatePollActivity(String idActivity) {
+    ExoSocialActivity activity = activityManager.getActivity(idActivity);
+    if (activity != null) {
+      activityManager.updateActivity(activity, true);
+    }
   }
 
 }

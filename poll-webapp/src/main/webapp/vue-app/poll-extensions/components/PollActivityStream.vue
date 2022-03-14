@@ -75,7 +75,6 @@ export default {
     if (this.pollId) {
       this.retrievePoll();
     }
-    console.log(this.poll);
   },
   methods: {
     retrievePoll() {
@@ -95,8 +94,14 @@ export default {
           });
       }
     },
-    submitVote() {
-      return;
+    submitVote(optionId) {
+      this.$pollService.addVote(optionId, eXo.env.portal.spaceId)
+        .then(() => {
+          document.dispatchEvent(new CustomEvent('activity-updated', {detail: this.activityId}));
+        })
+        .catch(error => {
+          console.error(`Error when voting: ${error}`);
+        });
     }
   }
 };

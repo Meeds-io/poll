@@ -134,7 +134,7 @@ public class PollRest implements ResourceContainer {
           @ApiResponse(code = HTTPStatus.UNAUTHORIZED, message = "Unauthorized operation"),
           @ApiResponse(code = HTTPStatus.INTERNAL_ERROR, message = "Internal server error"), })
   public Response addVote(@ApiParam(value = "space identifier", required = false) @QueryParam("spaceId") String spaceId,
-                          @ApiParam(value = "Poll id", required = true) @QueryParam("optionId") String optionId) {
+                          @ApiParam(value = "Poll option id", required = true) @QueryParam("optionId") String optionId) {
     if (optionId == null || optionId.isBlank() || spaceId == null || spaceId.isBlank()) {
       return Response.status(Response.Status.BAD_REQUEST).build();
     }
