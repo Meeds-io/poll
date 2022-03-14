@@ -131,7 +131,7 @@ public class PollServiceImpl implements PollService {
     pollVote.setVoterId(currentUserIdentityId);
     PollVote pollVoted = pollStorage.addVote(pollVote);
     if(pollVoted != null) {
-      updatePollActivity("10");
+      updatePollActivity(String.valueOf(pollStorage.getPollById(pollStorage.getPollOptionById(pollVote.getPollOptionId()).getPollId()).getActivityId()));
     }
     return pollVoted;
   }

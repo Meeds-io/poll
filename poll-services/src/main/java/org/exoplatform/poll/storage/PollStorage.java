@@ -100,5 +100,10 @@ public class PollStorage {
     return optionsVoted;
   }
 
+  public PollOption getPollOptionById(Long pollOptionId) {
+    PollOptionEntity pollOptionEntity = pollOptionDAO.find(pollOptionId);
+    return EntityMapper.fromPollOptionEntity(pollOptionEntity);
+  }
+
 
 }
