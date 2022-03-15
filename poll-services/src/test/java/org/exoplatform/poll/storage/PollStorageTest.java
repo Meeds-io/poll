@@ -148,7 +148,6 @@ public class PollStorageTest {
     // Then
     PollVote voteAdded = pollStorage.addVote(pollVote);
     assertNotNull(voteAdded);
-    assertNotNull(voteAdded.getId());
     assertEquals(1L, voteAdded.getVoterId());
     assertEquals(1L, voteAdded.getPollOptionId());
   }
@@ -178,11 +177,9 @@ public class PollStorageTest {
     // Then
     List<Integer> votes = pollStorage.getPollVotesById(poll.getId());
     assertNotNull(voteAdded);
-    assertNotNull(voteAdded.getId());
     assertEquals(1L, voteAdded.getVoterId());
     assertEquals(1L, voteAdded.getPollOptionId());
     assertNotNull(votes);
-    assertNotNull(votes.size());
 
   }
 
@@ -205,11 +202,9 @@ public class PollStorageTest {
     PollVote voteAdded = pollStorage.addVote(pollVote);
     List<Boolean> voted = pollStorage.checkVoted(poll.getId(), 1L);
     assertNotNull(voteAdded);
-    assertNotNull(voteAdded.getId());
     assertEquals(1L, voteAdded.getVoterId());
     assertEquals(1L, voteAdded.getPollOptionId());
     assertNotNull(voted);
-    assertNotNull(voted.size());
   }
 
   @PrepareForTest({ EntityMapper.class })
