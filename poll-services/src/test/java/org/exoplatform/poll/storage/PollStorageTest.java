@@ -26,8 +26,11 @@ import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 import org.exoplatform.poll.dao.PollVoteDAO;
+import org.exoplatform.poll.entity.PollVoteEntity;
+import org.exoplatform.poll.model.PollVote;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -53,12 +56,13 @@ public class PollStorageTest {
 
   private PollOptionDAO pollOptionDAO;
 
-  private PollVoteDAO pollVoteDAO;
+  private PollVoteDAO   pollVoteDAO;
 
   @Before
   public void setUp() throws Exception { // NOSONAR
     pollDAO = mock(PollDAO.class);
     pollOptionDAO = mock(PollOptionDAO.class);
+    pollVoteDAO = mock(PollVoteDAO.class);
     pollStorage = new PollStorage(pollDAO, pollOptionDAO, pollVoteDAO);
   }
 
@@ -90,7 +94,7 @@ public class PollStorageTest {
   @PrepareForTest({ EntityMapper.class })
   @Test
   public void testGetPollById() throws Exception { // NOSONAR
-    // Then
+    // Given
     Poll poll = createPoll();
     PollEntity pollEntity = createPollEntity();
     
@@ -109,7 +113,7 @@ public class PollStorageTest {
   @PrepareForTest({ EntityMapper.class })
   @Test
   public void testUpdatePoll() throws Exception { // NOSONAR
-    // Then
+    // Given
     Poll poll = createPoll();
     PollEntity pollEntity = createPollEntity();
     poll.setActivityId(1L);
@@ -124,6 +128,109 @@ public class PollStorageTest {
     Poll updatedPoll = pollStorage.updatePoll(poll);
     assertNotNull(updatedPoll);
     assertEquals(1L, updatedPoll.getActivityId());
+  }
+
+  @PrepareForTest({ EntityMapper.class })
+  @Test
+  public void testAddVote() throws Exception { // NOSONAR
+    // Given
+    Poll poll = createPoll();
+    PollOption pollOption = createPollOption(poll);
+    PollVoteEntity pollVoteEntity = createPollVoteEntity(pollOption.getId());
+    PollVote pollVote = createPollVote(pollOption.getId());
+
+    // When
+    when(pollVoteDAO.create(anyObject())).thenReturn(pollVoteEntity);
+    PowerMockito.mockStatic(EntityMapper.class);
+    when(EntityMapper.toPollVoteEntity(pollVote)).thenReturn(pollVoteEntity);
+    when(EntityMapper.fromPollVoteEntity(pollVoteEntity)).thenReturn(pollVote);
+
+    // Then
+    PollVote voteAdded = pollStorage.addVote(pollVote);
+    assertNotNull(voteAdded);
+    assertNotNull(voteAdded.getId());
+    assertEquals(1L, voteAdded.getVoterId());
+    assertEquals(1L, voteAdded.getPollOptionId());
+  }
+
+  @PrepareForTest({ EntityMapper.class })
+  @Test
+  public void testGetPollVotesById() throws Exception { // NOSONAR
+    // Given
+    Poll poll = createPoll();
+    PollOption pollOption = createPollOption(poll);
+    PollVoteEntity pollVoteEntity = createPollVoteEntity(pollOption.getId());
+    PollVote pollVote = createPollVote(pollOption.getId());
+
+    // When
+    when(pollVoteDAO.create(anyObject())).thenReturn(pollVoteEntity);
+    PowerMockito.mockStatic(EntityMapper.class);
+    when(EntityMapper.toPollVoteEntity(pollVote)).thenReturn(pollVoteEntity);
+    when(EntityMapper.fromPollVoteEntity(pollVoteEntity)).thenReturn(pollVote);
+
+    // Then
+    PollVote voteAdded = pollStorage.addVote(pollVote);
+
+    // When
+    when(pollVoteDAO.getTotalVotesByOption(anyObject())).thenReturn(1);
+    PowerMockito.mockStatic(EntityMapper.class);
+
+    // Then
+    List<Integer> votes = pollStorage.getPollVotesById(poll.getId());
+    assertNotNull(voteAdded);
+    assertNotNull(voteAdded.getId());
+    assertEquals(1L, voteAdded.getVoterId());
+    assertEquals(1L, voteAdded.getPollOptionId());
+    assertNotNull(votes);
+    assertNotNull(votes.size());
+
+  }
+
+  @PrepareForTest({ EntityMapper.class })
+  @Test
+  public void testCheckVoted() throws Exception { // NOSONAR
+    // Given
+    Poll poll = createPoll();
+    PollOption pollOption = createPollOption(poll);
+    PollVoteEntity pollVoteEntity = createPollVoteEntity(pollOption.getId());
+    PollVote pollVote = createPollVote(pollOption.getId());
+
+    // When
+    when(pollVoteDAO.create(anyObject())).thenReturn(pollVoteEntity);
+    PowerMockito.mockStatic(EntityMapper.class);
+    when(EntityMapper.toPollVoteEntity(pollVote)).thenReturn(pollVoteEntity);
+    when(EntityMapper.fromPollVoteEntity(pollVoteEntity)).thenReturn(pollVote);
+
+    // Then
+    PollVote voteAdded = pollStorage.addVote(pollVote);
+    List<Boolean> voted = pollStorage.checkVoted(poll.getId(), 1L);
+    assertNotNull(voteAdded);
+    assertNotNull(voteAdded.getId());
+    assertEquals(1L, voteAdded.getVoterId());
+    assertEquals(1L, voteAdded.getPollOptionId());
+    assertNotNull(voted);
+    assertNotNull(voted.size());
+  }
+
+  @PrepareForTest({ EntityMapper.class })
+  @Test
+  public void testGetPollOptionById() throws Exception { // NOSONAR
+    // Given
+    Poll poll = createPoll();
+    PollEntity pollEntity = createPollEntity();
+    PollOption pollOption = createPollOption(poll);
+    PollOptionEntity pollOptionEntity = createPollOptionEntity(pollEntity);
+
+    // When
+    when(pollOptionDAO.find(anyObject())).thenReturn(pollOptionEntity);
+    PowerMockito.mockStatic(EntityMapper.class);
+    when(EntityMapper.toPollOptionEntity(pollOption, pollEntity.getId())).thenReturn(pollOptionEntity);
+    when(EntityMapper.fromPollOptionEntity(pollOptionEntity)).thenReturn(pollOption);
+
+    // Then
+    PollOption retrievedPollOption = pollStorage.getPollOptionById(poll.getId());
+    assertNotNull(retrievedPollOption);
+    assertEquals(retrievedPollOption, pollOption);
   }
 
   protected Poll createPoll() {
@@ -164,5 +271,23 @@ public class PollStorageTest {
     pollOptionEntity.setDescription("pollOption description");
     pollOptionEntity.setId(1L);
     return pollOptionEntity;
+  }
+
+  protected PollVoteEntity createPollVoteEntity(Long optionId) {
+    Date createdDate = new Date(System.currentTimeMillis());
+    PollVoteEntity pollVoteEntity = new PollVoteEntity();
+    pollVoteEntity.setPollOptionId(optionId);
+    pollVoteEntity.setVoterId(1L);
+    pollVoteEntity.setVoteDate(createdDate);
+    return pollVoteEntity;
+  }
+
+  protected PollVote createPollVote(Long optionId) {
+    PollVote pollVote = new PollVote();
+    pollVote.setVoteDate(new Date());
+    pollVote.setPollOptionId(optionId);
+    pollVote.setVoterId(1L);
+    pollVote.setId(1L);
+    return pollVote;
   }
 }

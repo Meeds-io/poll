@@ -124,8 +124,8 @@ public class PollServiceImpl implements PollService {
                           String spaceId,
                           org.exoplatform.services.security.Identity currentIdentity) throws IllegalAccessException {
     Space space = spaceService.getSpaceById(spaceId);
-    if (!spaceService.canRedactOnSpace(space, currentIdentity)) {
-      throw new IllegalAccessException("User " + currentIdentity.getUserId() + "is not allowed to vote");
+    if (!spaceService.isMember(space, currentIdentity.getUserId())) {
+      throw new IllegalAccessException("User " + currentIdentity.getUserId() + "is not allowed to get total votes of each option of a poll");
     }
     long currentUserIdentityId = PollUtils.getCurrentUserIdentityId(identityManager, currentIdentity.getUserId());
     pollVote.setVoterId(currentUserIdentityId);
