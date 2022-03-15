@@ -24,6 +24,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import org.exoplatform.social.core.activity.model.ActivityFile;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -40,5 +42,8 @@ public class PollRestEntity {
   private String                     duration;
 
   private String                     message;
+
+  private List<ActivityFile>         files;
+
 
 }

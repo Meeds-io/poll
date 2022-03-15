@@ -111,7 +111,8 @@ export default {
             };
           }),
         duration: this.savedPoll.duration,
-        message: message
+        message: message,
+        files: this.files
       };
       this.$pollService.postPoll(poll, eXo.env.portal.spaceId)
         .then(() => {

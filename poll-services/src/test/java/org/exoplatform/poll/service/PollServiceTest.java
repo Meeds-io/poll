@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.exoplatform.social.core.activity.model.ActivityFile;
 import org.junit.Test;
 
 import org.exoplatform.poll.model.Poll;
@@ -52,9 +53,8 @@ public class PollServiceTest extends BasePollTest {
     List<PollOption> pollOptionList = new ArrayList<>();
     pollOptionList.add(pollOption);
     spaceService.addRedactor(space, user1Identity.getRemoteId());
-
     // When
-    Poll createdPoll = pollService.createPoll(poll, pollOptionList, space.getId(), MESSAGE, testuser1Identity);
+    Poll createdPoll = pollService.createPoll(poll, pollOptionList, space.getId(), MESSAGE, testuser1Identity, new ArrayList<>());
     
     // Then
     assertNotNull(createdPoll);
@@ -73,7 +73,7 @@ public class PollServiceTest extends BasePollTest {
 
     // When
     try {
-      pollService.createPoll(poll1, pollOptionList, space.getId(), MESSAGE, testuser2Identity);
+      pollService.createPoll(poll1, pollOptionList, space.getId(), MESSAGE, testuser2Identity, new ArrayList<>());
       fail("Should fail when a non redactor member attempts to create a poll");
     } catch (IllegalAccessException e) {
       // Expected
@@ -99,7 +99,7 @@ public class PollServiceTest extends BasePollTest {
     spaceService.addRedactor(space, user1Identity.getRemoteId());
 
     // When
-    Poll createdPoll = pollService.createPoll(poll, pollOptionList, space.getId(), MESSAGE, testuser1Identity);
+    Poll createdPoll = pollService.createPoll(poll, pollOptionList, space.getId(), MESSAGE, testuser1Identity, new ArrayList<>());
     createdPoll = pollService.getPollById(createdPoll.getId(), testuser1Identity);
 
     // Then
@@ -137,7 +137,7 @@ public class PollServiceTest extends BasePollTest {
     spaceService.addRedactor(space, user1Identity.getRemoteId());
 
     // When
-    Poll createdPoll = pollService.createPoll(poll, pollOptionList, space.getId(), MESSAGE, testuser1Identity);
+    Poll createdPoll = pollService.createPoll(poll, pollOptionList, space.getId(), MESSAGE, testuser1Identity, new ArrayList<>());
     List<PollOption> retrievedPollOptions = pollService.getPollOptionsById(createdPoll.getId(), testuser1Identity);
 
     // Then

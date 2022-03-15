@@ -80,7 +80,7 @@ public class PollRest implements ResourceContainer {
     try {
       Poll poll = RestEntityBuilder.toPoll(pollRestEntity);
       List<PollOption> pollOptions = RestEntityBuilder.toPollOptions(pollRestEntity.getOptions());
-      poll = pollService.createPoll(poll, pollOptions, spaceId, pollRestEntity.getMessage(), currentIdentity);
+      poll = pollService.createPoll(poll, pollOptions, spaceId, pollRestEntity.getMessage(), currentIdentity, pollRestEntity.getFiles());
       return Response.ok(poll).build();
     } catch (IllegalAccessException e) {
       LOG.warn("User '{}' attempts to create a non authorized poll", e);

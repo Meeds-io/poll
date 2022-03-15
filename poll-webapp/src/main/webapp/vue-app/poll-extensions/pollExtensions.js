@@ -33,6 +33,6 @@ export function initExtensions() {
       return activity && activity.type === 'poll';
     },
     vueComponent: Vue.options.components['poll-activity-stream'],
-    rank: 10,
+    rank: 30,
   });
 }

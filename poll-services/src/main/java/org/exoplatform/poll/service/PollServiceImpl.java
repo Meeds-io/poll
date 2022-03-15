@@ -26,6 +26,7 @@ import org.exoplatform.poll.model.Poll;
 import org.exoplatform.poll.model.PollOption;
 import org.exoplatform.poll.storage.PollStorage;
 import org.exoplatform.poll.utils.PollUtils;
+import org.exoplatform.social.core.activity.model.ActivityFile;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.activity.model.ExoSocialActivityImpl;
 import org.exoplatform.social.core.identity.model.Identity;
@@ -59,7 +60,8 @@ public class PollServiceImpl implements PollService {
                          List<PollOption> pollOptions,
                          String spaceId,
                          String message,
-                         org.exoplatform.services.security.Identity currentIdentity) throws IllegalAccessException {
+                         org.exoplatform.services.security.Identity currentIdentity,
+                         List<ActivityFile> files) throws IllegalAccessException {
     Space space = spaceService.getSpaceById(spaceId);
     if (!spaceService.canRedactOnSpace(space, currentIdentity)) {
       throw new IllegalAccessException("User " + currentIdentity.getUserId() + "is not allowed to create a poll with question "
@@ -69,7 +71,7 @@ public class PollServiceImpl implements PollService {
     poll.setCreatorId(currentUserIdentityId);
     poll.setSpaceId(Long.parseLong(spaceId));
     Poll createdPoll = pollStorage.createPoll(poll, pollOptions);
-    return postPollActivity(message, spaceId, currentIdentity, createdPoll);
+    return postPollActivity(message, spaceId, currentIdentity, createdPoll, files);
   }
 
   @Override
@@ -95,9 +97,10 @@ public class PollServiceImpl implements PollService {
   }
   
   private Poll postPollActivity(String message,
-                                  String spaceId,
-                                  org.exoplatform.services.security.Identity currentIdentity,
-                                  Poll createdPoll) {
+                                String spaceId,
+                                org.exoplatform.services.security.Identity currentIdentity,
+                                Poll createdPoll,
+                                List<ActivityFile> files) {
     Space space = spaceService.getSpaceById(spaceId);
     Identity spaceIdentity = identityManager.getOrCreateIdentity(SpaceIdentityProvider.NAME, space.getPrettyName());
     Identity pollActivityCreatorIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, currentIdentity.getUserId());
@@ -106,6 +109,7 @@ public class PollServiceImpl implements PollService {
     activity.setTitle(message);
     activity.setType(PollUtils.POLL_ACTIVITY_TYPE);
     activity.setUserId(pollActivityCreatorIdentity.getId());
+    activity.setFiles(files);
     Map<String, String> templateParams = new HashMap<>();
     templateParams.put(PollUtils.POLL_ID, String.valueOf(createdPoll.getId()));
     activity.setTemplateParams(templateParams);

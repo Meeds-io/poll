@@ -21,6 +21,7 @@ package org.exoplatform.poll.service;
 import org.exoplatform.poll.model.Poll;
 import org.exoplatform.poll.model.PollOption;
 import org.exoplatform.services.security.Identity;
+import org.exoplatform.social.core.activity.model.ActivityFile;
 
 import java.util.List;
 
@@ -36,7 +37,7 @@ public interface PollService {
    * @return created {@link Poll} with generated technical identifier
    * @throws IllegalAccessException when user is not authorized to create a poll
    */
-  Poll createPoll(Poll poll, List<PollOption> pollOptions, String spaceId, String message, Identity currentIdentity) throws IllegalAccessException;
+  Poll createPoll(Poll poll, List<PollOption> pollOptions, String spaceId, String message, Identity currentIdentity, List<ActivityFile> files) throws IllegalAccessException;
 
   /**
    * Retrieves a poll identified by its technical identifier.
