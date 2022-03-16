@@ -21,11 +21,15 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     <v-card
       class="border-color border-radius my-3 pa-5"
       outlined>
-      <poll-activity :poll="poll" @submit-vote="submitVote" />
+      <poll-activity
+        :poll="poll"
+        @submit-vote="submitVote"
+        :show-results="showResults"
+        :final-results="finalResults" />
     </v-card>
     <div
       class="votes-remaining-state"
-      v-text="reminingTime">
+      v-text="remainingTime">
     </div>
   </div>
 </template>
@@ -43,13 +47,13 @@ export default {
     poll: null
   }),
   computed: {
-    reminingTime() {
+    remainingTime() {
       const nowDateTime = new Date().getTime();
       const endDateTime = this.activity.poll.endDateTime;
       const days = this.$pollUtils.getRemainingDate.inDays(nowDateTime, endDateTime);
       const hours = this.$pollUtils.getRemainingDate.inHours(nowDateTime, endDateTime) - this.$pollUtils.getRemainingDate.inDays(nowDateTime, endDateTime)*24;
       const minutes = this.$pollUtils.getRemainingDate.inMinutes(nowDateTime, endDateTime) - this.$pollUtils.getRemainingDate.inHours(nowDateTime, endDateTime)*60;
-      return this.$t('activity.poll.remaining',{0: days, 1: hours, 2: minutes});
+      return this.finalResults ? this.$t('activity.poll.expired') : this.$t('activity.poll.remaining',{0: days, 1: hours, 2: minutes});
     },
     templateParams() {
       return this.activity && this.activity.templateParams;
@@ -60,6 +64,12 @@ export default {
     activityId() {
       return this.activity && this.activity.id;
     },
+    showResults() {
+      return this.activity && this.activity.poll && this.activity.poll.options && this.activity.poll.options.some(option => option.selected);
+    },
+    finalResults() {
+      return this.activity && this.activity.poll && this.activity.poll.endDateTime < new Date().getTime();
+    }
   },
   created() {
     if (this.pollId) {

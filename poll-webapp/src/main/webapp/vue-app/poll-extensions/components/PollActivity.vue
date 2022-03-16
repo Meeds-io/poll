@@ -22,7 +22,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <h3 class="question" v-sanitized-html="poll.question"></h3>
       <div class="answer-content">
         <div
-          v-for="(answer, index) in poll.options"
+          v-for="(answer, index) in answersPercent"
           :key="index"
           :class="{ voteAnswer: true, [answer.class]: (answer.class) }">
           <template v-if="!finalResults">
@@ -31,7 +31,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               :class="{ 'answer-no-vote no-select': true, active: answer.selected }"
               @click.prevent="handleVote(answer)">
               <span class="vote-content" v-sanitized-html="answer.description"></span>
-            </div>      
+            </div>
 
             <div v-else>
               <v-progress-linear
@@ -45,8 +45,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                     <span
                       v-if="answer.percent"
                       class="vote-percent"
-                      v-text="answer.percent"></span>                  
-                    <span class="vote-content" v-sanitized-html="answer.text"></span> 
+                      v-text="answer.percent"></span>
+                    <span class="vote-content" v-sanitized-html="answer.description"></span>
                   </div>
                 </template>
               </v-progress-linear>
@@ -67,17 +67,17 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                     v-if="answer.percent"
                     class="vote-percent"
                     v-text="answer.percent"></span>
-                  <span class="vote-content" v-sanitized-html="answer.description"></span> 
+                  <span class="vote-content" v-sanitized-html="answer.description"></span>
                 </div>
               </template>
             </v-progress-linear>
-            <span :class="{ voteBackground: true, selected: mostVotes == answer.votes }" :style="{ width: answer.percent }"></span>
+            <span :class="{ voteBackground: true, selected: mostVotes === answer.votes }" :style="{ width: answer.percent }"></span>
           </template>
         </div>
       </div>
       <div
-        class="total-votes" 
-        v-if="showTotalVotes && (visibleResults || finalResults)" 
+        class="total-votes"
+        v-if="showTotalVotes && (visibleResults || finalResults)"
         v-text="totalVotesFormatted">
       </div>
     </div>
@@ -118,10 +118,13 @@ export default {
     };
   },
   computed: {
+    answers() {
+      return this.poll && this.poll.options;
+    },
     totalVotes() {
       let totalVotes = 0;
       this.answers.filter(answer => {
-        if (!isNaN(answer.votes) && answer.votes > 0){
+        if (!isNaN(answer.votes) && answer.votes > 0) {
           totalVotes += parseInt(answer.votes);
         }
       });
@@ -133,7 +136,7 @@ export default {
     mostVotes() {
       let max = 0;
       this.answers.filter(answer => {
-        if (!isNaN(answer.votes) && answer.votes > 0 && answer.votes >= max){
+        if (!isNaN(answer.votes) && answer.votes > 0 && answer.votes >= max) {
           max = answer.votes;
         }
       });
@@ -151,7 +154,7 @@ export default {
           answer.percent = `${Math.round( (parseInt(answer.votes)/this.totalVotes ) * 100)}%`;
         }
         else {
-          answer.percent =  '0%';
+          answer.percent = '0%';
         }
         return answer;
       });
@@ -159,22 +162,11 @@ export default {
   },
   methods: {
     handleVote(answer) {
-
       answer.votes ++;
       answer.selected = true;
       this.visibleResults = true;
 
-      const res = {
-        value: answer.value,
-        votes: answer.votes,
-        totalVotes: this.totalVotes
-      };
-
-      if (this.customId) {
-        res.customId = this.customId;
-      }
-
-      this.$emit('submit-vote', res);
+      this.$emit('submit-vote', answer.id);
     }
   }
 };
