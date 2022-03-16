@@ -107,10 +107,6 @@ export default {
       type: String,
       default: 'Submit'
     },
-    customId: {
-      type: Number,
-      default: 0
-    }
   },
   data() {
     return {
