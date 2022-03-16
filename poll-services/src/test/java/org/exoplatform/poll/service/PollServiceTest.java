@@ -23,7 +23,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.exoplatform.poll.model.PollVote;
-import org.exoplatform.social.core.activity.model.ActivityFile;
 import org.junit.Test;
 
 import org.exoplatform.poll.model.Poll;
@@ -34,14 +33,14 @@ import static org.junit.Assert.*;
 public class PollServiceTest extends BasePollTest {
   private Date                createdDate = new Date(1508484583259L);
 
-  private Date                endDate     = new Date(1508484583260L);
+  private Date                endDate     = new Date(11508484583260L);
 
   private final static String MESSAGE     = "Activity title";
 
   @Test
   public void testCreatePoll() throws IllegalAccessException {
     // Given
-    org.exoplatform.services.security.Identity testuser1Identity = new org.exoplatform.services.security.Identity("testuser1");
+    org.exoplatform.services.security.Identity testUser1Identity = new org.exoplatform.services.security.Identity("testuser1");
     Poll poll = new Poll();
     poll.setQuestion("q1");
     poll.setCreatedDate(createdDate);
@@ -55,7 +54,7 @@ public class PollServiceTest extends BasePollTest {
     pollOptionList.add(pollOption);
     spaceService.addRedactor(space, user1Identity.getRemoteId());
     // When
-    Poll createdPoll = pollService.createPoll(poll, pollOptionList, space.getId(), MESSAGE, testuser1Identity, new ArrayList<>());
+    Poll createdPoll = pollService.createPoll(poll, pollOptionList, space.getId(), MESSAGE, testUser1Identity, new ArrayList<>());
     
     // Then
     assertNotNull(createdPoll);
@@ -84,7 +83,7 @@ public class PollServiceTest extends BasePollTest {
   @Test
   public void testGetPollById() throws IllegalAccessException {
     // Given
-    org.exoplatform.services.security.Identity testuser1Identity = new org.exoplatform.services.security.Identity("testuser1");
+    org.exoplatform.services.security.Identity testUser1Identity = new org.exoplatform.services.security.Identity("testuser1");
     Poll poll = new Poll();
     poll.setQuestion("q1");
     poll.setCreatedDate(createdDate);
@@ -99,8 +98,8 @@ public class PollServiceTest extends BasePollTest {
     pollOptionList.add(pollOption);
 
     // When
-    Poll createdPoll = pollService.createPoll(poll, pollOptionList, space.getId(), MESSAGE, testuser1Identity, new ArrayList<>());
-    createdPoll = pollService.getPollById(createdPoll.getId(), testuser1Identity);
+    Poll createdPoll = pollService.createPoll(poll, pollOptionList, space.getId(), MESSAGE, testUser1Identity, new ArrayList<>());
+    createdPoll = pollService.getPollById(createdPoll.getId(), testUser1Identity);
 
     // Then
     assertNotNull(poll);
@@ -130,8 +129,6 @@ public class PollServiceTest extends BasePollTest {
     poll.setSpaceId(1L);
     PollOption pollOption = new PollOption();
     pollOption.setDescription("pollOption");
-    List<PollOption> options = new ArrayList<>();
-    options.add(pollOption);
     List<PollOption> pollOptionList = new ArrayList<>();
     pollOptionList.add(pollOption);
 
@@ -151,7 +148,7 @@ public class PollServiceTest extends BasePollTest {
     Poll poll = new Poll();
     poll.setQuestion("q1");
     poll.setCreatedDate(createdDate);
-    poll.setEndDate(endDate);
+    poll.setEndDate(new Date(11508484583260L));
     poll.setCreatorId(Long.parseLong(user1Identity.getId()));
     poll.setSpaceId(1L);
     PollOption pollOption = new PollOption();
@@ -183,7 +180,7 @@ public class PollServiceTest extends BasePollTest {
     Poll poll = new Poll();
     poll.setQuestion("q1");
     poll.setCreatedDate(createdDate);
-    poll.setEndDate(endDate);
+    poll.setEndDate(new Date(11508484583260L));
     poll.setCreatorId(Long.parseLong(user1Identity.getId()));
     poll.setSpaceId(1L);
     PollOption pollOption = new PollOption();
@@ -213,7 +210,7 @@ public class PollServiceTest extends BasePollTest {
     Poll poll = new Poll();
     poll.setQuestion("q1");
     poll.setCreatedDate(createdDate);
-    poll.setEndDate(endDate);
+    poll.setEndDate(new Date(11508484583260L));
     poll.setCreatorId(Long.parseLong(user1Identity.getId()));
     poll.setSpaceId(1L);
     PollOption pollOption = new PollOption();

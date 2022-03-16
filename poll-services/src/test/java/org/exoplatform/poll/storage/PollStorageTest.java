@@ -230,7 +230,7 @@ public class PollStorageTest {
 
   protected Poll createPoll() {
     Date createdDate = new Date(System.currentTimeMillis());
-    Date endDate = new Date(System.currentTimeMillis() + 1);
+    Date endDate = new Date(11508484583260L);
     Poll poll = new Poll();
     poll.setId(1L);
     poll.setQuestion("q1");
@@ -250,7 +250,7 @@ public class PollStorageTest {
 
   protected PollEntity createPollEntity() {
     Date createdDate = new Date(System.currentTimeMillis());
-    Date endDate = new Date(System.currentTimeMillis() + 1);
+    Date endDate = new Date(11508484583260L);
     PollEntity pollEntity = new PollEntity();
     pollEntity.setId(1L);
     pollEntity.setQuestion("q1");

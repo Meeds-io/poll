@@ -35,7 +35,7 @@ public class PollVoteDAOTest extends TestCase {
 
     private Date startDate   = new Date(1508484583259L);
 
-    private Date            endDate     = new Date(1508484583260L);
+    private Date            endDate     = new Date(11508484583260L);
 
     private String          question    = "q1";
 
