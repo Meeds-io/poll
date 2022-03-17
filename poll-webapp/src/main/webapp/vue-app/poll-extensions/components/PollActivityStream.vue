@@ -49,7 +49,7 @@ export default {
   computed: {
     remainingTime() {
       const nowDateTime = new Date().getTime();
-      const endDateTime = this.activity.poll.endDateTime;
+      const endDateTime = this.poll.endDateTime;
       const days = this.$pollUtils.getRemainingDate.inDays(nowDateTime, endDateTime);
       const hours = this.$pollUtils.getRemainingDate.inHours(nowDateTime, endDateTime) - this.$pollUtils.getRemainingDate.inDays(nowDateTime, endDateTime)*24;
       const minutes = this.$pollUtils.getRemainingDate.inMinutes(nowDateTime, endDateTime) - this.$pollUtils.getRemainingDate.inHours(nowDateTime, endDateTime)*60;
@@ -65,10 +65,10 @@ export default {
       return this.activity && this.activity.id;
     },
     showResults() {
-      return this.activity && this.activity.poll && this.activity.poll.options && this.activity.poll.options.some(option => option.selected);
+      return this.poll && this.poll.options && this.poll.options.some(option => option.selected);
     },
     finalResults() {
-      return this.activity && this.activity.poll && this.activity.poll.endDateTime < new Date().getTime();
+      return this.poll && this.poll.endDateTime < new Date().getTime();
     }
   },
   created() {
@@ -78,21 +78,17 @@ export default {
   },
   methods: {
     retrievePoll() {
-      if (this.activity.poll) {
-        this.poll = this.activity.poll;
-      } else {
-        this.$pollService.getPollById(this.pollId)
-          .then(poll => {
-            this.poll = poll;
-            if (!this.poll) {
-              this.$root.$emit('activity-extension-abort', this.activityId);
-            }
-            this.activity.poll = poll;
-          })
-          .catch(() => {
+      this.$pollService.getPollById(this.pollId)
+        .then(poll => {
+          this.poll = poll;
+          if (!this.poll) {
             this.$root.$emit('activity-extension-abort', this.activityId);
-          });
-      }
+          }
+          this.activity.poll = poll;
+        })
+        .catch(() => {
+          this.$root.$emit('activity-extension-abort', this.activityId);
+        });
     },
     submitVote(optionId) {
       this.$pollService.addVote(optionId, eXo.env.portal.spaceId)
