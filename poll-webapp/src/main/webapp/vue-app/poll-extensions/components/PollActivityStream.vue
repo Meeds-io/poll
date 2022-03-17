@@ -22,6 +22,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       class="border-color border-radius my-3 pa-5"
       outlined>
       <poll-activity
+        v-if="poll"
         :poll="poll"
         @submit-vote="submitVote"
         :show-results="showResults"
@@ -34,8 +35,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   </div>
 </template>
 
-<script> 
-    
+<script>
+
 export default {
   props: {
     activity: {
@@ -49,7 +50,7 @@ export default {
   computed: {
     remainingTime() {
       const nowDateTime = new Date().getTime();
-      const endDateTime = this.poll.endDateTime;
+      const endDateTime = this.poll && this.poll.endDateTime;
       const days = this.$pollUtils.getRemainingDate.inDays(nowDateTime, endDateTime);
       const hours = this.$pollUtils.getRemainingDate.inHours(nowDateTime, endDateTime) - this.$pollUtils.getRemainingDate.inDays(nowDateTime, endDateTime)*24;
       const minutes = this.$pollUtils.getRemainingDate.inMinutes(nowDateTime, endDateTime) - this.$pollUtils.getRemainingDate.inHours(nowDateTime, endDateTime)*60;
