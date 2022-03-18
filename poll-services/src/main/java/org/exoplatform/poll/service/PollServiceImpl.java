@@ -66,8 +66,7 @@ public class PollServiceImpl implements PollService {
                          List<ActivityFile> files) throws IllegalAccessException {
     Space space = spaceService.getSpaceById(spaceId);
     if (!spaceService.canRedactOnSpace(space, currentIdentity)) {
-      throw new IllegalAccessException("User " + currentIdentity.getUserId() + "is not allowed to create a poll with question "
-          + poll.getQuestion());
+      throw new IllegalAccessException("User " + currentIdentity.getUserId() + " is not allowed to create a poll with question " + poll.getQuestion());
     }
     long currentUserIdentityId = PollUtils.getCurrentUserIdentityId(identityManager, currentIdentity.getUserId());
     poll.setCreatorId(currentUserIdentityId);
@@ -81,21 +80,72 @@ public class PollServiceImpl implements PollService {
     Poll poll = pollStorage.getPollById(pollId);
     Space pollSpace = spaceService.getSpaceById(String.valueOf(poll.getSpaceId()));
     if (!spaceService.isMember(pollSpace, currentIdentity.getUserId())) {
-      throw new IllegalAccessException("User " + currentIdentity.getUserId() + "is not allowed to get a poll with id "
-          + pollId);
+      throw new IllegalAccessException("User " + currentIdentity.getUserId() + " is not allowed to get a poll with id " + pollId);
     }
     return poll;
   }
   
+
   @Override
-  public List<PollOption> getPollOptionsById(long pollId, org.exoplatform.services.security.Identity currentIdentity) throws IllegalAccessException {
+  public PollOption getPollOptionById(long pollOptionId, org.exoplatform.services.security.Identity currentIdentity) throws IllegalAccessException {
+    PollOption pollOption = pollStorage.getPollOptionById(pollOptionId);
+    Poll poll = pollStorage.getPollById(pollOption.getPollId());
+    Space pollSpace = spaceService.getSpaceById(String.valueOf(poll.getSpaceId()));
+    if (!spaceService.isMember(pollSpace, currentIdentity.getUserId())) {
+      throw new IllegalAccessException("User " + currentIdentity.getUserId() + " is not allowed to get a poll option with id " + pollOptionId);
+    }
+    return pollOption;
+  }
+  
+  @Override
+  public List<PollOption> getPollOptionsByPollId(long pollId, org.exoplatform.services.security.Identity currentIdentity) throws IllegalAccessException {
     Poll poll = pollStorage.getPollById(pollId);
     Space pollSpace = spaceService.getSpaceById(String.valueOf(poll.getSpaceId()));
     if (!spaceService.isMember(pollSpace, currentIdentity.getUserId())) {
-      throw new IllegalAccessException("User " + currentIdentity.getUserId() + "is not allowed to get options of poll with id "
-          + pollId);
+      throw new IllegalAccessException("User " + currentIdentity.getUserId() + " is not allowed to get options of poll with id " + pollId);
     }
     return pollStorage.getPollOptionsById(pollId);
+  }
+  
+  @Override
+  public PollVote vote(String optionId, String spaceId, org.exoplatform.services.security.Identity currentIdentity) throws IllegalAccessException {
+    Space space = spaceService.getSpaceById(spaceId);
+    Poll poll = getPollById(pollStorage.getPollOptionById(Long.parseLong(optionId)).getPollId(), currentIdentity);
+    if (!spaceService.isMember(space, currentIdentity.getUserId())) {
+      throw new IllegalAccessException("User " + currentIdentity.getUserId() + " is not allowed to vote in a poll with id " + poll.getId());
+    }
+    if (!poll.getEndDate().after(new Date())) {
+      throw new IllegalAccessException("User " + currentIdentity.getUserId() + " is not allowed to vote in an expired poll with id " + poll.getId());
+    }
+    long currentUserIdentityId = PollUtils.getCurrentUserIdentityId(identityManager, currentIdentity.getUserId());
+    PollVote pollVote = new PollVote();
+    pollVote.setVoterId(currentUserIdentityId);
+    pollVote.setPollOptionId(Long.parseLong(optionId));
+    pollVote.setVoteDate(new Date());
+    pollVote = pollStorage.createPollVote(pollVote);
+    if(pollVote != null) {
+      updatePollActivity(String.valueOf(poll.getActivityId()));
+    }
+    return pollVote;
+  }
+
+  @Override
+  public int getPollOptionTotalVotes(long pollOptionId, String spaceId, org.exoplatform.services.security.Identity currentIdentity) throws IllegalAccessException {
+    Space pollSpace = spaceService.getSpaceById(spaceId);
+    if (!spaceService.isMember(pollSpace, currentIdentity.getUserId())) {
+      throw new IllegalAccessException("User " + currentIdentity.getUserId() + " is not allowed to get total votes of poll option with id " + pollOptionId);
+    }
+    return pollStorage.countPollOptionTotalVotes(pollOptionId);
+  }
+
+  @Override
+  public boolean isPollOptionVoted(long pollOptionId, String spaceId, org.exoplatform.services.security.Identity currentIdentity) throws IllegalAccessException {
+    Space pollSpace = spaceService.getSpaceById(spaceId);
+    if (!spaceService.isMember(pollSpace, currentIdentity.getUserId())) {
+      throw new IllegalAccessException("User " + currentIdentity.getUserId() + " is not allowed to check if poll option with id " + pollOptionId + " is voted");
+    }
+    long currentUserIdentityId = PollUtils.getCurrentUserIdentityId(identityManager, currentIdentity.getUserId());
+    return pollStorage.countPollOptionTotalVotesByUser(pollOptionId, currentUserIdentityId) > 0;
   }
   
   private Poll postPollActivity(String message,
@@ -120,51 +170,6 @@ public class PollServiceImpl implements PollService {
     createdPoll.setActivityId(Long.parseLong(activity.getId()));
     return pollStorage.updatePoll(createdPoll);
   }
-  @Override
-  public PollVote addVote(PollVote pollVote,
-                          String spaceId,
-                          org.exoplatform.services.security.Identity currentIdentity) throws IllegalAccessException {
-    Space space = spaceService.getSpaceById(spaceId);
-    Poll poll = pollStorage.getPollById(pollStorage.getPollOptionById(pollVote.getPollOptionId()).getPollId());
-    if (!spaceService.isMember(space, currentIdentity.getUserId())) {
-      throw new IllegalAccessException("User " + currentIdentity.getUserId() + "is not allowed to get total votes of each option of a poll with id" +
-              poll.getId());
-    }
-    if (!poll.getEndDate().after(new Date())) {
-      throw new IllegalAccessException("User " + currentIdentity.getUserId() + "is not allowed to vote in an expired poll with id" +
-              poll.getId());
-    }
-    long currentUserIdentityId = PollUtils.getCurrentUserIdentityId(identityManager, currentIdentity.getUserId());
-    pollVote.setVoterId(currentUserIdentityId);
-    PollVote pollVoted = pollStorage.addVote(pollVote);
-    if(pollVoted != null) {
-      updatePollActivity(String.valueOf(poll.getActivityId()));
-    }
-    return pollVoted;
-  }
-
-  @Override
-  public List<Integer> getPollVotesById(long pollId, org.exoplatform.services.security.Identity currentIdentity) throws IllegalAccessException {
-    Poll poll = pollStorage.getPollById(pollId);
-    Space pollSpace = spaceService.getSpaceById(String.valueOf(poll.getSpaceId()));
-    if (!spaceService.isMember(pollSpace, currentIdentity.getUserId())) {
-      throw new IllegalAccessException("User " + currentIdentity.getUserId() + "is not allowed to get total votes of each option of poll with id "
-              + pollId);
-    }
-    return pollStorage.getPollVotesById(pollId);
-  }
-
-  @Override
-  public List<Boolean> checkVoted(long pollId, org.exoplatform.services.security.Identity currentIdentity) throws IllegalAccessException {
-    Poll poll = pollStorage.getPollById(pollId);
-    Space pollSpace = spaceService.getSpaceById(String.valueOf(poll.getSpaceId()));
-    if (!spaceService.isMember(pollSpace, currentIdentity.getUserId())) {
-      throw new IllegalAccessException("User " + currentIdentity.getUserId() + "is not allowed to get total votes of each option of poll with id "
-              + pollId);
-    }
-    long currentUserIdentityId = PollUtils.getCurrentUserIdentityId(identityManager, currentIdentity.getUserId());
-    return pollStorage.checkVoted(pollId, currentUserIdentityId);
-  }
 
   private void updatePollActivity(String idActivity) {
     ExoSocialActivity activity = activityManager.getActivity(idActivity);
@@ -172,5 +177,4 @@ public class PollServiceImpl implements PollService {
       activityManager.updateActivity(activity, true);
     }
   }
-
 }

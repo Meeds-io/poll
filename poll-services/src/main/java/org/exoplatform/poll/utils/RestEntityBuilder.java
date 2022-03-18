@@ -20,17 +20,14 @@ package org.exoplatform.poll.utils;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.exoplatform.poll.model.Poll;
 import org.exoplatform.poll.model.PollOption;
-import org.exoplatform.poll.model.PollVote;
-import org.exoplatform.poll.rest.model.PollRestEntity;
 import org.exoplatform.poll.rest.model.PollOptionRestEntity;
-import org.exoplatform.poll.rest.model.PollVoteRestEntity;
+import org.exoplatform.poll.rest.model.PollRestEntity;
 
 public class RestEntityBuilder {
   
@@ -46,26 +43,22 @@ public class RestEntityBuilder {
   }
   
   public static final PollRestEntity fromPoll(Poll poll,
-                                              List<PollOption> pollOptions,
-                                              List<Integer> pollTotalVotes,
-                                              List<Boolean> pollOptionsVoted) {
+                                              List<PollOptionRestEntity> pollOptionRestEntities) {
     PollRestEntity pollRestEntity = new PollRestEntity();
-    pollRestEntity.setQuestion(poll.getQuestion());
     pollRestEntity.setId(poll.getId());
-    List<PollOptionRestEntity> pollOptionRestEntities = new ArrayList<>();
-
-    for (int i = 0; i < pollOptions.size(); i++) {
-      PollOptionRestEntity pollOptionRestEntity = new PollOptionRestEntity();
-      pollOptionRestEntity.setDescription(pollOptions.get(i).getDescription());
-      pollOptionRestEntity.setId(pollOptions.get(i).getId());
-      pollOptionRestEntity.setVotes(pollTotalVotes.get(i));
-      pollOptionRestEntity.setSelected(pollOptionsVoted.get(i));
-      pollOptionRestEntities.add(pollOptionRestEntity);
-    }
-
+    pollRestEntity.setQuestion(poll.getQuestion());
     pollRestEntity.setOptions(pollOptionRestEntities);
     pollRestEntity.setEndDateTime(poll.getEndDate().getTime());
     return pollRestEntity;
+  }
+
+  public static final PollOptionRestEntity fromPollOption(PollOption pollOption, int votes, boolean voted) {
+    PollOptionRestEntity pollOptionRestEntity = new PollOptionRestEntity();
+    pollOptionRestEntity.setId(pollOption.getId());
+    pollOptionRestEntity.setDescription(pollOption.getDescription());
+    pollOptionRestEntity.setVotes(votes);
+    pollOptionRestEntity.setVoted(voted);
+    return pollOptionRestEntity;
   }
 
   public static final Poll toPoll(PollRestEntity pollRestEntity) {
@@ -101,13 +94,5 @@ public class RestEntityBuilder {
       pollOption.setDescription(pollOptionEntity.getDescription());
       return pollOption;
     }).collect(Collectors.toList());
-  }
-
-  public static final PollVote toPollVote(PollVoteRestEntity pollVoteRestEntity) {
-    Date voteDate = new Date();
-    PollVote pollVote = new PollVote();
-    pollVote.setPollOptionId(pollVoteRestEntity.getPollOptionId());
-    pollVote.setVoteDate(voteDate);
-    return pollVote;
   }
 }

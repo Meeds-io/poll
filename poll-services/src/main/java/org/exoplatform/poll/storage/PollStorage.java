@@ -18,7 +18,6 @@
  */
 package org.exoplatform.poll.storage;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,8 +37,7 @@ public class PollStorage {
 
   private PollOptionDAO pollOptionDAO;
 
-  private PollVoteDAO pollVoteDAO;
-
+  private PollVoteDAO   pollVoteDAO;
 
   public PollStorage(PollDAO pollDAO, PollOptionDAO pollOptionDAO, PollVoteDAO pollVoteDAO) {
     this.pollDAO = pollDAO;
@@ -57,12 +55,12 @@ public class PollStorage {
     return EntityMapper.fromPollEntity(pollEntity);
   }
 
-  public Poll getPollById(Long pollId) {
+  public Poll getPollById(long pollId) {
     PollEntity pollEntity = pollDAO.find(pollId);
     return EntityMapper.fromPollEntity(pollEntity);
   }
-  
-  public List<PollOption> getPollOptionsById(Long pollId) {
+
+  public List<PollOption> getPollOptionsById(long pollId) {
     List<PollOptionEntity> pollOptionEntities = pollOptionDAO.findPollOptionsById(pollId);
     return pollOptionEntities.stream().map(EntityMapper::fromPollOptionEntity).collect(Collectors.toList());
   }
@@ -73,34 +71,22 @@ public class PollStorage {
     return EntityMapper.fromPollEntity(pollEntity);
   }
 
-  public PollVote addVote(PollVote pollVote) {
+  public PollVote createPollVote(PollVote pollVote) {
     PollVoteEntity pollVoteEntity = EntityMapper.toPollVoteEntity(pollVote);
     pollVoteEntity = pollVoteDAO.create(pollVoteEntity);
     return EntityMapper.fromPollVoteEntity(pollVoteEntity);
   }
 
-  public List<Integer> getPollVotesById(Long pollId) {
-    List<PollOptionEntity> pollOptionEntities = pollOptionDAO.findPollOptionsById(pollId);
-    List<Integer> optionsTotalVotes = new ArrayList<>();
-    for (PollOptionEntity pollOptionEntity : pollOptionEntities) {
-      optionsTotalVotes.add(pollVoteDAO.getTotalVotesByOption(pollOptionEntity.getId()));
-    }
-    return optionsTotalVotes;
+  public int countPollOptionTotalVotes(long pollOptionId) {
+    return pollVoteDAO.countPollOptionTotalVotes(pollOptionId);
   }
 
-  public List<Boolean> checkVoted(Long pollId, Long userId) {
-    List<PollOptionEntity> pollOptionEntities = pollOptionDAO.findPollOptionsById(pollId);
-    List<Boolean> optionsVoted = new ArrayList<>();
-    for (PollOptionEntity pollOptionEntity : pollOptionEntities) {
-      optionsVoted.add(pollVoteDAO.checkVoted(pollOptionEntity.getId(), userId));
-    }
-    return optionsVoted;
+  public int countPollOptionTotalVotesByUser(long pollOptionId, long userId) {
+    return pollVoteDAO.countPollOptionTotalVotesByUser(pollOptionId, userId);
   }
 
-  public PollOption getPollOptionById(Long pollOptionId) {
+  public PollOption getPollOptionById(long pollOptionId) {
     PollOptionEntity pollOptionEntity = pollOptionDAO.find(pollOptionId);
     return EntityMapper.fromPollOptionEntity(pollOptionEntity);
   }
-
-
 }

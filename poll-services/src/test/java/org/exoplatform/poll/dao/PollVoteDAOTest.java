@@ -18,7 +18,8 @@
  */
 package org.exoplatform.poll.dao;
 
-import junit.framework.TestCase;
+import java.util.Date;
+
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.container.RootContainer;
@@ -28,142 +29,125 @@ import org.exoplatform.poll.entity.PollOptionEntity;
 import org.exoplatform.poll.entity.PollVoteEntity;
 import org.exoplatform.services.naming.InitialContextInitializer;
 
-import java.util.Date;
-import java.util.List;
+import junit.framework.TestCase;
 
 public class PollVoteDAOTest extends TestCase {
 
-    private Date startDate   = new Date(1508484583259L);
+  private Date            startDate   = new Date(1508484583259L);
 
-    private Date            endDate     = new Date(11508484583260L);
+  private Date            endDate     = new Date(11508484583260L);
 
-    private String          question    = "q1";
+  private String          question    = "q1";
 
-    private String          description = "pollOption description";
+  private String          description = "pollOption description";
 
-    private Long            creatorId   = 1L;
+  private Long            creatorId   = 1L;
 
-    private Long            activityId  = 0L;
+  private Long            activityId  = 0L;
 
-    private Long            spaceId     = 1L;
+  private Long            spaceId     = 1L;
 
-    private PortalContainer container;
+  private PortalContainer container;
 
-    private PollOptionDAO   pollOptionDAO;
+  private PollOptionDAO   pollOptionDAO;
 
-    private PollDAO         pollDAO;
+  private PollDAO         pollDAO;
 
-    private PollVoteDAO     pollVoteDAO;
+  private PollVoteDAO     pollVoteDAO;
 
-    @Override
-    protected void setUp() throws Exception {
-        RootContainer rootContainer = RootContainer.getInstance();
-        rootContainer.getComponentInstanceOfType(InitialContextInitializer.class);
+  @Override
+  protected void setUp() throws Exception {
+    RootContainer rootContainer = RootContainer.getInstance();
+    rootContainer.getComponentInstanceOfType(InitialContextInitializer.class);
 
-        container = PortalContainer.getInstance();
-        pollOptionDAO = container.getComponentInstanceOfType(PollOptionDAO.class);
-        pollDAO = container.getComponentInstanceOfType(PollDAO.class);
-        pollVoteDAO = container.getComponentInstanceOfType(PollVoteDAO.class);
-        ExoContainerContext.setCurrentContainer(container);
-        begin();
-    }
+    container = PortalContainer.getInstance();
+    pollOptionDAO = container.getComponentInstanceOfType(PollOptionDAO.class);
+    pollDAO = container.getComponentInstanceOfType(PollDAO.class);
+    pollVoteDAO = container.getComponentInstanceOfType(PollVoteDAO.class);
+    ExoContainerContext.setCurrentContainer(container);
+    begin();
+  }
 
-    public void testAddVote() {
-        // Given
-        PollEntity createdPollEntity = createPollEntity();
-        PollOptionEntity pollOptionEntity = createPollOptionEntity(createdPollEntity.getId());
-        // When
-        PollVoteEntity pollVoteEntity = createPollVoteEntity(pollOptionEntity.getId());
+  public void testCreateVote() {
+    // Given
+    PollEntity createdPollEntity = createPollEntity();
+    PollOptionEntity pollOptionEntity = createPollOptionEntity(createdPollEntity.getId());
+    
+    // When
+    PollVoteEntity pollVoteEntity = createPollVoteEntity(pollOptionEntity.getId());
 
-        // Then
-        assertNotNull(pollVoteEntity);
-        assertNotNull(pollVoteEntity.getId());
-        assertEquals(pollOptionEntity.getId(), pollVoteEntity.getPollOptionId());
-        assertEquals(startDate, pollVoteEntity.getVoteDate());
-        assertEquals(creatorId, pollVoteEntity.getVoterId());
-    }
+    // Then
+    assertNotNull(pollVoteEntity);
+    assertNotNull(pollVoteEntity.getId());
+    assertEquals(pollOptionEntity.getId(), pollVoteEntity.getPollOptionId());
+    assertEquals(startDate, pollVoteEntity.getVoteDate());
+    assertEquals(creatorId, pollVoteEntity.getVoterId());
+  }
 
-    public void testGetTotalVotesByOption() {
-        // Given
-        PollEntity createdPollEntity = createPollEntity();
-        PollOptionEntity pollOptionEntity = createPollOptionEntity(createdPollEntity.getId());
-        createPollVoteEntity(pollOptionEntity.getId());
+  public void testCountPollOptionTotalVotes() {
+    // Given
+    PollEntity createdPollEntity = createPollEntity();
+    PollOptionEntity pollOptionEntity = createPollOptionEntity(createdPollEntity.getId());
+    createPollVoteEntity(pollOptionEntity.getId());
 
-        // When
-        List<PollOptionEntity> pollOptions = pollOptionDAO.findPollOptionsById(createdPollEntity.getId());
+    // When
+    int votes = pollVoteDAO.countPollOptionTotalVotes(pollOptionEntity.getId());
 
-        // Then
-        assertNotNull(pollOptions);
-        assertEquals(1, pollOptions.size());
+    // Then
+    assertEquals(1, votes);
+  }
 
-        // When
-        int votes = pollVoteDAO.getTotalVotesByOption(pollOptions.get(0).getId());
+  public void testCountPollOptionTotalVotesByUser() {
+    // Given
+    PollEntity createdPollEntity = createPollEntity();
+    PollOptionEntity pollOptionEntity = createPollOptionEntity(createdPollEntity.getId());
+    createPollVoteEntity(pollOptionEntity.getId());
 
-        // Then
-        assertNotNull(votes);
-        assertEquals(1, votes);
-    }
+    // When
+    int votes = pollVoteDAO.countPollOptionTotalVotesByUser(pollOptionEntity.getId(), creatorId);
 
-    public void testCheckVoted() {
-        // Given
-        PollEntity createdPollEntity = createPollEntity();
-        PollOptionEntity pollOptionEntity = createPollOptionEntity(createdPollEntity.getId());
-        createPollVoteEntity(pollOptionEntity.getId());
+    // Then
+    assertEquals(1, votes);
+  }
 
-        // When
-        List<PollOptionEntity> pollOptions = pollOptionDAO.findPollOptionsById(createdPollEntity.getId());
+  protected PollEntity createPollEntity() {
+    PollEntity pollEntity = new PollEntity();
+    pollEntity.setQuestion(question);
+    pollEntity.setCreatedDate(startDate);
+    pollEntity.setEndDate(endDate);
+    pollEntity.setCreatorId(creatorId);
+    pollEntity.setActivityId(activityId);
+    pollEntity.setSpaceId(spaceId);
+    PollEntity createdPollEntity = pollDAO.create(pollEntity);
+    return createdPollEntity;
+  }
 
-        // Then
-        assertNotNull(pollOptions);
-        assertEquals(1, pollOptions.size());
+  protected PollOptionEntity createPollOptionEntity(Long pollId) {
+    PollOptionEntity pollOptionEntity = new PollOptionEntity();
+    pollOptionEntity.setPollId(pollId);
+    pollOptionEntity.setDescription(description);
+    return pollOptionDAO.create(pollOptionEntity);
+  }
 
-        // When
-        Boolean voted = pollVoteDAO.checkVoted(pollOptions.get(0).getId(), creatorId);
+  protected PollVoteEntity createPollVoteEntity(Long optionId) {
+    PollVoteEntity pollVoteEntity = new PollVoteEntity();
+    pollVoteEntity.setPollOptionId(optionId);
+    pollVoteEntity.setVoterId(creatorId);
+    pollVoteEntity.setVoteDate(startDate);
+    return pollVoteDAO.create(pollVoteEntity);
+  }
 
-        // Then
-        assertNotNull(voted);
-        assertEquals(java.util.Optional.of(true), java.util.Optional.of(voted));
-    }
+  @Override
+  protected void tearDown() throws Exception {
+    end();
+  }
 
-    protected PollEntity createPollEntity() {
-        PollEntity pollEntity = new PollEntity();
-        pollEntity.setQuestion(question);
-        pollEntity.setCreatedDate(startDate);
-        pollEntity.setEndDate(endDate);
-        pollEntity.setCreatorId(creatorId);
-        pollEntity.setActivityId(activityId);
-        pollEntity.setSpaceId(spaceId);
-        PollEntity createdPollEntity = pollDAO.create(pollEntity);
-        return createdPollEntity;
-    }
+  private void begin() {
+    RequestLifeCycle.begin(container);
+  }
 
-    protected PollOptionEntity createPollOptionEntity(Long pollId) {
-        PollOptionEntity pollOptionEntity = new PollOptionEntity();
-        pollOptionEntity.setPollId(pollId);
-        pollOptionEntity.setDescription(description);
-        return pollOptionDAO.create(pollOptionEntity);
-    }
-
-    protected PollVoteEntity createPollVoteEntity(Long optionId) {
-        PollVoteEntity pollVoteEntity = new PollVoteEntity();
-        pollVoteEntity.setPollOptionId(optionId);
-        pollVoteEntity.setVoterId(creatorId);
-        pollVoteEntity.setVoteDate(startDate);
-        return pollVoteDAO.create(pollVoteEntity);
-    }
-
-
-    @Override
-    protected void tearDown() throws Exception {
-        end();
-    }
-
-    private void begin() {
-        RequestLifeCycle.begin(container);
-    }
-
-    private void end() {
-        RequestLifeCycle.end();
-    }
+  private void end() {
+    RequestLifeCycle.end();
+  }
 
 }

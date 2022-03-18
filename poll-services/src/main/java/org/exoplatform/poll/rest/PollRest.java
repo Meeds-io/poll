@@ -18,6 +18,7 @@
  */
 package org.exoplatform.poll.rest;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.security.RolesAllowed;
@@ -37,8 +38,8 @@ import org.exoplatform.common.http.HTTPStatus;
 import org.exoplatform.poll.model.Poll;
 import org.exoplatform.poll.model.PollOption;
 import org.exoplatform.poll.model.PollVote;
+import org.exoplatform.poll.rest.model.PollOptionRestEntity;
 import org.exoplatform.poll.rest.model.PollRestEntity;
-import org.exoplatform.poll.rest.model.PollVoteRestEntity;
 import org.exoplatform.poll.service.PollService;
 import org.exoplatform.poll.utils.RestEntityBuilder;
 import org.exoplatform.services.log.ExoLogger;
@@ -69,11 +70,9 @@ public class PollRest implements ResourceContainer {
   @Produces(MediaType.APPLICATION_JSON)
   @RolesAllowed("users")
   @ApiOperation(value = "Create a new poll", httpMethod = "POST", response = Response.class, consumes = "application/json")
-  @ApiResponses(value = { @ApiResponse(code = HTTPStatus.NO_CONTENT, message = "Request fulfilled"),
-      @ApiResponse(code = HTTPStatus.UNAUTHORIZED, message = "Unauthorized operation"),
-      @ApiResponse(code = HTTPStatus.INTERNAL_ERROR, message = "Internal server error"), })
+  @ApiResponses(value = { @ApiResponse(code = HTTPStatus.UNAUTHORIZED, message = "Unauthorized operation"),
+                          @ApiResponse(code = HTTPStatus.INTERNAL_ERROR, message = "Internal server error"), })
   public Response createPoll(@ApiParam(value = "space identifier", required = false) @QueryParam("spaceId") String spaceId,
-                             @ApiParam(value = "activity message", required = false) @QueryParam("message") String message,
                              @ApiParam(value = "Poll object to create", required = true) PollRestEntity pollRestEntity) {
     if (pollRestEntity == null) {
       return Response.status(Response.Status.BAD_REQUEST).build();
@@ -85,7 +84,7 @@ public class PollRest implements ResourceContainer {
       poll = pollService.createPoll(poll, pollOptions, spaceId, pollRestEntity.getMessage(), currentIdentity, pollRestEntity.getFiles());
       return Response.ok(poll).build();
     } catch (IllegalAccessException e) {
-      LOG.warn("User '{}' attempts to create a non authorized poll", e);
+      LOG.warn("User '{}' attempts to create a non authorized poll", currentIdentity.getUserId(), e);
       return Response.status(Response.Status.UNAUTHORIZED).build();
     } catch (Exception e) {
       return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
@@ -97,27 +96,32 @@ public class PollRest implements ResourceContainer {
   @RolesAllowed("users")
   @Produces(MediaType.APPLICATION_JSON)
   @ApiOperation(value = "Get a poll", httpMethod = "GET", response = Response.class, notes = "This gets the poll with the given id if the authenticated user is a member of the space.")
-  @ApiResponses(value = { @ApiResponse(code = HTTPStatus.NO_CONTENT, message = "Request fulfilled"),
-          @ApiResponse(code = HTTPStatus.BAD_REQUEST, message = "Invalid query input"),
-          @ApiResponse(code = HTTPStatus.UNAUTHORIZED, message = "Unauthorized operation"),
-          @ApiResponse(code = HTTPStatus.INTERNAL_ERROR, message = "Internal server error"), })
+  @ApiResponses(value = { @ApiResponse(code = HTTPStatus.BAD_REQUEST, message = "Invalid query input"),
+                          @ApiResponse(code = HTTPStatus.NOT_FOUND, message = "Poll not found"),
+                          @ApiResponse(code = HTTPStatus.UNAUTHORIZED, message = "Unauthorized operation"),
+                          @ApiResponse(code = HTTPStatus.INTERNAL_ERROR, message = "Internal server error"), })
   public Response getPollById(@ApiParam(value = "Poll id", required = true) @PathParam("id") String pollId) {
+    Identity currentIdentity = ConversationState.getCurrent().getIdentity();
     try {
       if (StringUtils.isBlank(pollId)) {
         return Response.status(Response.Status.BAD_REQUEST).build();
       }
-      Identity currentIdentity = ConversationState.getCurrent().getIdentity();
       Poll poll = pollService.getPollById(Long.parseLong(pollId), currentIdentity);
       if (poll == null) {
         return Response.status(Response.Status.NOT_FOUND).build();
       }
-      List<PollOption> pollOptions = pollService.getPollOptionsById(Long.parseLong(pollId), currentIdentity);
-      List<Integer> pollTotalVotes = pollService.getPollVotesById(Long.parseLong(pollId), currentIdentity);
-      List<Boolean> pollOptionsSelected = pollService.checkVoted(Long.parseLong(pollId), currentIdentity);
-      PollRestEntity pollRestEntity = RestEntityBuilder.fromPoll(poll, pollOptions, pollTotalVotes, pollOptionsSelected);
+      List<PollOption> pollOptions = pollService.getPollOptionsByPollId(Long.parseLong(pollId), currentIdentity);
+      List<PollOptionRestEntity> pollOptionRestEntities = new ArrayList<>();
+      for (PollOption pollOption : pollOptions) {
+        int pollOptionVotes = pollService.getPollOptionTotalVotes(pollOption.getId(), String.valueOf(poll.getSpaceId()), currentIdentity);
+        boolean isPollOptionVoted = pollService.isPollOptionVoted(pollOption.getId(), String.valueOf(poll.getSpaceId()), currentIdentity);
+        PollOptionRestEntity pollOptionRestEntity = RestEntityBuilder.fromPollOption(pollOption, pollOptionVotes, isPollOptionVoted);
+        pollOptionRestEntities.add(pollOptionRestEntity);
+      }
+      PollRestEntity pollRestEntity = RestEntityBuilder.fromPoll(poll, pollOptionRestEntities);
       return Response.ok(pollRestEntity).build();
     } catch (IllegalAccessException e) {
-      LOG.warn("User '{}' attempts to get a non authorized poll", e);
+      LOG.warn("User '{}' attempts to get a non authorized poll with id {}", currentIdentity.getUserId(), pollId, e);
       return Response.status(Response.Status.UNAUTHORIZED).build();
     } catch (Exception e) {
       return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
@@ -125,27 +129,29 @@ public class PollRest implements ResourceContainer {
   }
 
   @POST
-  @Path("/vote")
+  @Path("/vote/{optionId}")
   @Produces(MediaType.APPLICATION_JSON)
   @RolesAllowed("users")
-  @ApiOperation(value = "Vote in a created poll", httpMethod = "POST", response = Response.class)
-  @ApiResponses(value = { @ApiResponse(code = HTTPStatus.NO_CONTENT, message = "Request fulfilled"),
-          @ApiResponse(code = HTTPStatus.UNAUTHORIZED, message = "Unauthorized operation"),
-          @ApiResponse(code = HTTPStatus.INTERNAL_ERROR, message = "Internal server error"), })
-  public Response addVote(@ApiParam(value = "space identifier", required = false) @QueryParam("spaceId") String spaceId,
-                          @ApiParam(value = "Poll option id", required = true) @QueryParam("optionId") String optionId) {
-    if (optionId == null || optionId.isBlank() || spaceId == null || spaceId.isBlank()) {
-      return Response.status(Response.Status.BAD_REQUEST).build();
-    }
+  @ApiOperation(value = "Vote in a poll", httpMethod = "POST", response = Response.class)
+  @ApiResponses(value = { @ApiResponse(code = HTTPStatus.BAD_REQUEST, message = "Invalid query input"),
+                          @ApiResponse(code = HTTPStatus.NOT_FOUND, message = "Poll option not found"),
+                          @ApiResponse(code = HTTPStatus.UNAUTHORIZED, message = "Unauthorized operation"),
+                          @ApiResponse(code = HTTPStatus.INTERNAL_ERROR, message = "Internal server error"), })
+  public Response vote(@ApiParam(value = "Poll option id", required = true) @PathParam("optionId") String optionId) {
     Identity currentIdentity = ConversationState.getCurrent().getIdentity();
     try {
-      PollVoteRestEntity pollVoteRestEntity = new PollVoteRestEntity();
-      pollVoteRestEntity.setPollOptionId(Long.parseLong(optionId));
-      PollVote pollVote = RestEntityBuilder.toPollVote(pollVoteRestEntity);
-      pollVote = pollService.addVote(pollVote, spaceId, currentIdentity);
+      PollOption pollOption = pollService.getPollOptionById(Long.parseLong(optionId), currentIdentity);
+      if (pollOption == null) {
+        return Response.status(Response.Status.NOT_FOUND).build();
+      }
+      Poll poll = pollService.getPollById(pollOption.getPollId(), currentIdentity);
+      if (poll == null) {
+        return Response.status(Response.Status.NOT_FOUND).build();
+      }
+      PollVote pollVote = pollService.vote(optionId, String.valueOf(poll.getSpaceId()), currentIdentity);
       return Response.ok(pollVote).build();
     } catch (IllegalAccessException e) {
-      LOG.warn("User '{}' attempts to vote in a non authorized poll", e);
+      LOG.warn("User '{}' attempts to vote in a non authorized poll option with id {}", currentIdentity.getUserId(), optionId, e);
       return Response.status(Response.Status.UNAUTHORIZED).build();
     } catch (Exception e) {
       return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();

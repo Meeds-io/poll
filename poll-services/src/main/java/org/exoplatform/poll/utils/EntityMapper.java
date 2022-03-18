@@ -48,7 +48,9 @@ public class EntityMapper {
       return null;
     }
     PollEntity pollEntity = new PollEntity();
-    pollEntity.setId(poll.getId() == 0 ? null : poll.getId());
+    if (poll.getId() != 0) {
+      pollEntity.setId(poll.getId());
+    }
     pollEntity.setQuestion(poll.getQuestion());
     pollEntity.setCreatedDate(poll.getCreatedDate());
     pollEntity.setEndDate(poll.getEndDate());
@@ -91,11 +93,12 @@ public class EntityMapper {
       return null;
     }
     PollVoteEntity pollVoteEntity = new PollVoteEntity();
-    pollVoteEntity.setId(pollVote.getId() == 0 ? null : pollVote.getId());
+    if (pollVote.getId() != 0) {
+      pollVoteEntity.setId(pollVote.getId());
+    }
     pollVoteEntity.setPollOptionId(pollVote.getPollOptionId());
     pollVoteEntity.setVoterId(pollVote.getVoterId());
     pollVoteEntity.setVoteDate(pollVote.getVoteDate());
     return pollVoteEntity;
   }
-
 }
