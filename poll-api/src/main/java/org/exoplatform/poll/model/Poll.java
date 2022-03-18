@@ -28,6 +28,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Poll {
+  
   private long   id;
 
   private String question;
@@ -41,5 +42,4 @@ public class Poll {
   private long   activityId;
 
   private long   spaceId;
-
 }
