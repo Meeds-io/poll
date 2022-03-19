@@ -28,7 +28,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           <template v-if="!finalResults">
             <div
               v-if="!visibleResults"
-              :class="{ 'answer-no-vote no-select': true, active: answer.selected }"
+              :class="{ 'answer-no-vote no-select': true, active: answer.voted }"
               @click.prevent="handleVote(answer)">
               <span class="vote-content" v-sanitized-html="answer.description"></span>
             </div>
@@ -38,7 +38,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 :value="answer.percent"
                 color="wight"
                 height="20"
-                :class="{ 'answer-voted': true, selected: answer.selected }"
+                :class="{ 'answer-voted': true, selected: answer.voted }"
                 rounded>
                 <template>
                   <div class="flex d-flex">
@@ -159,7 +159,7 @@ export default {
   methods: {
     handleVote(answer) {
       answer.votes ++;
-      answer.selected = true;
+      answer.voted = true;
       this.visibleResults = true;
 
       this.$emit('submit-vote', answer.id);

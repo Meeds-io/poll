@@ -46,8 +46,8 @@ export const getPollById = (pollId) => {
   });
 };
 
-export const addVote = (optionId, spaceId) => {
-  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/v1/poll/vote?spaceId=${spaceId || ''}&optionId=${optionId || ''}`, {
+export const vote = (optionId) => {
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/v1/poll/vote/${optionId}`, {
     headers: {
       'Content-Type': 'application/json'
     },

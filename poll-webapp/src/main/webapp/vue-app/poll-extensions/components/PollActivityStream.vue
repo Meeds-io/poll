@@ -66,7 +66,7 @@ export default {
       return this.activity && this.activity.id;
     },
     showResults() {
-      return this.poll && this.poll.options && this.poll.options.some(option => option.selected);
+      return this.poll && this.poll.options && this.poll.options.some(option => option.voted);
     },
     finalResults() {
       return this.poll && this.poll.endDateTime < new Date().getTime();
@@ -85,14 +85,13 @@ export default {
           if (!this.poll) {
             this.$root.$emit('activity-extension-abort', this.activityId);
           }
-          this.activity.poll = poll;
         })
         .catch(() => {
           this.$root.$emit('activity-extension-abort', this.activityId);
         });
     },
     submitVote(optionId) {
-      this.$pollService.addVote(optionId, eXo.env.portal.spaceId)
+      this.$pollService.vote(optionId)
         .then(() => {
           document.dispatchEvent(new CustomEvent('activity-updated', {detail: this.activityId}));
         })
