@@ -61,9 +61,32 @@
       <append value=" ENGINE=INNODB CHARSET=UTF8 COLLATE utf8_general_ci"/>
     </modifySql>
   </changeSet>
+
   <changeSet author="poll" id="1.0.0-2">
     <addColumn tableName="POLL">
       <column name="SPACE_ID" type="BIGINT"/>
     </addColumn>
+  </changeSet>
+
+  <changeSet author="poll" id="1.0.0-3" dbms="oracle,postgresql,hsql">
+    <createSequence sequenceName="SEQ_POLL_VOTE_ID" startValue="1"/>
+  </changeSet>
+
+  <changeSet author="poll" id="1.0.0-4">
+    <createTable tableName="POLL_VOTE">
+      <column name="POLL_VOTE_ID" type="BIGINT" autoIncrement="${autoIncrement}" startWith="1">
+        <constraints nullable="false" primaryKey="true" primaryKeyName="PK_POLL_VOTE"/>
+      </column>
+      <column name="POLL_OPTION_ID" type="BIGINT">
+        <constraints foreignKeyName="FK_VOTE_OPTION_POLL" references="POLL_OPTION(POLL_OPTION_ID)" nullable="false" />
+      </column>
+      <column name="VOTE_DATE" type="TIMESTAMP" defaultValueComputed="NULL"/>
+      <column name="VOTER_ID" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+    <modifySql dbms="mysql">
+      <append value=" ENGINE=INNODB CHARSET=UTF8 COLLATE utf8_general_ci"/>
+    </modifySql>
   </changeSet>
 </databaseChangeLog>

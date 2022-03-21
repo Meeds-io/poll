@@ -18,22 +18,23 @@
  */
 package org.exoplatform.poll.dao;
 
-import java.util.List;
-
 import javax.persistence.TypedQuery;
 
 import org.exoplatform.commons.persistence.impl.GenericDAOJPAImpl;
-import org.exoplatform.poll.entity.PollOptionEntity;
-import org.exoplatform.poll.utils.PollUtils;
+import org.exoplatform.poll.entity.PollVoteEntity;
 
-import java.util.Collections;
+public class PollVoteDAO extends GenericDAOJPAImpl<PollVoteEntity, Long> {
 
-public class PollOptionDAO extends GenericDAOJPAImpl<PollOptionEntity, Long> {
+  public int countPollOptionTotalVotes(long pollOptionId) {
+    TypedQuery<Long> query = getEntityManager().createNamedQuery("PollVote.countPollOptionTotalVotes", Long.class);
+    query.setParameter("pollOptionId", pollOptionId);
+    return query.getSingleResult().intValue();
+  }
 
-  public List<PollOptionEntity> findPollOptionsById(Long pollId) {
-    TypedQuery<PollOptionEntity> query = getEntityManager().createNamedQuery("PollOption.findPollOptionsById", PollOptionEntity.class);
-    query.setParameter(PollUtils.POLL_ID, pollId);
-    List<PollOptionEntity> resultList = query.getResultList();
-    return resultList == null ? Collections.emptyList() : resultList;
+  public int countPollOptionTotalVotesByUser(long pollOptionId, long userId) {
+    TypedQuery<Long> query = getEntityManager().createNamedQuery("PollVote.countPollOptionTotalVotesByUser", Long.class);
+    query.setParameter("pollOptionId", pollOptionId);
+    query.setParameter("userId", userId);
+    return query.getSingleResult().intValue();
   }
 }

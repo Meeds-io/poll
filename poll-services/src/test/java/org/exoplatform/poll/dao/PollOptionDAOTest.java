@@ -34,7 +34,7 @@ public class PollOptionDAOTest extends TestCase {
 
   private Date            startDate   = new Date(1508484583259L);
 
-  private Date            endDate     = new Date(1508484583260L);
+  private Date            endDate     = new Date(11508484583260L);
 
   private String          question    = "q1";
 
@@ -67,9 +67,10 @@ public class PollOptionDAOTest extends TestCase {
   public void testCreatePollOption() {
     // Given
     PollEntity createdPollEntity = createPollEntity();
+    PollOptionEntity createdPollOption = createPollOptionEntity(createdPollEntity.getId());
     
     // When
-    PollOptionEntity createdPollOption = createPollOptionEntity(createdPollEntity.getId());
+    createdPollOption = pollOptionDAO.create(createdPollOption);
 
     // Then
     assertNotNull(createdPollOption);
@@ -81,7 +82,8 @@ public class PollOptionDAOTest extends TestCase {
   public void testFindPollOptionsById() {
     // Given
     PollEntity createdPollEntity = createPollEntity();
-    createPollOptionEntity(createdPollEntity.getId());
+    PollOptionEntity createdPollOption = createPollOptionEntity(createdPollEntity.getId());
+    pollOptionDAO.create(createdPollOption);
     
     // When
     List<PollOptionEntity> pollOptions = pollOptionDAO.findPollOptionsById(createdPollEntity.getId());
@@ -89,8 +91,9 @@ public class PollOptionDAOTest extends TestCase {
     // Then
     assertNotNull(pollOptions);
     assertEquals(1, pollOptions.size());
+
   }
-  
+
   protected PollEntity createPollEntity() {
     PollEntity pollEntity = new PollEntity();
     pollEntity.setQuestion(question);
@@ -99,15 +102,14 @@ public class PollOptionDAOTest extends TestCase {
     pollEntity.setCreatorId(creatorId);
     pollEntity.setActivityId(activityId);
     pollEntity.setSpaceId(spaceId);
-    PollEntity createdPollEntity = pollDAO.create(pollEntity);
-    return createdPollEntity;
+    return pollDAO.create(pollEntity);
   }
-  
-  protected PollOptionEntity createPollOptionEntity(Long pollId) {
+
+  protected PollOptionEntity createPollOptionEntity(long pollId) {
     PollOptionEntity pollOptionEntity = new PollOptionEntity();
     pollOptionEntity.setPollId(pollId);
     pollOptionEntity.setDescription(description);
-    return pollOptionDAO.create(pollOptionEntity);
+    return pollOptionEntity;
   }
 
   @Override

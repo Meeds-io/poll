@@ -20,15 +20,14 @@ package org.exoplatform.poll.utils;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.exoplatform.poll.model.Poll;
 import org.exoplatform.poll.model.PollOption;
-import org.exoplatform.poll.rest.model.PollRestEntity;
 import org.exoplatform.poll.rest.model.PollOptionRestEntity;
+import org.exoplatform.poll.rest.model.PollRestEntity;
 
 public class RestEntityBuilder {
   
@@ -43,20 +42,23 @@ public class RestEntityBuilder {
   private RestEntityBuilder() {
   }
   
-  public static final PollRestEntity fromPoll(Poll poll, List<PollOption> pollOptions) {
+  public static final PollRestEntity fromPoll(Poll poll,
+                                              List<PollOptionRestEntity> pollOptionRestEntities) {
     PollRestEntity pollRestEntity = new PollRestEntity();
+    pollRestEntity.setId(poll.getId());
     pollRestEntity.setQuestion(poll.getQuestion());
-    List<PollOptionRestEntity> pollOptionRestEntities = new ArrayList<>();
-    for (PollOption pollOption : pollOptions) {
-      PollOptionRestEntity pollOptionRestEntity = new PollOptionRestEntity();
-      pollOptionRestEntity.setDescription(pollOption.getDescription());
-      //TODO setVotes
-      pollOptionRestEntity.setVotes("0");
-      pollOptionRestEntities.add(pollOptionRestEntity);
-    }
     pollRestEntity.setOptions(pollOptionRestEntities);
     pollRestEntity.setEndDateTime(poll.getEndDate().getTime());
     return pollRestEntity;
+  }
+
+  public static final PollOptionRestEntity fromPollOption(PollOption pollOption, int votes, boolean voted) {
+    PollOptionRestEntity pollOptionRestEntity = new PollOptionRestEntity();
+    pollOptionRestEntity.setId(pollOption.getId());
+    pollOptionRestEntity.setDescription(pollOption.getDescription());
+    pollOptionRestEntity.setVotes(votes);
+    pollOptionRestEntity.setVoted(voted);
+    return pollOptionRestEntity;
   }
 
   public static final Poll toPoll(PollRestEntity pollRestEntity) {

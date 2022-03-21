@@ -23,10 +23,13 @@ import java.util.stream.Collectors;
 
 import org.exoplatform.poll.dao.PollDAO;
 import org.exoplatform.poll.dao.PollOptionDAO;
+import org.exoplatform.poll.dao.PollVoteDAO;
 import org.exoplatform.poll.entity.PollEntity;
 import org.exoplatform.poll.entity.PollOptionEntity;
+import org.exoplatform.poll.entity.PollVoteEntity;
 import org.exoplatform.poll.model.Poll;
 import org.exoplatform.poll.model.PollOption;
+import org.exoplatform.poll.model.PollVote;
 import org.exoplatform.poll.utils.EntityMapper;
 
 public class PollStorage {
@@ -34,9 +37,12 @@ public class PollStorage {
 
   private PollOptionDAO pollOptionDAO;
 
-  public PollStorage(PollDAO pollDAO, PollOptionDAO pollOptionDAO) {
+  private PollVoteDAO   pollVoteDAO;
+
+  public PollStorage(PollDAO pollDAO, PollOptionDAO pollOptionDAO, PollVoteDAO pollVoteDAO) {
     this.pollDAO = pollDAO;
     this.pollOptionDAO = pollOptionDAO;
+    this.pollVoteDAO = pollVoteDAO;
   }
 
   public Poll createPoll(Poll poll, List<PollOption> pollOptions) {
@@ -49,12 +55,12 @@ public class PollStorage {
     return EntityMapper.fromPollEntity(pollEntity);
   }
 
-  public Poll getPollById(Long pollId) {
+  public Poll getPollById(long pollId) {
     PollEntity pollEntity = pollDAO.find(pollId);
     return EntityMapper.fromPollEntity(pollEntity);
   }
-  
-  public List<PollOption> getPollOptionsById(Long pollId) {
+
+  public List<PollOption> getPollOptionsById(long pollId) {
     List<PollOptionEntity> pollOptionEntities = pollOptionDAO.findPollOptionsById(pollId);
     return pollOptionEntities.stream().map(EntityMapper::fromPollOptionEntity).collect(Collectors.toList());
   }
@@ -65,4 +71,22 @@ public class PollStorage {
     return EntityMapper.fromPollEntity(pollEntity);
   }
 
+  public PollVote createPollVote(PollVote pollVote) {
+    PollVoteEntity pollVoteEntity = EntityMapper.toPollVoteEntity(pollVote);
+    pollVoteEntity = pollVoteDAO.create(pollVoteEntity);
+    return EntityMapper.fromPollVoteEntity(pollVoteEntity);
+  }
+
+  public int countPollOptionTotalVotes(long pollOptionId) {
+    return pollVoteDAO.countPollOptionTotalVotes(pollOptionId);
+  }
+
+  public int countPollOptionTotalVotesByUser(long pollOptionId, long userId) {
+    return pollVoteDAO.countPollOptionTotalVotesByUser(pollOptionId, userId);
+  }
+
+  public PollOption getPollOptionById(long pollOptionId) {
+    PollOptionEntity pollOptionEntity = pollOptionDAO.find(pollOptionId);
+    return EntityMapper.fromPollOptionEntity(pollOptionEntity);
+  }
 }

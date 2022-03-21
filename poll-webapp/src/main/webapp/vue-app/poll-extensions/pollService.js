@@ -45,3 +45,19 @@ export const getPollById = (pollId) => {
     }
   });
 };
+
+export const vote = (optionId) => {
+  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/v1/poll/vote/${optionId}`, {
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    credentials: 'include',
+    method: 'POST',
+  }).then(resp => {
+    if (!resp || !resp.ok) {
+      throw new Error('Response code indicates a server error', resp);
+    } else {
+      return resp.json();
+    }
+  });
+};

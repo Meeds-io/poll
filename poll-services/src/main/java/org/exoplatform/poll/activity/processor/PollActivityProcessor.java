@@ -18,12 +18,14 @@
  */
 package org.exoplatform.poll.activity.processor;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import org.exoplatform.container.xml.InitParams;
 import org.exoplatform.poll.model.Poll;
 import org.exoplatform.poll.model.PollOption;
+import org.exoplatform.poll.rest.model.PollOptionRestEntity;
 import org.exoplatform.poll.rest.model.PollRestEntity;
 import org.exoplatform.poll.service.PollService;
 import org.exoplatform.poll.utils.PollUtils;
@@ -55,22 +57,31 @@ public class PollActivityProcessor extends BaseActivityProcessorPlugin {
       activity.setLinkedProcessedEntities(new HashMap<>());
     }
     PollRestEntity pollRestEntity = (PollRestEntity) activity.getLinkedProcessedEntities().get(PollUtils.POLL_ACTIVITY_TYPE);
-    
+
     if (pollRestEntity == null) {
       Identity currentIdentity = ConversationState.getCurrent().getIdentity();
       String pollId = activity.getTemplateParams().get(PollUtils.POLL_ID);
       try {
         Poll poll = pollService.getPollById(Long.parseLong(pollId), currentIdentity);
-        List<PollOption> pollOptions = pollService.getPollOptionsById(Long.parseLong(pollId), currentIdentity);
-        pollRestEntity = RestEntityBuilder.fromPoll(poll, pollOptions);
+        List<PollOption> pollOptions = pollService.getPollOptionsByPollId(Long.parseLong(pollId), currentIdentity);
+        List<PollOptionRestEntity> pollOptionRestEntities = new ArrayList<>();
+        for (PollOption pollOption : pollOptions) {
+          int pollOptionVotes = pollService.getPollOptionTotalVotes(pollOption.getId(),
+                                                                    String.valueOf(poll.getSpaceId()),
+                                                                    currentIdentity);
+          boolean isPollOptionVoted = pollService.isPollOptionVoted(pollOption.getId(),
+                                                                    String.valueOf(poll.getSpaceId()),
+                                                                    currentIdentity);
+          PollOptionRestEntity pollOptionRestEntity = RestEntityBuilder.fromPollOption(pollOption,
+                                                                                       pollOptionVotes,
+                                                                                       isPollOptionVoted);
+          pollOptionRestEntities.add(pollOptionRestEntity);
+        }
+        pollRestEntity = RestEntityBuilder.fromPoll(poll, pollOptionRestEntities);
       } catch (IllegalAccessException e) {
-        LOG.warn("User {} attempt to access unauthorized poll with id {}",
-                 currentIdentity.getUserId(),
-                 pollId,
-                 e);
+        LOG.warn("User {} attempt to access a non authorized poll with id {}", currentIdentity.getUserId(), pollId, e);
       }
       activity.getLinkedProcessedEntities().put(PollUtils.POLL_ACTIVITY_TYPE, pollRestEntity);
     }
   }
-
 }

@@ -44,6 +44,4 @@ public class PollRestEntity {
   private String                     message;
 
   private List<ActivityFile>         files;
-
-
 }

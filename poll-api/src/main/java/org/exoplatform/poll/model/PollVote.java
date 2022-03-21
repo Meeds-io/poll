@@ -16,22 +16,24 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package org.exoplatform.poll.rest.model;
+package org.exoplatform.poll.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PollOptionRestEntity {
+public class PollVote {
 
-  private long    id;
+  private long id;
 
-  private String  description;
+  private long pollOptionId;
 
-  private long    votes;
+  private long voterId;
 
-  private boolean voted;
+  private Date voteDate;
 }

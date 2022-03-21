@@ -20,8 +20,10 @@ package org.exoplatform.poll.utils;
 
 import org.exoplatform.poll.entity.PollEntity;
 import org.exoplatform.poll.entity.PollOptionEntity;
+import org.exoplatform.poll.entity.PollVoteEntity;
 import org.exoplatform.poll.model.Poll;
 import org.exoplatform.poll.model.PollOption;
+import org.exoplatform.poll.model.PollVote;
 
 public class EntityMapper {
 
@@ -46,7 +48,9 @@ public class EntityMapper {
       return null;
     }
     PollEntity pollEntity = new PollEntity();
-    pollEntity.setId(poll.getId() == 0 ? null : poll.getId());
+    if (poll.getId() != 0) {
+      pollEntity.setId(poll.getId());
+    }
     pollEntity.setQuestion(poll.getQuestion());
     pollEntity.setCreatedDate(poll.getCreatedDate());
     pollEntity.setEndDate(poll.getEndDate());
@@ -73,4 +77,28 @@ public class EntityMapper {
     return pollOptionEntity;
   }
 
+  public static PollVote fromPollVoteEntity(PollVoteEntity pollVoteEntity) {
+    if(pollVoteEntity == null) {
+      return null;
+    }
+    return new PollVote(pollVoteEntity.getId(),
+                        pollVoteEntity.getPollOptionId(),
+                        pollVoteEntity.getVoterId(),
+                        pollVoteEntity.getVoteDate());
+
+  }
+
+  public static PollVoteEntity toPollVoteEntity(PollVote pollVote) {
+    if (pollVote == null) {
+      return null;
+    }
+    PollVoteEntity pollVoteEntity = new PollVoteEntity();
+    if (pollVote.getId() != 0) {
+      pollVoteEntity.setId(pollVote.getId());
+    }
+    pollVoteEntity.setPollOptionId(pollVote.getPollOptionId());
+    pollVoteEntity.setVoterId(pollVote.getVoterId());
+    pollVoteEntity.setVoteDate(pollVote.getVoteDate());
+    return pollVoteEntity;
+  }
 }
