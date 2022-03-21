@@ -222,7 +222,6 @@ public class PollServiceTest extends BasePollTest {
     int votes = pollService.getPollOptionTotalVotes(1L, space.getId(), testUser1Identity);
 
     // Then
-    assertNotNull(votes);
     assertNotEquals(0, votes);
   }
 
@@ -253,7 +252,6 @@ public class PollServiceTest extends BasePollTest {
     boolean voted = pollService.isPollOptionVoted(1L, space.getId(), testUser1Identity);
 
     // Then
-    assertNotNull(voted);
     assertEquals(true, voted);
   }
 }
