@@ -33,7 +33,7 @@ public class PollDAOTest extends TestCase {
 
   private Date            startDate   = new Date(1508484583259L);
 
-  private Date            endDate     = new Date(11508484583260L);
+  private Date            endDate     = new Date(1508484583260L);
 
   private String          question    = "q1";
 
@@ -62,8 +62,10 @@ public class PollDAOTest extends TestCase {
 
   public void testCreatePoll() {
     // Given
-    // When
     PollEntity createdPollEntity = createPollEntity();
+    
+    // When
+    createdPollEntity = pollDAO.create(createdPollEntity);
 
     // Then
     assertNotNull(createdPollEntity);
@@ -79,6 +81,7 @@ public class PollDAOTest extends TestCase {
   public void testGetPollById() {
     // Given
     PollEntity createdPollEntity = createPollEntity();
+    createdPollEntity = pollDAO.create(createdPollEntity);
     
     // When
     PollEntity retrievedPollEntity = pollDAO.find(createdPollEntity.getId());
@@ -97,6 +100,7 @@ public class PollDAOTest extends TestCase {
   public void testUpdatePoll() {
     // Given
     PollEntity createdPollEntity = createPollEntity();
+    createdPollEntity = pollDAO.create(createdPollEntity);
     createdPollEntity.setActivityId(activity2Id);
     
     // When
@@ -114,7 +118,7 @@ public class PollDAOTest extends TestCase {
     pollEntity.setCreatorId(creatorId);
     pollEntity.setActivityId(activityId);
     pollEntity.setSpaceId(spaceId);
-    return pollDAO.create(pollEntity);
+    return pollEntity;
   }
 
   @Override
