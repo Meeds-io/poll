@@ -24,14 +24,15 @@ import javax.persistence.TypedQuery;
 
 import org.exoplatform.commons.persistence.impl.GenericDAOJPAImpl;
 import org.exoplatform.poll.entity.PollOptionEntity;
+import org.exoplatform.poll.utils.PollUtils;
+
 import java.util.Collections;
 
 public class PollOptionDAO extends GenericDAOJPAImpl<PollOptionEntity, Long> {
 
   public List<PollOptionEntity> findPollOptionsById(Long pollId) {
-    TypedQuery<PollOptionEntity> query = getEntityManager().createNamedQuery("PollOption.findPollOptionsById",
-                                                                             PollOptionEntity.class);
-    query.setParameter("pollId", pollId);
+    TypedQuery<PollOptionEntity> query = getEntityManager().createNamedQuery("PollOption.findPollOptionsById", PollOptionEntity.class);
+    query.setParameter(PollUtils.POLL_ID, pollId);
     List<PollOptionEntity> resultList = query.getResultList();
     return resultList == null ? Collections.emptyList() : resultList;
   }

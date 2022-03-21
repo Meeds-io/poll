@@ -27,10 +27,9 @@ import java.util.Date;
 @Entity(name = "PollVote")
 @ExoEntity
 @Table(name = "POLL_VOTE")
-@NamedQueries({
-    @NamedQuery(name = "PollVote.countPollOptionTotalVotes", query = "SELECT COUNT(*) FROM PollVote pollVote where pollVote.pollOptionId = :pollOptionId"),
-    @NamedQuery(name = "PollVote.countPollOptionTotalVotesByUser", query = "SELECT COUNT(*) FROM PollVote pollVote where pollVote.pollOptionId = :pollOptionId "
-        + "AND pollVote.voterId = :userId") })
+@NamedQuery(name = "PollVote.countPollOptionTotalVotes", query = "SELECT COUNT(*) FROM PollVote pollVote where pollVote.pollOptionId = :pollOptionId")
+@NamedQuery(name = "PollVote.countPollOptionTotalVotesByUser", query = "SELECT COUNT(*) FROM PollVote pollVote where pollVote.pollOptionId = :pollOptionId "
+        + "AND pollVote.voterId = :userId")
 
 public class PollVoteEntity implements Serializable {
 
