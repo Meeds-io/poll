@@ -20,7 +20,6 @@ package org.exoplatform.poll.storage;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.ArgumentMatchers.anyObject;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -32,6 +31,7 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -75,8 +75,8 @@ public class PollStorageTest {
     PollOption pollOption = createPollOption(poll);
     PollEntity pollEntity = createPollEntity();
     PollOptionEntity pollOptionEntity = createPollOptionEntity(pollEntity);
-    when(pollDAO.create(anyObject())).thenReturn(pollEntity);
-    when(pollOptionDAO.create(anyObject())).thenReturn(pollOptionEntity);
+    when(pollDAO.create(Mockito.any())).thenReturn(pollEntity);
+    when(pollOptionDAO.create(Mockito.any())).thenReturn(pollOptionEntity);
     PowerMockito.mockStatic(EntityMapper.class);
     when(EntityMapper.toPollEntity(poll)).thenReturn(pollEntity);
     when(EntityMapper.fromPollEntity(pollEntity)).thenReturn(poll);
@@ -97,7 +97,7 @@ public class PollStorageTest {
     // Given
     Poll poll = createPoll();
     PollEntity pollEntity = createPollEntity();
-    when(pollDAO.find(anyObject())).thenReturn(pollEntity);
+    when(pollDAO.find(Mockito.any())).thenReturn(pollEntity);
     PowerMockito.mockStatic(EntityMapper.class);
     when(EntityMapper.fromPollEntity(pollEntity)).thenReturn(poll);
     
@@ -118,7 +118,7 @@ public class PollStorageTest {
     PollOption pollOption = createPollOption(poll);
     PollOptionEntity pollOptionEntity = createPollOptionEntity(pollEntity);
     List<PollOptionEntity> pollOptionEntities = Arrays.asList( pollOptionEntity );
-    when(pollOptionDAO.findPollOptionsById(anyObject())).thenReturn(pollOptionEntities);
+    when(pollOptionDAO.findPollOptionsById(Mockito.any())).thenReturn(pollOptionEntities);
     PowerMockito.mockStatic(EntityMapper.class);
     when(EntityMapper.fromPollOptionEntity(pollOptionEntity)).thenReturn(pollOption);
     // When
@@ -136,7 +136,7 @@ public class PollStorageTest {
     Poll poll = createPoll();
     PollEntity pollEntity = createPollEntity();
     poll.setActivityId(1L);
-    when(pollDAO.update(anyObject())).thenReturn(pollEntity);
+    when(pollDAO.update(Mockito.any())).thenReturn(pollEntity);
     PowerMockito.mockStatic(EntityMapper.class);
     when(EntityMapper.toPollEntity(poll)).thenReturn(pollEntity);
     when(EntityMapper.fromPollEntity(pollEntity)).thenReturn(poll);
@@ -157,7 +157,7 @@ public class PollStorageTest {
     PollOption pollOption = createPollOption(poll);
     PollVoteEntity pollVoteEntity = createPollVoteEntity(pollOption.getId());
     PollVote pollVote = createPollVote(pollOption.getId());
-    when(pollVoteDAO.create(anyObject())).thenReturn(pollVoteEntity);
+    when(pollVoteDAO.create(Mockito.any())).thenReturn(pollVoteEntity);
     PowerMockito.mockStatic(EntityMapper.class);
     when(EntityMapper.toPollVoteEntity(pollVote)).thenReturn(pollVoteEntity);
     when(EntityMapper.fromPollVoteEntity(pollVoteEntity)).thenReturn(pollVote);
@@ -209,7 +209,7 @@ public class PollStorageTest {
     PollEntity pollEntity = createPollEntity();
     PollOption pollOption = createPollOption(poll);
     PollOptionEntity pollOptionEntity = createPollOptionEntity(pollEntity);
-    when(pollOptionDAO.find(anyObject())).thenReturn(pollOptionEntity);
+    when(pollOptionDAO.find(Mockito.any())).thenReturn(pollOptionEntity);
     PowerMockito.mockStatic(EntityMapper.class);
     when(EntityMapper.fromPollOptionEntity(pollOptionEntity)).thenReturn(pollOption);
     // When
