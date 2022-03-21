@@ -31,7 +31,7 @@ import org.exoplatform.poll.model.PollOption;
 import static org.junit.Assert.*;
 
 public class PollServiceTest extends BasePollTest {
-  private Date                createdDate = new Date(1508484583259L);
+  private Date                createdDate = new Date();
 
   private Date                endDate     = new Date(11508484583260L);
 
@@ -141,96 +141,119 @@ public class PollServiceTest extends BasePollTest {
     assertEquals(1, retrievedPollOptions.size());
   }
 
-//  @Test
-//  public void testVote() throws IllegalAccessException {
-//    // Given
-//    org.exoplatform.services.security.Identity testUser1Identity = new org.exoplatform.services.security.Identity("testuser1");
-//    Poll poll = new Poll();
-//    poll.setQuestion("q1");
-//    poll.setCreatedDate(createdDate);
-//    poll.setEndDate(new Date(11508484583260L));
-//    poll.setCreatorId(Long.parseLong(user1Identity.getId()));
-//    poll.setSpaceId(1L);
-//    PollOption pollOption = new PollOption();
-//    pollOption.setDescription("pollOption");
-//    List<PollOption> pollOptionList = new ArrayList<>();
-//    pollOptionList.add(pollOption);
-//
-//    PollVote pollVote = new PollVote();
-//    pollVote.setPollOptionId(1L);
-//    pollVote.setVoteDate(createdDate);
-//    pollVote.setVoterId(Long.parseLong(user1Identity.getId()));
-//    pollService.createPoll(poll, pollOptionList, space.getId(), MESSAGE, testUser1Identity, new ArrayList<>());
-//
-//    // When
-//    PollVote voteAdded = pollService.vote("1L", space.getId(), testUser1Identity);
-//
-//    // Then
-//    assertNotNull(voteAdded);
-//    assertEquals(pollVote.getVoteDate(), voteAdded.getVoteDate());
-//    assertEquals(pollVote.getPollOptionId(), voteAdded.getPollOptionId());
-//    assertEquals(pollVote.getVoterId(), voteAdded.getVoterId());
-//
-//  }
-//
-//  @Test
-//  public void testGetPollOptionTotalVotes() throws IllegalAccessException {
-//    // Given
-//    org.exoplatform.services.security.Identity testUser1Identity = new org.exoplatform.services.security.Identity("testuser1");
-//    Poll poll = new Poll();
-//    poll.setQuestion("q1");
-//    poll.setCreatedDate(createdDate);
-//    poll.setEndDate(new Date(11508484583260L));
-//    poll.setCreatorId(Long.parseLong(user1Identity.getId()));
-//    poll.setSpaceId(1L);
-//    PollOption pollOption = new PollOption();
-//    pollOption.setDescription("pollOption");
-//    List<PollOption> pollOptionList = new ArrayList<>();
-//    pollOptionList.add(pollOption);
-//
-//    PollVote pollVote = new PollVote();
-//    pollVote.setVoteDate(createdDate);
-//    pollVote.setVoterId(Long.parseLong(user1Identity.getId()));
-//    pollVote.setPollOptionId(1L);
-//
-//    // When
-//    pollService.createPoll(poll, pollOptionList, space.getId(), MESSAGE, testUser1Identity, new ArrayList<>());
-//    pollService.vote("1L", space.getId(), testUser1Identity);
-//    List<Integer> votes = pollService.getPollVotesById(1L, testUser1Identity);
-//
-//    // Then
-//    assertNotNull(votes);
-//    assertEquals(1, votes.size());
-//  }
+  @Test
+  public void testGetPollOptionById() throws IllegalAccessException {
+    // Given
+    org.exoplatform.services.security.Identity testUser1Identity = new org.exoplatform.services.security.Identity("testuser1");
+    Poll poll = new Poll();
+    poll.setQuestion("q1");
+    poll.setCreatedDate(createdDate);
+    poll.setEndDate(endDate);
+    poll.setCreatorId(Long.parseLong(user1Identity.getId()));
+    poll.setSpaceId(1L);
+    PollOption pollOption = new PollOption();
+    pollOption.setDescription("pollOption");
+    List<PollOption> pollOptionList = new ArrayList<>();
+    pollOptionList.add(pollOption);
 
-//  @Test
-//  public void testIsPollOptionVoted() throws IllegalAccessException {
-//    // Given
-//    org.exoplatform.services.security.Identity testUser1Identity = new org.exoplatform.services.security.Identity("testuser1");
-//    Poll poll = new Poll();
-//    poll.setQuestion("q1");
-//    poll.setCreatedDate(createdDate);
-//    poll.setEndDate(new Date(11508484583260L));
-//    poll.setCreatorId(Long.parseLong(user1Identity.getId()));
-//    poll.setSpaceId(1L);
-//    PollOption pollOption = new PollOption();
-//    pollOption.setDescription("pollOption");
-//    List<PollOption> pollOptionList = new ArrayList<>();
-//    pollOptionList.add(pollOption);
-//
-//    PollVote pollVote = new PollVote();
-//    pollVote.setVoteDate(createdDate);
-//    pollVote.setVoterId(Long.parseLong(user1Identity.getId()));
-//    pollVote.setPollOptionId(1L);
-//    
-//    pollService.createPoll(poll, pollOptionList, space.getId(), MESSAGE, testUser1Identity, new ArrayList<>());
-//    pollService.vote("1L", space.getId(), testUser1Identity);
-//
-//    // When
-//    boolean voted = pollService.isPollOptionVoted(1L, space.getId(), testUser1Identity);
-//
-//    // Then
-//    assertNotNull(voted);
-//    assertEquals(true, voted);
-//  }
+    // When
+    pollService.createPoll(poll, pollOptionList, space.getId(), MESSAGE, testUser1Identity, new ArrayList<>());
+    PollOption retrievedPollOption = pollService.getPollOptionById(1L, testUser1Identity);
+
+    // Then
+    assertNotNull(retrievedPollOption);
+    assertEquals(1, retrievedPollOption.getId());
+  }
+
+  @Test
+  public void testVote() throws IllegalAccessException {
+    // Given
+    org.exoplatform.services.security.Identity testUser1Identity = new org.exoplatform.services.security.Identity("testuser1");
+    Poll poll = new Poll();
+    poll.setQuestion("q1");
+    poll.setCreatedDate(createdDate);
+    poll.setEndDate(new Date(11508484583260L));
+    poll.setCreatorId(Long.parseLong(user1Identity.getId()));
+    poll.setSpaceId(1L);
+    PollOption pollOption = new PollOption();
+    pollOption.setDescription("pollOption");
+    List<PollOption> pollOptionList = new ArrayList<>();
+    pollOptionList.add(pollOption);
+
+    PollVote pollVote = new PollVote();
+    pollVote.setPollOptionId(1L);
+    pollVote.setVoteDate(createdDate);
+    pollVote.setVoterId(Long.parseLong(user1Identity.getId()));
+    pollService.createPoll(poll, pollOptionList, space.getId(), MESSAGE, testUser1Identity, new ArrayList<>());
+
+    // When
+    PollVote voteAdded = pollService.vote("1", space.getId(), testUser1Identity);
+
+    // Then
+    assertNotNull(voteAdded);
+    assertEquals(pollVote.getPollOptionId(), voteAdded.getPollOptionId());
+    assertEquals(pollVote.getVoterId(), voteAdded.getVoterId());
+
+  }
+
+  @Test
+  public void testGetPollOptionTotalVotes() throws IllegalAccessException {
+    // Given
+    org.exoplatform.services.security.Identity testUser1Identity = new org.exoplatform.services.security.Identity("testuser1");
+    Poll poll = new Poll();
+    poll.setQuestion("q1");
+    poll.setCreatedDate(createdDate);
+    poll.setEndDate(new Date(11508484583260L));
+    poll.setCreatorId(Long.parseLong(user1Identity.getId()));
+    poll.setSpaceId(1L);
+    PollOption pollOption = new PollOption();
+    pollOption.setDescription("pollOption");
+    List<PollOption> pollOptionList = new ArrayList<>();
+    pollOptionList.add(pollOption);
+
+    PollVote pollVote = new PollVote();
+    pollVote.setVoteDate(createdDate);
+    pollVote.setVoterId(Long.parseLong(user1Identity.getId()));
+    pollVote.setPollOptionId(1L);
+
+    // When
+    pollService.createPoll(poll, pollOptionList, space.getId(), MESSAGE, testUser1Identity, new ArrayList<>());
+    pollService.vote("1", space.getId(), testUser1Identity);
+    int votes = pollService.getPollOptionTotalVotes(1L, space.getId(), testUser1Identity);
+
+    // Then
+    assertNotNull(votes);
+    assertNotEquals(0, votes);
+  }
+
+  @Test
+  public void testIsPollOptionVoted() throws IllegalAccessException {
+    // Given
+    org.exoplatform.services.security.Identity testUser1Identity = new org.exoplatform.services.security.Identity("testuser1");
+    Poll poll = new Poll();
+    poll.setQuestion("q1");
+    poll.setCreatedDate(createdDate);
+    poll.setEndDate(new Date(11508484583260L));
+    poll.setCreatorId(Long.parseLong(user1Identity.getId()));
+    poll.setSpaceId(1L);
+    PollOption pollOption = new PollOption();
+    pollOption.setDescription("pollOption");
+    List<PollOption> pollOptionList = new ArrayList<>();
+    pollOptionList.add(pollOption);
+
+    PollVote pollVote = new PollVote();
+    pollVote.setVoteDate(createdDate);
+    pollVote.setVoterId(Long.parseLong(user1Identity.getId()));
+    pollVote.setPollOptionId(1L);
+
+    pollService.createPoll(poll, pollOptionList, space.getId(), MESSAGE, testUser1Identity, new ArrayList<>());
+    pollService.vote("1", space.getId(), testUser1Identity);
+
+    // When
+    boolean voted = pollService.isPollOptionVoted(1L, space.getId(), testUser1Identity);
+
+    // Then
+    assertNotNull(voted);
+    assertEquals(true, voted);
+  }
 }
