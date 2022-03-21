@@ -46,7 +46,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                       v-if="answer.percent"
                       class="vote-percent"
                       v-text="answer.percent"></span>
-                    <span class="vote-content text-truncate" v-sanitized-html="answer.description"></span>
+                    <span
+                      class="vote-content text-truncate"
+                      :title="answer.description"
+                      v-sanitized-html="answer.description"></span>
                   </div>
                 </template>
               </v-progress-linear>
@@ -67,7 +70,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                     v-if="answer.percent"
                     class="vote-percent"
                     v-text="answer.percent"></span>
-                  <span class="vote-content text-truncate" v-sanitized-html="answer.description"></span>
+                  <span
+                    class="vote-content text-truncate"
+                    :title="answer.description"
+                    v-sanitized-html="answer.description"></span>
                 </div>
               </template>
             </v-progress-linear>
