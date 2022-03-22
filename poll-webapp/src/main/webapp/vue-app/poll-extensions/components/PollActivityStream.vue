@@ -17,19 +17,17 @@ along with this program; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <div id="poll-activity-stream">
+  <div id="poll-activity-stream" v-if="poll">
     <v-card
       class="border-color border-radius my-3 pa-5"
       outlined>
       <poll-activity
-        v-if="poll"
         :poll="poll"
         @submit-vote="submitVote"
         :show-results="showResults"
         :final-results="finalResults" />
     </v-card>
     <div
-      v-if="poll"
       class="votes-remaining-state"
       v-text="remainingTime">
     </div>
