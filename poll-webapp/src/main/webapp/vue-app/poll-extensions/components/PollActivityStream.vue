@@ -91,9 +91,6 @@ export default {
     },
     submitVote(optionId) {
       this.$pollService.vote(optionId)
-        .then(() => {
-          document.dispatchEvent(new CustomEvent('activity-updated', {detail: this.activityId}));
-        })
         .catch(error => {
           console.error(`Error when voting: ${error}`);
         });
