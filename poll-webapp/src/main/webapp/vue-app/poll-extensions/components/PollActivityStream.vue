@@ -29,6 +29,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         :final-results="finalResults" />
     </v-card>
     <div
+      v-if="poll"
       class="votes-remaining-state"
       v-text="remainingTime">
     </div>
