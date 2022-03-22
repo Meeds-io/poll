@@ -17,28 +17,28 @@
                xmlns="http://www.exoplatform.org/xml/ns/kernel_1_3.xsd">
 
   <component>
-    <type>org.exoplatform.poll.dao.PollDAO</type>
+    <type>io.meeds.poll.dao.PollDAO</type>
   </component>
 
   <component>
-    <type>org.exoplatform.poll.dao.PollOptionDAO</type>
+    <type>io.meeds.poll.dao.PollOptionDAO</type>
   </component>
 
   <component>
-    <type>org.exoplatform.poll.dao.PollVoteDAO</type>
+    <type>io.meeds.poll.dao.PollVoteDAO</type>
   </component>
 
   <component>
-    <key>org.exoplatform.poll.service.PollService</key>
-    <type>org.exoplatform.poll.service.PollServiceImpl</type>
+    <key>io.meeds.poll.service.PollService</key>
+    <type>io.meeds.poll.service.PollServiceImpl</type>
   </component>
 
   <component>
-    <type>org.exoplatform.poll.storage.PollStorage</type>
+    <type>io.meeds.poll.storage.PollStorage</type>
   </component>
 
   <component>
-    <type>org.exoplatform.poll.rest.PollRest</type>
+    <type>io.meeds.poll.rest.PollRest</type>
   </component>
 
   <external-component-plugins>
@@ -62,7 +62,7 @@
     <component-plugin>
       <name>PollActivityProcessor</name>
       <set-method>addProcessorPlugin</set-method>
-      <type>org.exoplatform.poll.activity.processor.PollActivityProcessor</type>
+      <type>io.meeds.poll.activity.processor.PollActivityProcessor</type>
       <init-params>
         <value-param>
           <name>priority</name>
