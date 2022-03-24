@@ -1,6 +1,25 @@
+/*
+ * This file is part of the Meeds project (https://meeds.io/).
+ *
+ * Copyright (C) 2022 Meeds Association contact@meeds.io
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 3 of the License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
 package io.meeds.poll.listener;
 
 import io.meeds.poll.model.Poll;
+import io.meeds.poll.service.PollService;
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.services.listener.Asynchronous;
 import org.exoplatform.services.listener.Event;
@@ -12,6 +31,8 @@ import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
 import org.exoplatform.analytics.model.StatisticData;
 import org.exoplatform.analytics.utils.AnalyticsUtils;
+
+import java.util.concurrent.TimeUnit;
 
 import static org.exoplatform.analytics.utils.AnalyticsUtils.addSpaceStatistics;
 
@@ -25,6 +46,8 @@ public class AnalyticsPollListener extends Listener<String, Poll> {
     private IdentityManager identityManager;
 
     private SpaceService spaceService;
+
+    private PollService pollService;
 
     @Override
     public void onEvent(Event<String, Poll> event) throws Exception {
@@ -44,18 +67,18 @@ public class AnalyticsPollListener extends Listener<String, Poll> {
             userId = Long.parseLong(identity.getId());
         }
         StatisticData statisticData = new StatisticData();
+        Space space = getSpaceService().getSpaceById(String.valueOf(poll.getSpaceId()));
 
-        statisticData.setModule("contents");
-        statisticData.setSubModule("contents");
+        statisticData.setModule("poll");
+        statisticData.setSubModule("poll");
         statisticData.setOperation(operation);
         statisticData.setUserId(userId);
         statisticData.addParameter("PollId", poll.getId());
         statisticData.addParameter("ActivityId", poll.getActivityId());
-        statisticData.addParameter("NumberOptions", poll.getId());
-        statisticData.addParameter("ChosenDuration", poll.getId());
-        statisticData.addParameter("NumberVotes", poll.getId());
-        statisticData.addParameter("NumberSpaceMembers", poll.getId());
-        Space space = getSpaceService().getSpaceById(String.valueOf(poll.getSpaceId()));
+        statisticData.addParameter("NumberOptions", getPollService().getNumberOptions(poll.getId()));
+        statisticData.addParameter("ChosenDuration", getDuration(poll));
+        statisticData.addParameter("NumberVotes", getPollService().getNumberVotes(poll.getId()));
+        statisticData.addParameter("NumberSpaceMembers", space.getMembers().length);
         if (space != null) {
             addSpaceStatistics(statisticData, space);
         }
@@ -74,5 +97,17 @@ public class AnalyticsPollListener extends Listener<String, Poll> {
             spaceService = ExoContainerContext.getService(SpaceService.class);
         }
         return spaceService;
+    }
+
+    public PollService getPollService() {
+        if (pollService == null) {
+            pollService = ExoContainerContext.getService(PollService.class);
+        }
+        return pollService;
+    }
+
+    private long getDuration(Poll poll) {
+        long duration = Math.abs(poll.getEndDate().getTime() - poll.getCreatedDate().getTime());
+        return TimeUnit.DAYS.convert(duration, TimeUnit.MILLISECONDS);
     }
 }

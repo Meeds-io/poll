@@ -168,6 +168,23 @@ public class PollServiceImpl implements PollService {
     long currentUserIdentityId = PollUtils.getCurrentUserIdentityId(identityManager, currentIdentity.getUserId());
     return pollStorage.countPollOptionTotalVotesByUser(pollOptionId, currentUserIdentityId) > 0;
   }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public int getNumberOptions(long pollId) {
+    return pollStorage.getNumberOptions(pollId);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public int getNumberVotes(long pollId) {
+    return pollStorage.getNumberVotes(pollId);
+  }
+
   
   private Poll postPollActivity(String message,
                                 String spaceId,

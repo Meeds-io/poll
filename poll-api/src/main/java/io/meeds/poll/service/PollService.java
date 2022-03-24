@@ -103,4 +103,20 @@ public interface PollService {
    * @throws IllegalAccessException when the current user is not authorized to check if the {@link Poll} option is voted
    */
   boolean isPollOptionVoted(long pollOptionId, String spaceId, Identity currentIdentity) throws IllegalAccessException;
+
+  /**
+   * Retrieves total number of poll options using a given pollId.
+   *
+   * @param pollId technical identifier of a poll
+   * @return A {@link int} which retrieves the total number of poll options using the given {@link Poll} id
+   */
+  int getNumberOptions(long pollId);
+
+  /**
+   * Retrieves total number of votes using a given pollId.
+   *
+   * @param pollId technical identifier of a poll
+   * @return A {@link int} which retrieves the total number of votes using the given {@link Poll} id
+   */
+  int getNumberVotes(long pollId);
 }

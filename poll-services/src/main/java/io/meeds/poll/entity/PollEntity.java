@@ -27,6 +27,13 @@ import java.util.Date;
 @Entity(name = "Poll")
 @ExoEntity
 @Table(name = "POLL")
+@NamedQuery(name = "Poll.getNumberOptions",
+        query = "SELECT COUNT(*) FROM Poll poll, PollOption pollOption where poll.id = pollOption.pollId AND poll.id = :pollId " +
+                "group by poll.id")
+@NamedQuery(name = "Poll.getNumberVotes",
+        query = "SELECT COUNT(*) FROM Poll poll, PollOption pollOption, PollVote pollVote " +
+                "where poll.id = pollOption.pollId AND pollOption.id = pollVote.pollOptionId AND poll.id = :pollId " +
+                "group by poll.id")
 public class PollEntity implements Serializable {
 
   private static final long serialVersionUID = 5290107403575974438L;
