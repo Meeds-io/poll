@@ -76,7 +76,10 @@ public class PollServiceImpl implements PollService {
     poll.setCreatorId(currentUserIdentityId);
     poll.setSpaceId(Long.parseLong(spaceId));
     Poll createdPoll = pollStorage.createPoll(poll, pollOptions);
-    return postPollActivity(message, spaceId, currentIdentity, createdPoll, files);
+    createdPoll =  postPollActivity(message, spaceId, currentIdentity, createdPoll, files);
+    PollUtils.broadcastEvent(PollUtils.CREATE_POLL, currentIdentity.getUserId(), createdPoll);//Analytics
+    return createdPoll;
+
   }
 
   @Override
@@ -137,6 +140,7 @@ public class PollServiceImpl implements PollService {
     pollVote.setVoteDate(new Date());
     pollVote = pollStorage.createPollVote(pollVote);
     updatePollActivity(String.valueOf(poll.getActivityId()));
+    PollUtils.broadcastEvent(PollUtils.VOTE_POLL, currentIdentity.getUserId(), poll);//Analytics
     return pollVote;
   }
 

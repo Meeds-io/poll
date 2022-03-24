@@ -72,4 +72,18 @@
       </init-params>
     </component-plugin>
   </external-component-plugins>
+
+  <external-component-plugins profiles="analytics">
+    <target-component>org.exoplatform.services.listener.ListenerService</target-component>
+    <component-plugin>
+      <name>meeds.poll.createPoll</name>
+      <set-method>addListener</set-method>
+      <type>io.meeds.poll.listener.AnalyticsPollListener</type>
+    </component-plugin>
+    <component-plugin>
+      <name>meeds.poll.votePoll</name>
+      <set-method>addListener</set-method>
+      <type>io.meeds.poll.listener.AnalyticsPollListener</type>
+    </component-plugin>
+  </external-component-plugins>
 </configuration>
