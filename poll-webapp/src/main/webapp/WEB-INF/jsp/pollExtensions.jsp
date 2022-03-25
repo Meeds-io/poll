@@ -10,11 +10,9 @@ if (ConversationState.getCurrent() != null) {
     pollFeatureEnabled = CommonsUtils.isFeatureActive("poll", currentIdentity.getUserId());    	
   }
 }
+String enabledSpaces = System.getProperty("exo.feature.poll.enabledSpaces", "");
 %>
 
 <script type="text/javascript">
-  var pollFeatureEnabled = <%=pollFeatureEnabled%>
-  if (pollFeatureEnabled) {
-    require(['PORTLET/poll/PollExtensions'], app => app.init());
-  }
+  require(['PORTLET/poll/PollExtensions'], app => app.init(<%=pollFeatureEnabled%>, '<%=enabledSpaces%>'));
 </script>
