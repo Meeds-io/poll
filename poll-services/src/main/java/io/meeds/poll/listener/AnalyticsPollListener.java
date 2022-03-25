@@ -53,13 +53,11 @@ public class AnalyticsPollListener extends Listener<String, Poll> {
     public void onEvent(Event<String, Poll> event) throws Exception {
         Poll poll = event.getData();
         String operation = "";
-        switch (event.getEventName()) {
-            case "meeds.poll.createPoll":
-                operation = CREATE_POLL_OPERATION_NAME;
-                break;
-            case "meeds.poll.votePoll":
-                operation = VOTE_POLL_OPERATION_NAME;
-                break;
+        if (event.getEventName().equals("meeds.poll.createPoll")) {
+            operation = CREATE_POLL_OPERATION_NAME;
+        }
+        else if (event.getEventName().equals("meeds.poll.votePoll")) {
+            operation = VOTE_POLL_OPERATION_NAME;
         }
         long userId = 0;
         Identity identity = getIdentityManager().getOrCreateIdentity(OrganizationIdentityProvider.NAME, event.getSource());
@@ -68,9 +66,11 @@ public class AnalyticsPollListener extends Listener<String, Poll> {
         }
         StatisticData statisticData = new StatisticData();
         Space space = getSpaceService().getSpaceById(String.valueOf(poll.getSpaceId()));
-
-        statisticData.setModule("poll");
-        statisticData.setSubModule("poll");
+        if (space != null) {
+            addSpaceStatistics(statisticData, space);
+        }
+        statisticData.setModule("Poll");
+        statisticData.setSubModule("Poll");
         statisticData.setOperation(operation);
         statisticData.setUserId(userId);
         statisticData.addParameter("PollId", poll.getId());
@@ -78,10 +78,8 @@ public class AnalyticsPollListener extends Listener<String, Poll> {
         statisticData.addParameter("NumberOptions", getPollService().getNumberOptions(poll.getId()));
         statisticData.addParameter("ChosenDuration", getDuration(poll));
         statisticData.addParameter("NumberVotes", getPollService().getNumberVotes(poll.getId()));
-        statisticData.addParameter("NumberSpaceMembers", space.getMembers().length);
-        if (space != null) {
-            addSpaceStatistics(statisticData, space);
-        }
+        statisticData.addParameter("NumberSpaceMembers", space != null ? space.getMembers().length : 0);
+
         AnalyticsUtils.addStatisticData(statisticData);
     }
 

@@ -23,7 +23,6 @@ import org.exoplatform.commons.persistence.impl.GenericDAOJPAImpl;
 import io.meeds.poll.entity.PollEntity;
 
 import javax.persistence.NoResultException;
-import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 public class PollDAO extends GenericDAOJPAImpl<PollEntity, Long> {
