@@ -220,6 +220,36 @@ public class PollStorageTest {
     assertEquals(1L, retrievedPollOption.getId());
   }
 
+  @PrepareForTest({ EntityMapper.class })
+  @Test
+  public void testGetNumberOptions() throws Exception { // NOSONAR
+    // Given
+    Poll poll = createPoll();
+    createPollOption(poll);
+    when(pollDAO.getNumberOptions(poll.getId())).thenReturn(1);
+
+    // When
+    int numberOptions = pollStorage.getNumberOptions(poll.getId());
+
+    // Then
+    assertEquals(1, numberOptions);
+  }
+
+  @PrepareForTest({ EntityMapper.class })
+  @Test
+  public void testGetNumberVotes() throws Exception { // NOSONAR
+    // Given
+    Poll poll = createPoll();
+    createPollOption(poll);
+    when(pollDAO.getNumberVotes(poll.getId())).thenReturn(1);
+
+    // When
+    int numberVotes = pollStorage.getNumberVotes(poll.getId());
+
+    // Then
+    assertEquals(1, numberVotes);
+  }
+
   protected Poll createPoll() {
     Date createdDate = new Date(System.currentTimeMillis());
     Date endDate = new Date(11508484583260L);

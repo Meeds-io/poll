@@ -30,7 +30,11 @@ public class PollDAO extends GenericDAOJPAImpl<PollEntity, Long> {
     public int getNumberOptions(long pollId) {
         TypedQuery<Long> query = getEntityManager().createNamedQuery("Poll.getNumberOptions", Long.class);
         query.setParameter("pollId", pollId);
-        return query.getSingleResult().intValue();
+        try {
+            return query.getSingleResult().intValue();
+        } catch (NoResultException e) {
+            throw new NoResultException();
+        }
     }
 
     public int getNumberVotes(long pollId) {
