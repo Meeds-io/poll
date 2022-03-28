@@ -18,7 +18,7 @@
  */
 
 export function initExtensions(pollFeatureEnabled, enabledSpaces) {
-  if (pollFeatureEnabled && eXo.env.portal.spaceName && eXo.env.portal.spaceName !== '' && (enabledSpaces === '' || enabledSpaces.includes(eXo.env.portal.spaceName))) {
+  if (pollFeatureEnabled && eXo.env.portal.spaceGroup && eXo.env.portal.spaceGroup !== '' && (enabledSpaces === '' || enabledSpaces.includes(eXo.env.portal.spaceGroup))) {
     extensionRegistry.registerComponent('ActivityComposerFooterAction', 'activity-composer-footer-action', {
       id: 'createPollButton',
       vueComponent: Vue.options.components['create-poll-composer'],
