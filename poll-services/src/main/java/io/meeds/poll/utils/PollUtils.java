@@ -20,6 +20,7 @@ package io.meeds.poll.utils;
 
 import java.time.ZonedDateTime;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.services.listener.ListenerService;
@@ -28,6 +29,8 @@ import org.exoplatform.services.log.Log;
 import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
 import org.exoplatform.social.core.manager.IdentityManager;
+
+import io.meeds.poll.model.Poll;
 
 public class PollUtils {
 
@@ -61,7 +64,12 @@ public class PollUtils {
       ListenerService listenerService = CommonsUtils.getService(ListenerService.class);
       listenerService.broadcast(eventName, source, data);
     } catch (Exception e) {
-      LOG.warn("Error broadcasting event '" + eventName + "' using source '" + source + "' and data " + data, e);
+      LOG.warn("Error when broadcasting event '" + eventName + "' using source '" + source + "' and data " + data, e);
     }
+  }
+  
+  public static long getPollDuration(Poll poll) {
+    long duration = Math.abs(poll.getEndDate().getTime() - poll.getCreatedDate().getTime());
+    return TimeUnit.DAYS.convert(duration, TimeUnit.MILLISECONDS);
   }
 }

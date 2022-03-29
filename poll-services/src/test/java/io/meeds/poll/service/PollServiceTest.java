@@ -288,8 +288,6 @@ public class PollServiceTest extends BasePollTest {
     } catch (IllegalAccessException e) {
       // Expected
     }
-    
-    
   }
   
   @Test
@@ -340,7 +338,7 @@ public class PollServiceTest extends BasePollTest {
   }
 
   @Test
-  public void testGetNumberOptions() throws IllegalAccessException {
+  public void testGetPollOptionsNumber() throws IllegalAccessException {
     // Given
     org.exoplatform.services.security.Identity testUser1Identity = new org.exoplatform.services.security.Identity("testuser1");
     Poll poll = new Poll();
@@ -366,14 +364,14 @@ public class PollServiceTest extends BasePollTest {
     Poll createdPoll = pollService.createPoll(poll, pollOptionList, space.getId(), MESSAGE, testUser1Identity, new ArrayList<>());
 
     // When
-    int numberOptions = pollService.getNumberOptions(createdPoll.getId());
+    int pollOptionsNumber = pollService.getPollOptionsNumber(createdPoll.getId(), "testuser1");
 
     // Then
-    assertEquals(4, numberOptions);
+    assertEquals(4, pollOptionsNumber);
   }
 
   @Test
-  public void getNumberVotes() throws IllegalAccessException {
+  public void testGetPollTotalVotes() throws IllegalAccessException {
     // Given
     org.exoplatform.services.security.Identity testUser1Identity = new org.exoplatform.services.security.Identity("testuser1");
     org.exoplatform.services.security.Identity testUser2Identity = new org.exoplatform.services.security.Identity("testuser2");
@@ -403,9 +401,9 @@ public class PollServiceTest extends BasePollTest {
     pollService.vote(String.valueOf(createdPollOptions.get(1).getId()), space.getId(), testUser2Identity);
 
     // When
-    int numberVotes = pollService.getNumberVotes(createdPoll.getId());
+    int pollTotalVotes = pollService.getPollTotalVotes(createdPoll.getId(), "testuser1");
 
     // Then
-    assertEquals(3, numberVotes);
+    assertEquals(3, pollTotalVotes);
   }
 }

@@ -80,21 +80,34 @@ public class PollOptionDAOTest extends TestCase {
     assertEquals(description, createdPollOption.getDescription());
   }
 
-  public void testFindPollOptionsById() {
+  public void testFindPollOptionsByPollId() {
     // Given
     PollEntity createdPollEntity = createPollEntity();
     PollOptionEntity createdPollOption = createPollOptionEntity(createdPollEntity.getId());
     pollOptionDAO.create(createdPollOption);
     
     // When
-    List<PollOptionEntity> pollOptions = pollOptionDAO.findPollOptionsById(createdPollEntity.getId());
+    List<PollOptionEntity> pollOptions = pollOptionDAO.findPollOptionsByPollId(createdPollEntity.getId());
 
     // Then
     assertNotNull(pollOptions);
     assertEquals(1, pollOptions.size());
 
   }
+  
+  public void testCountPollOptionsByPollId() {
+    // Given
+    PollEntity createdPollEntity = createPollEntity();
+    PollOptionEntity createdPollOption = createPollOptionEntity(createdPollEntity.getId());
+    pollOptionDAO.create(createdPollOption);
 
+    // When
+    int pollOptionsNumber = pollOptionDAO.countPollOptionsByPollId(createdPollEntity.getId());
+
+    // Then
+    assertEquals(1, pollOptionsNumber);
+  }
+  
   protected PollEntity createPollEntity() {
     PollEntity pollEntity = new PollEntity();
     pollEntity.setQuestion(question);

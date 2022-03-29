@@ -30,6 +30,9 @@ import java.util.Date;
 @NamedQuery(name = "PollVote.countPollOptionTotalVotes", query = "SELECT COUNT(*) FROM PollVote pollVote where pollVote.pollOptionId = :pollOptionId")
 @NamedQuery(name = "PollVote.countPollOptionTotalVotesByUser", query = "SELECT COUNT(*) FROM PollVote pollVote where pollVote.pollOptionId = :pollOptionId "
         + "AND pollVote.voterId = :userId")
+@NamedQuery(name = "PollVote.countPollTotalVotes",
+query = "SELECT COUNT(*) FROM PollVote pollVote, PollOption pollOption, Poll poll " +
+        "where pollVote.pollOptionId = pollOption.id AND pollOption.pollId = poll.id AND poll.id = :pollId ")
 
 public class PollVoteEntity implements Serializable {
 

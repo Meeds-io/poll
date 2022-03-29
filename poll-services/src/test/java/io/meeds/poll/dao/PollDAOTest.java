@@ -20,8 +20,6 @@ package io.meeds.poll.dao;
 
 import java.util.Date;
 
-import io.meeds.poll.entity.PollOptionEntity;
-import io.meeds.poll.entity.PollVoteEntity;
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.container.RootContainer;
@@ -30,10 +28,6 @@ import org.exoplatform.services.naming.InitialContextInitializer;
 
 import io.meeds.poll.entity.PollEntity;
 import junit.framework.TestCase;
-
-import javax.persistence.NoResultException;
-
-import static org.junit.Assert.fail;
 
 public class PollDAOTest extends TestCase {
 
@@ -51,16 +45,9 @@ public class PollDAOTest extends TestCase {
 
   private Long            spaceId     = 1L;
 
-  private String          description = "pollOption description";
-
   private PortalContainer container;
 
   private PollDAO         pollDAO;
-
-  private PollOptionDAO   pollOptionDAO;
-
-  private PollVoteDAO     pollVoteDAO;
-
 
   @Override
   protected void setUp() throws Exception {
@@ -69,8 +56,6 @@ public class PollDAOTest extends TestCase {
 
     container = PortalContainer.getInstance();
     pollDAO = container.getComponentInstanceOfType(PollDAO.class);
-    pollOptionDAO = container.getComponentInstanceOfType(PollOptionDAO.class);
-    pollVoteDAO = container.getComponentInstanceOfType(PollVoteDAO.class);
     ExoContainerContext.setCurrentContainer(container);
     begin();
   }
@@ -124,43 +109,6 @@ public class PollDAOTest extends TestCase {
     // Then
     assertEquals(activity2Id, updatedPollEntity.getActivityId());
   }
-
-  public void testGetNumberOptions() {
-    // Given
-    PollEntity createdPollEntity = createPollEntity();
-    createdPollEntity = pollDAO.create(createdPollEntity);
-    createPollOptionEntity(createdPollEntity.getId());
-
-    // When
-    int numberOptions = pollDAO.getNumberOptions(createdPollEntity.getId());
-
-    // Then
-    assertEquals(1, numberOptions);
-
-    // When
-    try {
-      PollEntity pollEntity2 = createPollEntity();
-      PollEntity createdPollEntity2 = pollDAO.create(pollEntity2);
-      pollDAO.getNumberOptions(createdPollEntity2.getId());
-      fail("Should fail when no option is related to the given poll with id " + createdPollEntity2.getId());
-    } catch (NoResultException e) {
-      // Expected
-    }
-  }
-
-  public void testGetNumberVotes() {
-    // Given
-    PollEntity createdPollEntity = createPollEntity();
-    createdPollEntity = pollDAO.create(createdPollEntity);
-    PollOptionEntity pollOptionEntity = createPollOptionEntity(createdPollEntity.getId());
-    createPollVoteEntity(pollOptionEntity.getId());
-
-    // When
-    int numberVotes = pollDAO.getNumberVotes(createdPollEntity.getId());
-
-    // Then
-    assertEquals(1, numberVotes);
-  }
   
   protected PollEntity createPollEntity() {
     PollEntity pollEntity = new PollEntity();
@@ -171,21 +119,6 @@ public class PollDAOTest extends TestCase {
     pollEntity.setActivityId(activityId);
     pollEntity.setSpaceId(spaceId);
     return pollEntity;
-  }
-
-  protected PollOptionEntity createPollOptionEntity(long pollId) {
-    PollOptionEntity pollOptionEntity = new PollOptionEntity();
-    pollOptionEntity.setPollId(pollId);
-    pollOptionEntity.setDescription(description);
-    return pollOptionDAO.create(pollOptionEntity);
-  }
-
-  protected PollVoteEntity createPollVoteEntity(long optionId) {
-    PollVoteEntity pollVoteEntity = new PollVoteEntity();
-    pollVoteEntity.setPollOptionId(optionId);
-    pollVoteEntity.setVoterId(creatorId);
-    pollVoteEntity.setVoteDate(startDate);
-    return pollVoteDAO.create(pollVoteEntity);
   }
 
   @Override

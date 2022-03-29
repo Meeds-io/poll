@@ -92,10 +92,10 @@ public class PollVoteDAOTest extends TestCase {
     pollVoteDAO.create(pollVoteEntity);
 
     // When
-    int votes = pollVoteDAO.countPollOptionTotalVotes(pollOptionEntity.getId());
+    int pollOptionTotalVotes = pollVoteDAO.countPollOptionTotalVotes(pollOptionEntity.getId());
 
     // Then
-    assertEquals(1, votes);
+    assertEquals(1, pollOptionTotalVotes);
   }
 
   public void testCountPollOptionTotalVotesByUser() {
@@ -106,10 +106,27 @@ public class PollVoteDAOTest extends TestCase {
     pollVoteDAO.create(pollVoteEntity);
 
     // When
-    int votes = pollVoteDAO.countPollOptionTotalVotesByUser(pollOptionEntity.getId(), creatorId);
+    int pollOptionTotalVotesByUser = pollVoteDAO.countPollOptionTotalVotesByUser(pollOptionEntity.getId(), creatorId);
 
     // Then
-    assertEquals(1, votes);
+    assertEquals(1, pollOptionTotalVotesByUser);
+  }
+  
+  public void testCountPollTotalVotes() {
+    // Given
+    PollEntity createdPollEntity = createPollEntity();
+    PollOptionEntity pollOption1Entity = createPollOptionEntity(createdPollEntity.getId());
+    PollVoteEntity pollVote1Entity = createPollVoteEntity(pollOption1Entity.getId());
+    pollVoteDAO.create(pollVote1Entity);
+    PollOptionEntity pollOption2Entity = createPollOptionEntity(createdPollEntity.getId());
+    PollVoteEntity pollVote2Entity = createPollVoteEntity(pollOption2Entity.getId());
+    pollVoteDAO.create(pollVote2Entity);
+
+    // When
+    int pollTotalVotes = pollVoteDAO.countPollTotalVotes(createdPollEntity.getId());
+
+    // Then
+    assertEquals(2, pollTotalVotes);
   }
 
   protected PollEntity createPollEntity() {

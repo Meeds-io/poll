@@ -86,4 +86,5 @@
       <type>io.meeds.poll.listener.AnalyticsPollListener</type>
     </component-plugin>
   </external-component-plugins>
+  
 </configuration>

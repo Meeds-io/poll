@@ -33,41 +33,41 @@ public interface PollService {
    *
    * @param poll {@link Poll} object to create
    * @param pollOptions {@link Poll} options objects to create
-   * @param spaceId {@link Space} id related to the {@link Poll} to be created
+   * @param spaceId {@link Space} id related to the {@link poll} to be created
    * @param message Message of {@link Poll} activity to be created
-   * @param currentIdentity User identity creating the poll
+   * @param currentIdentity User identity creating the {@link poll}
    * @return created {@link Poll} with generated technical identifier
-   * @throws IllegalAccessException when the current user is not authorized to create a poll
+   * @throws IllegalAccessException when the current user is not authorized to create a {@link poll}
    */
   Poll createPoll(Poll poll, List<PollOption> pollOptions, String spaceId, String message, Identity currentIdentity, List<ActivityFile> files) throws IllegalAccessException;
 
   /**
    * Retrieves a poll identified by its technical identifier.
    * 
-   * @param pollId technical identifier of a poll
-   * @param currentIdentity User identity getting the poll
+   * @param pollId technical identifier of a {@link poll}
+   * @param currentIdentity User identity getting the {@link poll}
    * @return A {@link Poll} object
-   * @throws IllegalAccessException when the current user is not authorized to get a poll
+   * @throws IllegalAccessException when the current user is not authorized to get a {@link poll}
    */
   Poll getPollById(long pollId, Identity currentIdentity) throws IllegalAccessException;
   
   /**
    * Retrieves a poll option identified by its technical identifier.
    * 
-   * @param pollId technical identifier of a poll
-   * @param currentIdentity User identity getting the poll option
+   * @param pollId technical identifier of a {@link poll}
+   * @param currentIdentity User identity getting the {@link poll} option
    * @return A {@link Poll} option object
-   * @throws IllegalAccessException when the current user is not authorized to get a poll option
+   * @throws IllegalAccessException when the current user is not authorized to get a {@link poll} option
    */
   PollOption getPollOptionById(long pollOptionId, Identity currentIdentity) throws IllegalAccessException;
   
   /**
    * Retrieves options of a poll identified by its technical identifier.
    * 
-   * @param pollId technical identifier of a poll
-   * @param currentIdentity User identity getting the poll options
+   * @param pollId technical identifier of a {@link poll}
+   * @param currentIdentity User identity getting the {@link poll} options
    * @return A {@link Poll} object
-   * @throws IllegalAccessException when the current user is not authorized to get poll options of a poll
+   * @throws IllegalAccessException when the current user is not authorized to get poll options of a {@link poll}
    */
   List<PollOption> getPollOptionsByPollId(long pollId, Identity currentIdentity) throws IllegalAccessException;
 
@@ -75,8 +75,8 @@ public interface PollService {
    * Votes a poll option
    *
    * @param pollOptionId {@link Poll} option id to be voted
-   * @param spaceId {@link Space} id related to the voted {@link Poll}
-   * @param currentIdentity User identity voting in the poll
+   * @param spaceId {@link Space} id related to the voted {@link poll}
+   * @param currentIdentity User identity voting in the {@link poll}
    * @return created {@link Poll} vote with generated technical identifier
    * @throws IllegalAccessException when the current user is not authorized to vote
    */
@@ -86,10 +86,10 @@ public interface PollService {
    * Retrieves total votes of a poll option identified by its technical identifier
    *
    * @param pollOptionId {@link Poll} option technical identifier
-   * @param spaceId {@link Space} id related to the {@link Poll} option
+   * @param spaceId {@link Space} id related to the {@link poll} option
    * @param currentIdentity User identity
    * @return The {@link Poll} option total votes
-   * @throws IllegalAccessException when the current user is not authorized to get the {@link Poll} option total votes 
+   * @throws IllegalAccessException when the current user is not authorized to get the {@link poll} option total votes 
    */
   int getPollOptionTotalVotes(long pollOptionId, String spaceId, Identity currentIdentity) throws IllegalAccessException;
 
@@ -97,26 +97,30 @@ public interface PollService {
    * Checks if a the current user has voted a poll option identified by its technical identifier.
    *
    * @param pollOptionId {@link Poll} option technical identifier to be checked if it is voted
-   * @param spaceId {@link Space} id related to the {@link Poll} option
-   * @param currentIdentity User identity to be checked if he has voted the {@link Poll} option
-   * @return A {@link boolean} which indicates if the current identity has voted the {@link Poll} option
-   * @throws IllegalAccessException when the current user is not authorized to check if the {@link Poll} option is voted
+   * @param spaceId {@link Space} id related to the {@link poll} option
+   * @param currentIdentity User identity to be checked if he has voted the {@link poll} option
+   * @return A {@link boolean} which indicates if the current identity has voted the {@link poll} option
+   * @throws IllegalAccessException when the current user is not authorized to check if the {@link poll} option is voted
    */
   boolean isPollOptionVoted(long pollOptionId, String spaceId, Identity currentIdentity) throws IllegalAccessException;
 
   /**
-   * Retrieves total number of poll options using a given pollId.
+   * Retrieves the number of poll options identified by its technical identifier
    *
-   * @param pollId technical identifier of a poll
-   * @return A {@link int} which retrieves the total number of poll options using the given {@link Poll} id
+   * @param pollId technical identifier of a {@link poll}
+   * @param currentUserId Current user identifier getting the {@link poll} options number
+   * @return The {@link poll} options number
+   * @throws IllegalAccessException when the current user is not authorized to get {@link poll} options number
    */
-  int getNumberOptions(long pollId);
+  int getPollOptionsNumber(long pollId, String currentUserId) throws IllegalAccessException;
 
   /**
-   * Retrieves total number of votes using a given pollId.
+   * Retrieves total votes of a poll identified by its technical identifier
    *
-   * @param pollId technical identifier of a poll
-   * @return A {@link int} which retrieves the total number of votes using the given {@link Poll} id
+   * @param pollId technical identifier of a {@link poll}
+   * @param currentUserId Current user identifier getting the {@link poll} total votes
+   * @return The {@link Poll} total votes
+   * @throws IllegalAccessException when the current user is not authorized to get {@link poll} total votes
    */
-  int getNumberVotes(long pollId);
+  int getPollTotalVotes(long pollId, String currentUserId) throws IllegalAccessException;
 }

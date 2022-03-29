@@ -20,6 +20,7 @@ package io.meeds.poll.dao;
 
 import java.util.List;
 
+import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 
 import org.exoplatform.commons.persistence.impl.GenericDAOJPAImpl;
@@ -31,10 +32,20 @@ import java.util.Collections;
 
 public class PollOptionDAO extends GenericDAOJPAImpl<PollOptionEntity, Long> {
 
-  public List<PollOptionEntity> findPollOptionsById(Long pollId) {
-    TypedQuery<PollOptionEntity> query = getEntityManager().createNamedQuery("PollOption.findPollOptionsById", PollOptionEntity.class);
+  public List<PollOptionEntity> findPollOptionsByPollId(Long pollId) {
+    TypedQuery<PollOptionEntity> query = getEntityManager().createNamedQuery("PollOption.findPollOptionsByPollId", PollOptionEntity.class);
     query.setParameter(PollUtils.POLL_ID, pollId);
     List<PollOptionEntity> resultList = query.getResultList();
     return resultList == null ? Collections.emptyList() : resultList;
+  }
+
+  public int countPollOptionsByPollId(long pollId) {
+    TypedQuery<Long> query = getEntityManager().createNamedQuery("PollOption.countPollOptionsByPollId", Long.class);
+    query.setParameter("pollId", pollId);
+    try {
+      return query.getSingleResult().intValue();
+    } catch (NoResultException e) {
+      throw new NoResultException();
+    }
   }
 }

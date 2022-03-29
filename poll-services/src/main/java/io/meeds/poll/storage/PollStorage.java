@@ -60,8 +60,8 @@ public class PollStorage {
     return EntityMapper.fromPollEntity(pollEntity);
   }
 
-  public List<PollOption> getPollOptionsById(long pollId) {
-    List<PollOptionEntity> pollOptionEntities = pollOptionDAO.findPollOptionsById(pollId);
+  public List<PollOption> getPollOptionsByPollId(long pollId) {
+    List<PollOptionEntity> pollOptionEntities = pollOptionDAO.findPollOptionsByPollId(pollId);
     return pollOptionEntities.stream().map(EntityMapper::fromPollOptionEntity).collect(Collectors.toList());
   }
 
@@ -90,11 +90,11 @@ public class PollStorage {
     return EntityMapper.fromPollOptionEntity(pollOptionEntity);
   }
 
-  public int getNumberOptions(long pollId) {
-    return pollDAO.getNumberOptions(pollId);
+  public int countPollOptionsByPollId(long pollId) {
+    return pollOptionDAO.countPollOptionsByPollId(pollId);
   }
 
-  public int getNumberVotes(long pollId) {
-    return pollDAO.getNumberVotes(pollId);
+  public int countPollTotalVotes(long pollId) {
+    return pollVoteDAO.countPollTotalVotes(pollId);
   }
 }

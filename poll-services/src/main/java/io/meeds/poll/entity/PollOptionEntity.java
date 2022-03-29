@@ -26,7 +26,8 @@ import java.io.Serializable;
 @Entity(name = "PollOption")
 @ExoEntity
 @Table(name = "POLL_OPTION")
-@NamedQuery(name = "PollOption.findPollOptionsById", query = "SELECT pollOpt FROM PollOption pollOpt where pollOpt.pollId = :pollId")
+@NamedQuery(name = "PollOption.findPollOptionsByPollId", query = "SELECT pollOpt FROM PollOption pollOpt where pollOpt.pollId = :pollId")
+@NamedQuery(name = "PollOption.countPollOptionsByPollId", query = "SELECT COUNT(*) FROM PollOption pollOpt where pollOpt.pollId = :pollId")
 public class PollOptionEntity implements Serializable {
 
   private static final long serialVersionUID = 8803249235458041880L;

@@ -22,28 +22,5 @@ import org.exoplatform.commons.persistence.impl.GenericDAOJPAImpl;
 
 import io.meeds.poll.entity.PollEntity;
 
-import javax.persistence.NoResultException;
-import javax.persistence.TypedQuery;
-
 public class PollDAO extends GenericDAOJPAImpl<PollEntity, Long> {
-
-    public int getNumberOptions(long pollId) {
-        TypedQuery<Long> query = getEntityManager().createNamedQuery("Poll.getNumberOptions", Long.class);
-        query.setParameter("pollId", pollId);
-        try {
-            return query.getSingleResult().intValue();
-        } catch (NoResultException e) {
-            throw new NoResultException();
-        }
-    }
-
-    public int getNumberVotes(long pollId) {
-            TypedQuery<Long> query = getEntityManager().createNamedQuery("Poll.getNumberVotes", Long.class);
-            query.setParameter("pollId", pollId);
-        try {
-            return query.getSingleResult().intValue();
-        } catch (NoResultException e) {
-            return 0;
-        }
-    }
 }

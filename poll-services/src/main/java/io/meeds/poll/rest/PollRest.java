@@ -87,7 +87,7 @@ public class PollRest implements ResourceContainer {
       LOG.warn("User '{}' attempts to create a non authorized poll", currentIdentity.getUserId(), e);
       return Response.status(Response.Status.UNAUTHORIZED).build();
     } catch (Exception e) {
-      LOG.error("Error when creating a new poll ", e);
+      LOG.error("Error when creating a poll ", e);
       return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
     }
   }
@@ -156,7 +156,7 @@ public class PollRest implements ResourceContainer {
       LOG.warn("User '{}' attempts to vote in a non authorized poll option with id {}", currentIdentity.getUserId(), optionId, e);
       return Response.status(Response.Status.UNAUTHORIZED).build();
     } catch (Exception e) {
-      LOG.error("Error when voting in a poll with the given option id {}", optionId, e);
+      LOG.error("Error when voting in the poll option id {}", optionId, e);
       return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
     }
   }
