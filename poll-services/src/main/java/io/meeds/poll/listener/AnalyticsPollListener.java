@@ -1,8 +1,8 @@
 /*
  * This file is part of the Meeds project (https://meeds.io/).
- *
+ * 
  * Copyright (C) 2022 Meeds Association contact@meeds.io
- *
+ * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -11,14 +11,15 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 package io.meeds.poll.listener;
 
-import static org.exoplatform.analytics.utils.AnalyticsUtils.addSpaceStatistics;
+import java.util.Arrays;
+import java.util.HashSet;
 
 import org.exoplatform.analytics.model.StatisticData;
 import org.exoplatform.analytics.utils.AnalyticsUtils;
@@ -39,15 +40,29 @@ import io.meeds.poll.utils.PollUtils;
 @Asynchronous
 public class AnalyticsPollListener extends Listener<String, Poll> {
 
-  public static final String CREATE_POLL_OPERATION_NAME = "createPoll";
+  private static final String CREATE_POLL_OPERATION_NAME = "createPoll";
 
-  public static final String VOTE_POLL_OPERATION_NAME   = "votePoll";
+  private static final String VOTE_POLL_OPERATION_NAME   = "votePoll";
 
-  private IdentityManager    identityManager;
+  private static final String POLL_MODULE                = "Poll";
 
-  private SpaceService       spaceService;
+  private static final String POLL_ID                    = "PollId";
 
-  private PollService        pollService;
+  private static final String POLL_ACTIVITY_ID           = "PollActivityId";
+
+  private static final String POLL_OPTIONS_NUMBER        = "PollOptionsNumber";
+
+  private static final String POLL_DURATION              = "PollDuration";
+
+  private static final String POLL_TOTAL_VOTES           = "PollTotalVotes";
+
+  private static final String POLL_SPACE_MEMBERS_COUNT   = "PollSpaceMembersCount";
+
+  private IdentityManager     identityManager;
+
+  private SpaceService        spaceService;
+
+  private PollService         pollService;
 
   @Override
   public void onEvent(Event<String, Poll> event) throws Exception {
@@ -58,26 +73,24 @@ public class AnalyticsPollListener extends Listener<String, Poll> {
     } else if (event.getEventName().equals(PollUtils.VOTE_POLL)) {
       operation = VOTE_POLL_OPERATION_NAME;
     }
+    String userName = event.getSource();
     long userId = 0;
-    Identity identity = getIdentityManager().getOrCreateIdentity(OrganizationIdentityProvider.NAME, event.getSource());
+    Identity identity = getIdentityManager().getOrCreateIdentity(OrganizationIdentityProvider.NAME, userName);
     if (identity != null) {
       userId = Long.parseLong(identity.getId());
     }
     StatisticData statisticData = new StatisticData();
     Space space = getSpaceService().getSpaceById(String.valueOf(poll.getSpaceId()));
-    if (space != null) {
-      addSpaceStatistics(statisticData, space);
-    }
-    statisticData.setModule("Poll");
-    statisticData.setSubModule("Poll");
+    statisticData.setModule(POLL_MODULE);
+    statisticData.setSubModule(POLL_MODULE);
     statisticData.setOperation(operation);
     statisticData.setUserId(userId);
-    statisticData.addParameter("PollId", poll.getId());
-    statisticData.addParameter("ActivityId", poll.getActivityId());
-    statisticData.addParameter("NumberOptions", getPollService().getPollOptionsNumber(poll.getId(), identity.getRemoteId()));
-    statisticData.addParameter("ChosenDuration", PollUtils.getPollDuration(poll));
-    statisticData.addParameter("NumberVotes", getPollService().getPollTotalVotes(poll.getId(), identity.getRemoteId()));
-    statisticData.addParameter("NumberSpaceMembers", space != null ? space.getMembers().length : 0);
+    statisticData.addParameter(POLL_ID, poll.getId());
+    statisticData.addParameter(POLL_ACTIVITY_ID, poll.getActivityId());
+    statisticData.addParameter(POLL_OPTIONS_NUMBER, getPollService().getPollOptionsNumber(poll.getId(), userName));
+    statisticData.addParameter(POLL_DURATION, PollUtils.getPollDuration(poll));
+    statisticData.addParameter(POLL_TOTAL_VOTES, getPollService().getPollTotalVotes(poll.getId(), userName));
+    statisticData.addParameter(POLL_SPACE_MEMBERS_COUNT, getSize(space.getMembers()));
 
     AnalyticsUtils.addStatisticData(statisticData);
   }
@@ -101,5 +114,9 @@ public class AnalyticsPollListener extends Listener<String, Poll> {
       pollService = ExoContainerContext.getService(PollService.class);
     }
     return pollService;
+  }
+  
+  private static int getSize(String[] array) {
+    return array == null ? 0 : new HashSet<>(Arrays.asList(array)).size();
   }
 }
