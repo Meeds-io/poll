@@ -58,8 +58,8 @@ public class PollServiceTest extends BasePollTest {
     
     // Then
     assertNotNull(createdPoll);
-    assertEquals(poll.getCreatorId(), createdPoll.getCreatorId());
-    assertEquals(poll.getQuestion(), createdPoll.getQuestion());
+    assertEquals(Long.parseLong(user1Identity.getId()), createdPoll.getCreatorId());
+    assertEquals("q1", createdPoll.getQuestion());
     assertNotEquals(poll.getActivityId(), createdPoll.getActivityId());
 
     // Given
@@ -103,9 +103,9 @@ public class PollServiceTest extends BasePollTest {
 
     // Then
     assertNotNull(poll);
-    assertEquals(createdPoll.getQuestion(), retrievedPoll.getQuestion());
-    assertEquals(createdPoll.getCreatedDate(), retrievedPoll.getCreatedDate());
-    assertEquals(createdPoll.getEndDate(), retrievedPoll.getEndDate());
+    assertEquals("q1", retrievedPoll.getQuestion());
+    assertEquals(createdDate, retrievedPoll.getCreatedDate());
+    assertEquals(endDate, retrievedPoll.getEndDate());
     
     // When
     try {

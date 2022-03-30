@@ -83,12 +83,12 @@ public class PollStorageTest {
     when(EntityMapper.fromPollOptionEntity(pollOptionEntity)).thenReturn(pollOption);
 
     // When
-    Poll pollCreated = pollStorage.createPoll(poll, Collections.singletonList(pollOption));
+    Poll createdPoll = pollStorage.createPoll(poll, Collections.singletonList(pollOption));
 
     // Then
-    assertNotNull(pollCreated);
-    assertEquals(1L, pollCreated.getId());
-    assertEquals(poll, pollCreated);
+    assertNotNull(createdPoll);
+    assertEquals(1L, createdPoll.getId());
+    assertEquals("q1", createdPoll.getQuestion());
   }
 
   @PrepareForTest({ EntityMapper.class })
@@ -106,7 +106,8 @@ public class PollStorageTest {
 
     // Then
     assertNotNull(retrievedPoll);
-    assertEquals(retrievedPoll, poll);
+    assertEquals(1L, retrievedPoll.getId());
+    assertEquals("q1", retrievedPoll.getQuestion());
   }
   
   @PrepareForTest({ EntityMapper.class })
