@@ -108,19 +108,19 @@ public interface PollService {
    * Retrieves the number of poll options identified by its technical identifier
    *
    * @param pollId technical identifier of a {@link poll}
-   * @param currentUserId Current user identifier getting the {@link poll} options number
+   * @param currentIdentity User identifier getting the {@link poll} options number
    * @return The {@link poll} options number
    * @throws IllegalAccessException when the current user is not authorized to get {@link poll} options number
    */
-  int getPollOptionsNumber(long pollId, String currentUserId) throws IllegalAccessException;
+  int getPollOptionsNumber(long pollId, Identity currentIdentity) throws IllegalAccessException;
 
   /**
    * Retrieves total votes of a poll identified by its technical identifier
    *
    * @param pollId technical identifier of a {@link poll}
-   * @param currentUserId Current user identifier getting the {@link poll} total votes
+   * @param currentIdentity User identifier getting the {@link poll} total votes
    * @return The {@link Poll} total votes
    * @throws IllegalAccessException when the current user is not authorized to get {@link poll} total votes
    */
-  int getPollTotalVotes(long pollId, String currentUserId) throws IllegalAccessException;
+  int getPollTotalVotes(long pollId, Identity currentIdentity) throws IllegalAccessException;
 }

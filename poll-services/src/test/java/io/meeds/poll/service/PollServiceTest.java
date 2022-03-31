@@ -364,7 +364,7 @@ public class PollServiceTest extends BasePollTest {
     Poll createdPoll = pollService.createPoll(poll, pollOptionList, space.getId(), MESSAGE, testUser1Identity, new ArrayList<>());
 
     // When
-    int pollOptionsNumber = pollService.getPollOptionsNumber(createdPoll.getId(), "testuser1");
+    int pollOptionsNumber = pollService.getPollOptionsNumber(createdPoll.getId(), testUser1Identity);
 
     // Then
     assertEquals(4, pollOptionsNumber);
@@ -401,7 +401,7 @@ public class PollServiceTest extends BasePollTest {
     pollService.vote(String.valueOf(createdPollOptions.get(1).getId()), space.getId(), testUser2Identity);
 
     // When
-    int pollTotalVotes = pollService.getPollTotalVotes(createdPoll.getId(), "testuser1");
+    int pollTotalVotes = pollService.getPollTotalVotes(createdPoll.getId(), testUser1Identity);
 
     // Then
     assertEquals(3, pollTotalVotes);

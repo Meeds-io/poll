@@ -28,7 +28,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           <template v-if="!finalResults">
             <div
               v-if="!visibleResults"
-              :class="{ 'answer-no-vote no-select': true, active: answer.voted }"
+              :title="!isSpaceMember && $t('activity.poll.not.space.member')"
+              :class="{ 'answer-cant-vote': !isSpaceMember, 'answer-no-vote no-select': true, active: answer.voted }"
               @click.prevent="handleVote(answer)">
               <span class="vote-content" v-sanitized-html="answer.description"></span>
             </div>
@@ -113,6 +114,10 @@ export default {
       type: String,
       default: 'Submit'
     },
+    isSpaceMember: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -164,11 +169,13 @@ export default {
   },
   methods: {
     handleVote(answer) {
-      answer.votes ++;
-      answer.voted = true;
-      this.visibleResults = true;
+      if (this.isSpaceMember) {
+        answer.votes ++;
+        answer.voted = true;
+        this.visibleResults = true;
 
-      this.$emit('submit-vote', answer.id);
+        this.$emit('submit-vote', answer.id);
+      }
     }
   }
 };

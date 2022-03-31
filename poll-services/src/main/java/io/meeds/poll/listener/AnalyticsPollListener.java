@@ -87,9 +87,9 @@ public class AnalyticsPollListener extends Listener<String, Poll> {
     statisticData.setUserId(userId);
     statisticData.addParameter(POLL_ID, poll.getId());
     statisticData.addParameter(POLL_ACTIVITY_ID, poll.getActivityId());
-    statisticData.addParameter(POLL_OPTIONS_NUMBER, getPollService().getPollOptionsNumber(poll.getId(), userName));
+    statisticData.addParameter(POLL_OPTIONS_NUMBER, getPollService().getPollOptionsNumber(poll.getId(), new org.exoplatform.services.security.Identity(userName)));
     statisticData.addParameter(POLL_DURATION, PollUtils.getPollDuration(poll));
-    statisticData.addParameter(POLL_TOTAL_VOTES, getPollService().getPollTotalVotes(poll.getId(), userName));
+    statisticData.addParameter(POLL_TOTAL_VOTES, getPollService().getPollTotalVotes(poll.getId(), new org.exoplatform.services.security.Identity(userName)));
     statisticData.addParameter(POLL_SPACE_MEMBERS_COUNT, getSize(space.getMembers()));
 
     AnalyticsUtils.addStatisticData(statisticData);
