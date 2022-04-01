@@ -66,7 +66,7 @@ export default {
       return this.activity && this.activity.id;
     },
     showResults() {
-      return this.poll && this.poll.options && this.poll.options.some(option => option.voted);
+      return this.poll && (this.poll.creator === eXo.env.portal.userName || this.poll.options && this.poll.options.some(option => option.voted));
     },
     finalResults() {
       return this.poll && this.poll.endDateTime < new Date().getTime();

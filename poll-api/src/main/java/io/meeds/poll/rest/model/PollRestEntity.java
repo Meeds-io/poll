@@ -39,6 +39,8 @@ public class PollRestEntity {
 
   private long                       endDateTime;
 
+  private String                     creator;
+
   private String                     duration;
 
   private String                     message;
