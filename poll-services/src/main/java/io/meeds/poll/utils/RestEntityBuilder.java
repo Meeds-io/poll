@@ -24,6 +24,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.exoplatform.commons.utils.CommonsUtils;
+import org.exoplatform.social.core.manager.IdentityManager;
+
 import io.meeds.poll.model.Poll;
 import io.meeds.poll.model.PollOption;
 import io.meeds.poll.rest.model.PollOptionRestEntity;
@@ -49,6 +52,10 @@ public class RestEntityBuilder {
     pollRestEntity.setQuestion(poll.getQuestion());
     pollRestEntity.setOptions(pollOptionRestEntities);
     pollRestEntity.setEndDateTime(poll.getEndDate().getTime());
+    IdentityManager identityManager = CommonsUtils.getService(IdentityManager.class);
+    if (identityManager.getIdentity(String.valueOf(poll.getCreatorId())) != null) {
+      pollRestEntity.setCreator(identityManager.getIdentity(String.valueOf(poll.getCreatorId())).getRemoteId());
+    }
     return pollRestEntity;
   }
 
