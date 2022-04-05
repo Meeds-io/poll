@@ -11,7 +11,7 @@
       <properties-param>
         <name>PollFeatureProperties</name>
         <description>Poll Feature enablement flag</description>
-        <property name="exo.feature.poll.enabled" value="${exo.feature.poll.enabled:false}" />
+        <property name="exo.feature.poll.enabled" value="${exo.feature.poll.enabled:true}" />
       </properties-param>
     </init-params>
   </component>
