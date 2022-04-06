@@ -151,7 +151,6 @@ public class PollServiceImpl implements PollService {
         pollVote.setPollOptionId(Long.parseLong(pollOptionId));
         pollVote.setVoteDate(new Date());
         pollVote = pollStorage.createPollVote(pollVote);
-        updatePollActivity(String.valueOf(poll.getActivityId()));
         PollUtils.broadcastEvent(PollUtils.VOTE_POLL, currentIdentity.getUserId(), poll);//Analytics
       }
     }
@@ -234,13 +233,6 @@ public class PollServiceImpl implements PollService {
     activityManager.saveActivityNoReturn(spaceIdentity, activity);
     createdPoll.setActivityId(Long.parseLong(activity.getId()));
     return pollStorage.updatePoll(createdPoll);
-  }
-
-  private void updatePollActivity(String pollActivityId) {
-    ExoSocialActivity pollActivity = activityManager.getActivity(pollActivityId);
-    if (pollActivity != null) {
-      activityManager.updateActivity(pollActivity, true);
-    }
   }
 
   private boolean canViewPoll(Space pollSpace, org.exoplatform.services.security.Identity currentIdentity) {
