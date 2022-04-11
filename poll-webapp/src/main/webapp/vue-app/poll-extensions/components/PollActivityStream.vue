@@ -26,7 +26,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         @submit-vote="submitVote"
         :show-results="showResults"
         :final-results="finalResults"
-        :is-space-member="isSpaceMember" />
+        :is-space-member="isSpaceMember"
+        :is-poll-creator="isPollCreator" />
     </v-card>
     <div
       class="votes-remaining-state"
@@ -66,13 +67,16 @@ export default {
       return this.activity && this.activity.id;
     },
     showResults() {
-      return this.poll && (this.poll.creator === eXo.env.portal.userName || this.poll.options && this.poll.options.some(option => option.voted));
+      return this.poll && this.poll.options && this.poll.options.some(option => option.voted);
     },
     finalResults() {
       return this.poll && this.poll.endDateTime < new Date().getTime();
     },
     isSpaceMember() {
       return this.activity && this.activity.activityStream && this.activity.activityStream.space && this.activity.activityStream.space.isMember;
+    },
+    isPollCreator() {
+      return this.poll && this.poll.creator && this.poll.creator === eXo.env.portal.userName;
     }
   },
   created() {
