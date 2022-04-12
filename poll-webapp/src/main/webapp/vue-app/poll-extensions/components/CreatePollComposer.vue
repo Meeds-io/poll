@@ -104,7 +104,7 @@ export default {
     postPoll(message) {
       const poll = {
         question: this.savedPoll.question,
-        options: this.savedPoll.options.filter(option => option.data != null)
+        options: this.savedPoll.options.filter(option => option.data != null && option.data !== '')
           .map(option => {
             return {
               description: option.data,
