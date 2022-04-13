@@ -16,10 +16,10 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-import {initExtensions} from './pollExtensions.js';
 import './initComponents.js';
-import * as pollUtils from './pollUtils.js';
-import * as pollService from './pollService.js';
+import {initExtensions} from './js/pollExtensions.js';
+import * as pollUtils from './js/pollUtils.js';
+import * as pollService from './js/pollService.js';
 
 // getting language of the PLF
 const lang = eXo.env.portal.language || 'en';

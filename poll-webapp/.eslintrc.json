@@ -2,8 +2,7 @@
   "extends": [
     "eslint-config-meedsio"
   ],
-  "globals": {
-    "gapi": true,
-    "webConferencing": true
+  "rules": {
+    "vue/no-mutating-props": "warn"
   }
 }
