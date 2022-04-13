@@ -30,7 +30,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               <v-progress-linear
                 v-if="isPollCreator"
                 :value="answer.percent"
-                color="wight"
+                color="transparent"
                 height="20"
                 :class="{ 'answer-voted': true, selected: answer.voted }"
                 @click.prevent="handleVote(answer)"
@@ -61,7 +61,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <div v-else>
               <v-progress-linear
                 :value="answer.percent"
-                color="wight"
+                color="transparent"
                 height="20"
                 :class="{ 'answer-voted': true, selected: answer.voted }"
                 rounded>
@@ -85,7 +85,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           <template v-else>
             <v-progress-linear
               :value="answer.percent"
-              color="wight"
+              color="transparent"
               height="20"
               class="answer-voted final"
               rounded>
@@ -166,7 +166,7 @@ export default {
       return totalVotes;
     },
     totalVotesFormatted(){
-      return `${this.totalVotes} vote${this.totalVotes > 0 ? 's' : ''}`;
+      return this.totalVotes === 1 ? this.$t('activity.poll.many.votes.label',{0: this.totalVotes}) : this.$t('activity.poll.single.vote.label',{0: this.totalVotes});
     },
     mostVotes() {
       let max = 0;
