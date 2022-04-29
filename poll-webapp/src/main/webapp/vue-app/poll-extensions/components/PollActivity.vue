@@ -32,7 +32,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 :value="answer.percent"
                 color="transparent"
                 height="20"
-                :class="{ 'answer-voted': true, selected: answer.voted }"
+                :class="{ 'answer-cant-vote': !isSpaceMember, 'answer-voted': true, selected: answer.voted }"
                 @click.prevent="handleVote(answer)"
                 rounded>
                 <template>
@@ -79,7 +79,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                 </template>
               </v-progress-linear>
             </div>
-            <span class="voteBackground voteBackgroundPollCreator" :style="{ width: (!visibleResults && isPollCreator) || visibleResults ? fixWidth(answer.percent) : '0%' }"></span>
+            <span :class="`voteBackground voteBackgroundPollCreator  ${!isSpaceMember && 'poll-creator-non-member'}`"
+                  :title="!isSpaceMember && $t('activity.poll.not.space.member')"
+                  :style="{ width: (!visibleResults && isPollCreator) || visibleResults ? fixWidth(answer.percent) : '0%'}"></span>
           </template>
 
           <template v-else>
