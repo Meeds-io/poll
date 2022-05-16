@@ -168,7 +168,7 @@ export default {
       return totalVotes;
     },
     totalVotesFormatted(){
-      return this.totalVotes === 0 || this.totalVotes === 1 ? this.$t('activity.poll.single.vote.label',{0: this.totalVotes}) : this.$t('activity.poll.many.votes.label',{0: this.totalVotes});
+      return this.totalVotes === 1 ? this.$t('activity.poll.single.vote.label',{0: this.totalVotes}) : this.$t('activity.poll.many.votes.label',{0: this.totalVotes});
     },
     mostVotes() {
       let max = 0;
