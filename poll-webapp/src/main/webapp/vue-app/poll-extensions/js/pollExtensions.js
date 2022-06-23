@@ -40,9 +40,7 @@ export function initExtensions(pollFeatureEnabled, enabledSpaces) {
     id: 'favorite-poll',
     type: 'poll',
     icon: 'fas fa-poll',
-    class: 'orange--color',
-    title: activity => {  
-      return activity.poll.question;
-    }
+    class: 'dark-yellow--color',
+    title: activity => activity?.poll?.question || activity.title,
   });
 }
