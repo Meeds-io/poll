@@ -35,4 +35,12 @@ export function initExtensions(pollFeatureEnabled, enabledSpaces) {
     vueComponent: Vue.options.components['poll-activity-stream'],
     rank: 30,
   });
+  
+  extensionRegistry.registerExtension('ActivityFavoriteIcon', 'activity-favorite-icon-extensions', {
+    id: 'favorite-poll',
+    type: 'poll',
+    icon: 'fas fa-poll',
+    class: 'dark-yellow--color',
+    title: activity => activity?.poll?.question || activity.title,
+  });
 }
