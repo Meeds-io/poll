@@ -82,10 +82,14 @@
           }
         }
       }
+      .creator-not-voted {
+	    border: 2px solid @primaryColor;
+        border-radius: 5px;
+	  }
       .answer-cant-vote {
 	    opacity: 0.5;
 	  }
-      .answer-voted {
+      .answer {
         padding: 5px 0;
         .vote-content {
           position: relative;
@@ -141,7 +145,7 @@
     }
     .total-votes {
       font-size: 14px;
-      color: @grayLight
+      color: @textLightColor
     }
   }
 }
@@ -149,6 +153,6 @@
 #poll-activity-stream {
   .votes-remaining-state {
     font-size: 14px;
-    color: @grayLight
+    color: @textLightColor
   }
 }
