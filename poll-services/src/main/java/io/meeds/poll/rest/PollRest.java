@@ -32,6 +32,12 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.apache.commons.lang3.StringUtils;
 
 import org.exoplatform.common.http.HTTPStatus;
@@ -48,14 +54,9 @@ import io.meeds.poll.rest.model.PollOptionRestEntity;
 import io.meeds.poll.rest.model.PollRestEntity;
 import io.meeds.poll.service.PollService;
 import io.meeds.poll.utils.RestEntityBuilder;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 
 @Path("/v1/poll")
-@Api(value = "/v1/poll", description = "Managing poll") // NOSONAR
+@Tag(name = "/v1/poll", description = "Managing poll")
 public class PollRest implements ResourceContainer {
   private static final Log LOG = ExoLogger.getLogger(PollRest.class);
 
@@ -69,11 +70,11 @@ public class PollRest implements ResourceContainer {
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
   @RolesAllowed("users")
-  @ApiOperation(value = "Create a new poll", httpMethod = "POST", response = Response.class, consumes = "application/json")
-  @ApiResponses(value = { @ApiResponse(code = HTTPStatus.UNAUTHORIZED, message = "Unauthorized operation"),
-                          @ApiResponse(code = HTTPStatus.INTERNAL_ERROR, message = "Internal server error"), })
-  public Response createPoll(@ApiParam(value = "space identifier", required = false) @QueryParam("spaceId") String spaceId,
-                             @ApiParam(value = "Poll object to create", required = true) PollRestEntity pollRestEntity) {
+  @Operation(summary = "Create a new poll", method = "POST", description = "Create a new poll")
+  @ApiResponses(value = { @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
+                          @ApiResponse(responseCode = "50", description = "Internal server error"), })
+  public Response createPoll(@Parameter(description = "space identifier") @QueryParam("spaceId") String spaceId,
+                             @RequestBody(description = "Poll object to create", required = true) PollRestEntity pollRestEntity) {
     if (pollRestEntity == null) {
       return Response.status(Response.Status.BAD_REQUEST).build();
     }
@@ -96,12 +97,12 @@ public class PollRest implements ResourceContainer {
   @Path("{id}")
   @RolesAllowed("users")
   @Produces(MediaType.APPLICATION_JSON)
-  @ApiOperation(value = "Get a poll", httpMethod = "GET", response = Response.class, notes = "This gets the poll with the given id if the authenticated user is a member of the space.")
-  @ApiResponses(value = { @ApiResponse(code = HTTPStatus.BAD_REQUEST, message = "Invalid query input"),
-                          @ApiResponse(code = HTTPStatus.NOT_FOUND, message = "Poll not found"),
-                          @ApiResponse(code = HTTPStatus.UNAUTHORIZED, message = "Unauthorized operation"),
-                          @ApiResponse(code = HTTPStatus.INTERNAL_ERROR, message = "Internal server error"), })
-  public Response getPollById(@ApiParam(value = "Poll id", required = true) @PathParam("id") String pollId) {
+  @Operation(summary = "Get a poll", method = "GET", description = "This gets the poll with the given id if the authenticated user is a member of the space.")
+  @ApiResponses(value = { @ApiResponse(responseCode = "400", description = "Invalid query input"),
+                          @ApiResponse(responseCode = "404", description = "Poll not found"),
+                          @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
+                          @ApiResponse(responseCode = "500", description = "Internal server error"), })
+  public Response getPollById(@Parameter(description = "Poll id", required = true) @PathParam("id") String pollId) {
     Identity currentIdentity = ConversationState.getCurrent().getIdentity();
     try {
       if (StringUtils.isBlank(pollId)) {
@@ -134,12 +135,12 @@ public class PollRest implements ResourceContainer {
   @Path("/vote/{optionId}")
   @Produces(MediaType.APPLICATION_JSON)
   @RolesAllowed("users")
-  @ApiOperation(value = "Vote in a poll", httpMethod = "POST", response = Response.class)
-  @ApiResponses(value = { @ApiResponse(code = HTTPStatus.BAD_REQUEST, message = "Invalid query input"),
-                          @ApiResponse(code = HTTPStatus.NOT_FOUND, message = "Poll option not found"),
-                          @ApiResponse(code = HTTPStatus.UNAUTHORIZED, message = "Unauthorized operation"),
-                          @ApiResponse(code = HTTPStatus.INTERNAL_ERROR, message = "Internal server error"), })
-  public Response vote(@ApiParam(value = "Poll option id", required = true) @PathParam("optionId") String optionId) {
+  @Operation(summary = "Vote in a poll", method = "POST", description = "Vote in a poll")
+  @ApiResponses(value = { @ApiResponse(responseCode = "400", description = "Invalid query input"),
+                          @ApiResponse(responseCode = "404", description = "Poll option not found"),
+                          @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
+                          @ApiResponse(responseCode = "500", description = "Internal server error"), })
+  public Response vote(@Parameter(description = "Poll option id", required = true) @PathParam("optionId") String optionId) {
     Identity currentIdentity = ConversationState.getCurrent().getIdentity();
     try {
       PollOption pollOption = pollService.getPollOptionById(Long.parseLong(optionId), currentIdentity);
