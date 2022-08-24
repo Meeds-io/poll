@@ -95,6 +95,11 @@
           position: relative;
           z-index: 1;
         }
+        .vote-content-winning{
+          position: relative;
+          z-index: 1;
+          font-weight: bold;
+        }
         .vote-percent {
           font-weight: bold;
           min-width: 51px;
@@ -123,14 +128,14 @@
           left: 0;
           bottom: 0;
           z-index: 0;
-          background-color: @greyColor;
+          background-color: @greyColorDefault;
           border-top-left-radius: 5px;
           border-bottom-left-radius: 5px;
           transition: all .3s cubic-bezier(0.5,1.2,.5,1.2);
           -webkit-transition: all .3s cubic-bezier(0.5,1.2,.5,1.2);
           -moz-transition: all .3s cubic-bezier(0.5,1.2,.5,1.2);
           &.selected {
-            background-color: @primaryColor;
+            background-color: #C7D2E1;
           }
         }
         .voteBackgroundPollCreator {

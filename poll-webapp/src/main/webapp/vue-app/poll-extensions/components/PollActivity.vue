@@ -100,7 +100,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                     class="vote-percent"
                     v-text="answer.percent"></span>
                   <span
-                    class="vote-content text-truncate"
+                    :class="mostVotes === answer.votes ?  'vote-content-winning text-truncate':'vote-content text-truncate' "
                     :title="answer.description"
                     v-sanitized-html="answer.description"></span>
                 </div>
