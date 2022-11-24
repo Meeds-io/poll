@@ -124,4 +124,12 @@ public interface PollService {
    * @throws IllegalAccessException when the current user is not authorized to get {@link Poll} total votes
    */
   int getPollTotalVotes(long pollId, Identity currentIdentity) throws IllegalAccessException;
+
+  /**
+   * Checks if the user voted in the poll
+   * @param currentIdentity User identifier representing The Voter
+   * @param pollId technical identifier of the poll
+   * @return boolean true if the user did already vote this Poll
+   */
+  boolean didVote(Identity currentIdentity, Long pollId);
 }
