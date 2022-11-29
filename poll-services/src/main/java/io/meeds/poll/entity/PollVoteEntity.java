@@ -33,6 +33,9 @@ import java.util.Date;
 @NamedQuery(name = "PollVote.countPollTotalVotes",
 query = "SELECT COUNT(*) FROM PollVote pollVote, PollOption pollOption, Poll poll " +
         "where pollVote.pollOptionId = pollOption.id AND pollOption.pollId = poll.id AND poll.id = :pollId ")
+@NamedQuery(name = "PollVote.countUserVotesInPoll", query = "select count(*) from PollVote pollVote "
+    + "inner join PollOption pollOption on pollVote.pollOptionId = pollOption.id "
+    + "inner join Poll poll on pollOption.pollId = poll.id where poll.id = :pollId and pollVote.voterId = :userId")
 
 public class PollVoteEntity implements Serializable {
 

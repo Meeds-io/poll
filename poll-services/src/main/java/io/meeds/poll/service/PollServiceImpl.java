@@ -211,7 +211,13 @@ public class PollServiceImpl implements PollService {
     }
     return pollStorage.countPollTotalVotes(pollId);
   }
-  
+
+  @Override
+  public boolean didVote(org.exoplatform.services.security.Identity currentIdentity, Long pollId) {
+    long currentUserIdentityId = PollUtils.getCurrentUserIdentityId(identityManager, currentIdentity.getUserId());
+    return pollStorage.didVote(currentUserIdentityId, pollId);
+  }
+
   private Poll postPollActivity(String message,
                                 String spaceId,
                                 org.exoplatform.services.security.Identity currentIdentity,

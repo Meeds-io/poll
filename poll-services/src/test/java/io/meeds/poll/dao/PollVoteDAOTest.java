@@ -129,6 +129,14 @@ public class PollVoteDAOTest extends TestCase {
     assertEquals(2, pollTotalVotes);
   }
 
+  public void testCountUserVotesInPollOptions() {
+    PollEntity createdPollEntity = createPollEntity();
+    PollOptionEntity pollOption1Entity = createPollOptionEntity(createdPollEntity.getId());
+    PollVoteEntity pollVote1Entity = createPollVoteEntity(pollOption1Entity.getId());
+    pollVoteDAO.create(pollVote1Entity);
+    assertEquals(1, pollVoteDAO.countUserVotesInPoll(createdPollEntity.getId(), creatorId));
+  }
+
   protected PollEntity createPollEntity() {
     PollEntity pollEntity = new PollEntity();
     pollEntity.setQuestion(question);
