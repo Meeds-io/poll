@@ -18,8 +18,7 @@
  */
 package io.meeds.poll.storage;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -249,6 +248,21 @@ public class PollStorageTest {
 
     // Then
     assertEquals(1, pollTotalVotes);
+  }
+
+  @PrepareForTest({ EntityMapper.class })
+  @Test
+  public void testDidVote() throws Exception { // NOSONAR
+    // Given
+    Poll poll = createPoll();
+    createPollOption(poll);
+    when(pollVoteDAO.countUserVotesInPoll(poll.getId(), 1L)).thenReturn(1L);
+
+    // When
+    boolean didVote = pollStorage.didVote(1L, poll.getId());
+
+    // Then
+    assertTrue(didVote);
   }
 
   protected Poll createPoll() {

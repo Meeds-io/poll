@@ -151,6 +151,9 @@ public class PollRest implements ResourceContainer {
       if (poll == null) {
         return Response.status(Response.Status.NOT_FOUND).build();
       }
+      if(pollService.didVote(currentIdentity, pollOption.getPollId())) {
+        return Response.status(Response.Status.FORBIDDEN).entity("User did already vote an option in this poll").build();
+      }
       PollVote pollVote = pollService.vote(optionId, String.valueOf(poll.getSpaceId()), currentIdentity);
       return Response.ok(pollVote).build();
     } catch (IllegalAccessException e) {
