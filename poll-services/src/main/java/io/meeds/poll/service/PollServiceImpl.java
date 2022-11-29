@@ -102,7 +102,7 @@ public class PollServiceImpl implements PollService {
     }
     return poll;
   }
-  
+
   @Override
   public PollOption getPollOptionById(long pollOptionId, org.exoplatform.services.security.Identity currentIdentity) throws IllegalAccessException {
     PollOption pollOption = pollStorage.getPollOptionById(pollOptionId);
@@ -118,7 +118,7 @@ public class PollServiceImpl implements PollService {
     }
     return pollOption;
   }
-  
+
   @Override
   public List<PollOption> getPollOptionsByPollId(long pollId, org.exoplatform.services.security.Identity currentIdentity) throws IllegalAccessException {
     Poll poll = pollStorage.getPollById(pollId);
@@ -133,7 +133,7 @@ public class PollServiceImpl implements PollService {
     }
     return pollStorage.getPollOptionsByPollId(pollId);
   }
-  
+
   @Override
   public PollVote vote(String pollOptionId, String spaceId, org.exoplatform.services.security.Identity currentIdentity) throws IllegalAccessException {
     Space space = spaceService.getSpaceById(spaceId);
