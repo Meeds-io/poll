@@ -97,4 +97,8 @@ public class PollStorage {
   public int countPollTotalVotes(long pollId) {
     return pollVoteDAO.countPollTotalVotes(pollId);
   }
+
+  public boolean didVote(long currentUserIdentityId, Long pollId) {
+    return pollVoteDAO.countUserVotesInPoll(pollId, currentUserIdentityId) > 0;
+  }
 }
