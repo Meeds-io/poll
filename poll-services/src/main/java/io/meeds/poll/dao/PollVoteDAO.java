@@ -49,4 +49,11 @@ public class PollVoteDAO extends GenericDAOJPAImpl<PollVoteEntity, Long> {
       return 0;
     }
   }
+
+  public long countUserVotesInPoll(Long pollId, long userId) {
+    TypedQuery<Long> query = getEntityManager().createNamedQuery("PollVote.countUserVotesInPoll", Long.class);
+    query.setParameter("pollId", pollId);
+    query.setParameter("userId", userId);
+    return query.getSingleResult();
+  }
 }
