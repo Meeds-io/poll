@@ -12,43 +12,11 @@
   </properties>
   <dependencies>
     <dependency>
-      <groupId>org.exoplatform.ws</groupId>
-      <artifactId>exo.ws.rest.core</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-     <groupId>org.projectlombok</groupId>
-     <artifactId>lombok</artifactId>
-     <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.exoplatform.core</groupId>
-      <artifactId>exo.core.component.security.core</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.exoplatform.social</groupId>
       <artifactId>social-component-api</artifactId>
     </dependency>
   </dependencies>
   <build>
     <finalName>poll-api</finalName>
-    <plugins>
-      <plugin>
-        <groupId>org.projectlombok</groupId>
-        <artifactId>lombok-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>generate-sources</phase>
-            <goals>
-              <goal>delombok</goal>
-            </goals>
-            <configuration>
-              <sourceDirectory>${basedir}/src/main/java</sourceDirectory>
-              <addOutputDirectory>false</addOutputDirectory>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
   </build>
 </project>
