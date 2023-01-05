@@ -60,7 +60,12 @@ public class PollActivityProcessor extends BaseActivityProcessorPlugin {
     PollRestEntity pollRestEntity = (PollRestEntity) activity.getLinkedProcessedEntities().get(PollUtils.POLL_ACTIVITY_TYPE);
 
     if (pollRestEntity == null) {
-      Identity currentIdentity = ConversationState.getCurrent().getIdentity();
+      ConversationState currentState = ConversationState.getCurrent();
+      if (currentState == null) {
+        LOG.warn("Error processing Poll due to null ConversationState.getCurrent() inside activity storage layer processor. Ignore processing.");
+        return;
+      }
+      Identity currentIdentity = currentState.getIdentity();
       String pollId = activity.getTemplateParams().get(PollUtils.POLL_ID);
       try {
         Poll poll = pollService.getPollById(Long.parseLong(pollId), currentIdentity);
