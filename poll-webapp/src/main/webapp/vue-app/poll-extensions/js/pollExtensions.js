@@ -17,8 +17,8 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-export function initExtensions(pollFeatureEnabled, enabledSpaces) {
-  if (pollFeatureEnabled && eXo.env.portal.spaceGroup && eXo.env.portal.spaceGroup !== '' && (enabledSpaces === '' || enabledSpaces.includes(eXo.env.portal.spaceGroup))) {
+export function initExtensions(enabledSpaces) {
+  if (eXo.env.portal.spaceGroup && eXo.env.portal.spaceGroup !== '' && (enabledSpaces === '' || enabledSpaces.includes(eXo.env.portal.spaceGroup))) {
     extensionRegistry.registerComponent('ActivityComposerFooterAction', 'activity-composer-footer-action', {
       id: 'createPollButton',
       vueComponent: Vue.options.components['create-poll-composer'],
