@@ -23,7 +23,7 @@ const config = {
     ]
   },
   entry: {
-    pollExtensions: './src/main/webapp/vue-app/poll-extensions/main.js',
+    pollActivityStreamExtension: './src/main/webapp/vue-app/poll-activity-stream-extension/main.js',
   },
   output: {
     path: path.join(__dirname, 'target/poll/'),
