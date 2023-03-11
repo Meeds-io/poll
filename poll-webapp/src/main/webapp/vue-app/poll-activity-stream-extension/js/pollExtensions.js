@@ -17,15 +17,15 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-export function initExtensions(enabledSpaces) {
-  if (eXo.env.portal.spaceGroup && eXo.env.portal.spaceGroup !== '' && (enabledSpaces === '' || enabledSpaces.includes(eXo.env.portal.spaceGroup))) {
+export function initExtensions() {
+  if (eXo.env.portal.spaceGroup?.length) {
     extensionRegistry.registerComponent('ActivityComposerFooterAction', 'activity-composer-footer-action', {
       id: 'createPollButton',
       vueComponent: Vue.options.components['create-poll-composer'],
       rank: 20,
     });
   }
-  
+
   extensionRegistry.registerComponent('ActivityContent', 'activity-content-extensions', {
     id: 'poll',
     isEnabled: (params) => {
@@ -35,7 +35,7 @@ export function initExtensions(enabledSpaces) {
     vueComponent: Vue.options.components['poll-activity-stream'],
     rank: 30,
   });
-  
+
   extensionRegistry.registerExtension('ActivityFavoriteIcon', 'activity-favorite-icon-extensions', {
     id: 'favorite-poll',
     type: 'poll',
