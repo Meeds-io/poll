@@ -40,6 +40,6 @@ if (!Vue.prototype.$pollService) {
   });
 }
 
-export function init(enabledSpaces) {
-  initExtensions(enabledSpaces);
+export function init() {
+  initExtensions();
 }
