@@ -18,6 +18,18 @@
  */
 package io.meeds.poll.listener;
 
+import static io.meeds.poll.utils.PollUtils.CREATE_POLL;
+import static io.meeds.poll.utils.PollUtils.CREATE_POLL_OPERATION_NAME;
+import static io.meeds.poll.utils.PollUtils.POLL_ACTIVITY_ID;
+import static io.meeds.poll.utils.PollUtils.POLL_DURATION;
+import static io.meeds.poll.utils.PollUtils.POLL_MODULE;
+import static io.meeds.poll.utils.PollUtils.POLL_OPTIONS_NUMBER;
+import static io.meeds.poll.utils.PollUtils.POLL_SPACE_MEMBERS_COUNT;
+import static io.meeds.poll.utils.PollUtils.POLL_TOTAL_VOTES;
+import static io.meeds.poll.utils.PollUtils.VOTE_POLL;
+import static io.meeds.poll.utils.PollUtils.VOTE_POLL_OPERATION_NAME;
+import static io.meeds.poll.utils.PollUtils.getPollDuration;
+
 import java.util.Arrays;
 import java.util.HashSet;
 
@@ -35,28 +47,11 @@ import org.exoplatform.social.core.space.spi.SpaceService;
 
 import io.meeds.poll.model.Poll;
 import io.meeds.poll.service.PollService;
-import io.meeds.poll.utils.PollUtils;
 
 @Asynchronous
 public class AnalyticsPollListener extends Listener<String, Poll> {
 
-  private static final String CREATE_POLL_OPERATION_NAME = "createPoll";
-
-  private static final String VOTE_POLL_OPERATION_NAME   = "votePoll";
-
-  private static final String POLL_MODULE                = "Poll";
-
   private static final String POLL_ID                    = "PollId";
-
-  private static final String POLL_ACTIVITY_ID           = "PollActivityId";
-
-  private static final String POLL_OPTIONS_NUMBER        = "PollOptionsNumber";
-
-  private static final String POLL_DURATION              = "PollDuration";
-
-  private static final String POLL_TOTAL_VOTES           = "PollTotalVotes";
-
-  private static final String POLL_SPACE_MEMBERS_COUNT   = "PollSpaceMembersCount";
 
   private IdentityManager     identityManager;
 
@@ -68,9 +63,9 @@ public class AnalyticsPollListener extends Listener<String, Poll> {
   public void onEvent(Event<String, Poll> event) throws Exception {
     Poll poll = event.getData();
     String operation = "";
-    if (event.getEventName().equals(PollUtils.CREATE_POLL)) {
+    if (event.getEventName().equals(CREATE_POLL)) {
       operation = CREATE_POLL_OPERATION_NAME;
-    } else if (event.getEventName().equals(PollUtils.VOTE_POLL)) {
+    } else if (event.getEventName().equals(VOTE_POLL)) {
       operation = VOTE_POLL_OPERATION_NAME;
     }
     String userName = event.getSource();
@@ -88,7 +83,7 @@ public class AnalyticsPollListener extends Listener<String, Poll> {
     statisticData.addParameter(POLL_ID, poll.getId());
     statisticData.addParameter(POLL_ACTIVITY_ID, poll.getActivityId());
     statisticData.addParameter(POLL_OPTIONS_NUMBER, getPollService().getPollOptionsNumber(poll.getId(), new org.exoplatform.services.security.Identity(userName)));
-    statisticData.addParameter(POLL_DURATION, PollUtils.getPollDuration(poll));
+    statisticData.addParameter(POLL_DURATION, getPollDuration(poll));
     statisticData.addParameter(POLL_TOTAL_VOTES, getPollService().getPollTotalVotes(poll.getId(), new org.exoplatform.services.security.Identity(userName)));
     statisticData.addParameter(POLL_SPACE_MEMBERS_COUNT, getSize(space.getMembers()));
 

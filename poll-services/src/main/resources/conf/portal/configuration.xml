@@ -73,18 +73,65 @@
     </component-plugin>
   </external-component-plugins>
 
-  <external-component-plugins profiles="analytics">
+  <external-component-plugins>
     <target-component>org.exoplatform.services.listener.ListenerService</target-component>
-    <component-plugin>
+    <component-plugin profiles="analytics">
       <name>meeds.poll.createPoll</name>
       <set-method>addListener</set-method>
       <type>io.meeds.poll.listener.AnalyticsPollListener</type>
     </component-plugin>
-    <component-plugin>
+    <component-plugin profiles="analytics">
       <name>meeds.poll.votePoll</name>
       <set-method>addListener</set-method>
       <type>io.meeds.poll.listener.AnalyticsPollListener</type>
     </component-plugin>
+    <component-plugin profiles="gamification">
+      <name>meeds.poll.createPoll</name>
+      <set-method>addListener</set-method>
+      <type>io.meeds.poll.listener.GamificationPollListener</type>
+    </component-plugin>
+    <component-plugin profiles="gamification">
+      <name>meeds.poll.votePoll</name>
+      <set-method>addListener</set-method>
+      <type>io.meeds.poll.listener.GamificationPollListener</type>
+    </component-plugin>
   </external-component-plugins>
-  
+
+  <external-component-plugins profiles="gamification">
+    <target-component>io.meeds.gamification.service.RuleRegistry</target-component>
+    <component-plugin>
+      <name>rule.initializeWallet</name>
+      <set-method>addPlugin</set-method>
+      <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
+      <init-params>
+        <value-param>
+          <name>rule-event</name>
+          <value>createPoll</value>
+        </value-param>
+      </init-params>
+    </component-plugin>
+    <component-plugin>
+      <name>rule.initializeWallet</name>
+      <set-method>addPlugin</set-method>
+      <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
+      <init-params>
+        <value-param>
+          <name>rule-event</name>
+          <value>votePoll</value>
+        </value-param>
+      </init-params>
+    </component-plugin>
+    <component-plugin>
+      <name>rule.initializeWallet</name>
+      <set-method>addPlugin</set-method>
+      <type>io.meeds.gamification.plugin.RuleConfigPlugin</type>
+      <init-params>
+        <value-param>
+          <name>rule-event</name>
+          <value>receivePollVote</value>
+        </value-param>
+      </init-params>
+    </component-plugin>
+  </external-component-plugins>
+
 </configuration>
