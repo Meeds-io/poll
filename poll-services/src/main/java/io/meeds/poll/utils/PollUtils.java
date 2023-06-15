@@ -34,15 +34,55 @@ import io.meeds.poll.model.Poll;
 
 public class PollUtils {
 
-  private static final Log LOG = ExoLogger.getLogger(PollUtils.class);
+  private static final Log   LOG                               = ExoLogger.getLogger(PollUtils.class);
 
-  public static final String POLL_ACTIVITY_TYPE = "poll";
-  
-  public static final String POLL_ID = "pollId";
+  public static final String POLL_ACTIVITY_TYPE                = "poll";
 
-  public static final String CREATE_POLL = "meeds.poll.createPoll";
+  public static final String POLL_ID                           = "pollId";
 
-  public static final String VOTE_POLL = "meeds.poll.votePoll";
+  public static final String CREATE_POLL                       = "meeds.poll.createPoll";
+
+  public static final String VOTE_POLL                         = "meeds.poll.votePoll";
+
+  public static final String CREATE_POLL_OPERATION_NAME        = "createPoll";
+
+  public static final String VOTE_POLL_OPERATION_NAME          = "votePoll";
+
+  public static final String RECEIVE_POLL_VOTE_OPERATION_NAME  = "receivePollVote";
+
+  public static final String POLL_MODULE                       = "Poll";
+
+  public static final String POLL_ACTIVITY_ID                  = "PollActivityId";
+
+  public static final String POLL_OPTIONS_NUMBER               = "PollOptionsNumber";
+
+  public static final String POLL_DURATION                     = "PollDuration";
+
+  public static final String POLL_TOTAL_VOTES                  = "PollTotalVotes";
+
+  public static final String POLL_SPACE_MEMBERS_COUNT          = "PollSpaceMembersCount";
+
+  public static final String GAMIFICATION_TRIGGER_NAME         = "eventId";
+
+  public static final String GAMIFICATION_SENDER_ID            = "senderId";
+
+  public static final String GAMIFICATION_SENDER_TYPE          = "senderType";
+
+  public static final String GAMIFICATION_RECEIVER_ID          = "receiverId";
+
+  public static final String GAMIFICATION_RECEIVER_TYPE        = "receiverType";
+
+  public static final String GAMIFICATION_OBJECT_ID            = "objectId";
+
+  public static final String GAMIFICATION_OBJECT_TYPE          = "objectType";
+
+  public static final String GAMIFICATION_ACTIVITY_OBJECT_TYPE = "activity";
+
+  public static final String GAMIFICATION_GENERIC_EVENT_NAME   = "exo.gamification.generic.action";
+
+  public static final String GAMIFICATION_CANCEL_EVENT_NAME    = "gamification.cancel.event.action";
+
+  public static final String GAMIFICATION_DELETE_EVENT_NAME    = "gamification.delete.event.action";
 
   private PollUtils() {
   }
@@ -67,7 +107,7 @@ public class PollUtils {
       LOG.warn("Error when broadcasting event '" + eventName + "' using source '" + source + "' and data " + data, e);
     }
   }
-  
+
   public static long getPollDuration(Poll poll) {
     long duration = Math.abs(poll.getEndDate().getTime() - poll.getCreatedDate().getTime());
     return TimeUnit.DAYS.convert(duration, TimeUnit.MILLISECONDS);
