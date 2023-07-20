@@ -31,4 +31,15 @@
     </depends>
   </module>
 
+  <module>
+    <name>engagementCenterActionsPollExtensions</name>
+    <load-group>engagement-center-user-actions</load-group>
+    <script>
+      <path>/js/engagementCenterExtensions.bundle.js</path>
+    </script>
+    <depends>
+      <module>extensionRegistry</module>
+    </depends>
+  </module>
+
 </gatein-resources>
