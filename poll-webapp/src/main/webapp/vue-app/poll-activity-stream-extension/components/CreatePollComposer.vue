@@ -20,10 +20,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   <div>
     <v-card 
       class="d-flex flex-row" 
-      @click="openCreatePollDrawer" 
       outlined 
       flat 
-      hover>
+      hover
+      @click="openCreatePollDrawer" >
       <v-card-actions class="ms-4 py-3">
         <v-icon
           color="amber darken-1"
