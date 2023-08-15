@@ -18,17 +18,23 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
   <div>
-    <div class="actionItem" @click="openCreatePollDrawer">
-      <div class="actionItemIcon">
-        <div class="createPollComposerIcon"></div>
-      </div>
-      <div class="actionItemDescription">
-        <div :class="`actionLabel ${createdPollIcon}`"> {{ pollActionLabel }} </div>
-        <div class="actionDescription">
-          <p>{{ pollActionDescription }}</p>
-        </div>
-      </div>
-    </div>
+    <v-card 
+      class="d-flex flex-row" 
+      @click="openCreatePollDrawer" 
+      outlined 
+      flat 
+      hover>
+      <v-card-actions class="ms-4 py-3">
+        <v-icon
+          color="amber darken-1"
+          size="44">
+          fa-poll
+        </v-icon>
+      </v-card-actions>
+      <v-card-title class="caption font-weight-bold">
+        {{ pollActionLabel }}
+      </v-card-title>
+    </v-card>
     <create-poll-drawer
       ref="createPollDrawer"
       :saved-poll="savedPoll"
@@ -73,12 +79,6 @@ export default {
     pollActionLabel() {
       return this.$t(`composer.poll.${this.pollAction}.drawer.label`);
     },
-    pollActionDescription() {
-      return this.$t(`composer.poll.${this.pollAction}.drawer.description`);
-    },
-    createdPollIcon() {
-      return this.pollAction === 'update' ? 'createdPollIcon' : '';
-    }
   },
   created() {
     document.addEventListener('post-activity', event => {
