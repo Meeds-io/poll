@@ -152,6 +152,9 @@ export default {
       return this.$t('composer.poll.create.drawer.action.cancel');
     }
   },
+  created() {
+    document.addEventListener('exo-poll-open-drawer', this.openDrawer);
+  },
   methods: {
     intializeDrawerFields() {
       this.poll = {};
