@@ -18,24 +18,19 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
   <div>
-    <v-card 
-      class="d-flex flex-row" 
-      outlined 
-      flat 
-      hover
-      @click="openCreatePollDrawer" >
-      <v-card-actions class="ms-4 py-3">
-        <v-icon
-          color="amber darken-1"
-          class="my-1"
-          size="42">
-          fa-poll
-        </v-icon>
-      </v-card-actions>
-      <v-card-title class="caption font-weight-bold">
+    <div
+      class="d-flex flex-row align-center"
+      @click="openCreatePollDrawer">
+      <v-icon
+        color="amber darken-1"
+        class="my-1"
+        size="42">
+        fa-poll
+      </v-icon>
+      <v-span class="caption font-weight-bold ms-5">
         {{ pollActionLabel }}
-      </v-card-title>
-    </v-card>
+      </v-span>
+    </div>
     <create-poll-drawer
       ref="createPollDrawer"
       :saved-poll="savedPoll"
