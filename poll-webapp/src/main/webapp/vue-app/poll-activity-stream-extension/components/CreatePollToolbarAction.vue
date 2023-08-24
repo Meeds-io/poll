@@ -1,0 +1,148 @@
+<!--
+This file is part of the Meeds project (https://meeds.io/).
+ 
+Copyright (C) 2022 Meeds Association contact@meeds.io
+ 
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 3 of the License, or (at your option) any later version.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+ 
+You should have received a copy of the GNU Lesser General Public License
+along with this program; if not, write to the Free Software Foundation,
+Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+-->
+<template>
+  <v-btn
+    :ripple="false"
+    class="d-flex flex-row align-center py-2"
+    text
+    @click="openCreatePollDrawer">
+    <v-icon
+      color="amber darken-1"
+      size="27">
+      fa-poll
+    </v-icon>
+    <v-span class="body-2 font-weight-bold ms-5 mt-1 dark-grey-color">
+      {{ $t('poll.title') }}
+    </v-span>
+  </v-btn>
+</template>
+<script>
+export default {
+  data() {
+    return {
+      pollAction: 'create',
+      savedPoll: {}
+    };
+  },
+  props: {
+    activityId: {
+      type: String,
+      default: null,
+    },
+    message: {
+      type: String,
+      default: null,
+    },
+    maxMessageLength: {
+      type: Number,
+      default: 0,
+    },
+    templateParams: {
+      type: Object,
+      default: null,
+    },
+    files: {
+      type: Array,
+      default: null,
+    },
+    activityType: {
+      type: Array,
+      default: null,
+    },
+  },
+  computed: {
+    pollActionLabel() {
+      return this.$t(`composer.poll.${this.pollAction}.drawer.label`);
+    },
+  },
+  created() {
+    document.addEventListener('post-activity', event => {
+      this.postPoll(event.detail);
+    });
+    document.addEventListener('message-composer-opened', () => {
+      if (this.pollAction === 'update') {
+        this.activityType.push('poll');
+        document.dispatchEvent(new CustomEvent('activity-composer-edited'));
+      }
+    });
+  },
+  methods: {
+    openCreatePollDrawer() {
+      document.dispatchEvent(new CustomEvent('activity-composer-drawer-open', {detail: {
+        activityId: this.activityId,
+        activityBody: this.message,
+        activityParams: this.templateParams,
+        files: this.files,
+        activityType: this.activityType,
+      }}));
+      window.setTimeout(() => {
+        document.dispatchEvent(new CustomEvent('exo-poll-open-drawer'));
+      }, 200);
+    },
+    createPoll(poll) {
+      Object.assign(this.savedPoll, poll);
+      this.pollAction = 'update';
+      this.activityType.push('poll');
+      document.dispatchEvent(new CustomEvent('activity-composer-edited'));
+    },
+    postPoll(message) {
+      const poll = {
+        question: this.savedPoll.question,
+        options: this.savedPoll.options.filter(option => option.data != null && option.data !== '')
+          .map(option => {
+            return {
+              description: option.data,
+            };
+          }),
+        duration: this.savedPoll.duration,
+        message: message,
+        files: this.files
+      };
+      this.$pollService.postPoll(poll, eXo.env.portal.spaceId)
+        .then(this.postSaveMessage)
+        .then(() => {
+          document.dispatchEvent(new CustomEvent('activity-created', {detail: this.activityId}));
+          this.pollAction = 'create';
+          this.savedPoll = {};
+        })
+        .catch(error => {
+          console.error(`Error when posting message: ${error}`);
+        })
+        .finally(() => {
+          document.dispatchEvent(new CustomEvent('activity-composer-closed'));
+        });
+    },
+    postSaveMessage(activity) {
+      const postSaveOperations = extensionRegistry.loadExtensions('activity', 'saveAction');
+      if (postSaveOperations?.length) {
+        const promises = [];
+        postSaveOperations.forEach(extension => {
+          if (extension.postSave) {
+            const result = extension.postSave(activity);
+            if (result?.then) {
+              promises.push(result);
+            }
+          }
+        });
+        return Promise.all(promises).then(() => activity);
+      }
+    },
+  },
+};
+</script> 
