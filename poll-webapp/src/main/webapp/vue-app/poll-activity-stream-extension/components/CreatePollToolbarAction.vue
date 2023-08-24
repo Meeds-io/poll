@@ -66,11 +66,6 @@ export default {
       default: null,
     },
   },
-  computed: {
-    pollActionLabel() {
-      return this.$t(`composer.poll.${this.pollAction}.drawer.label`);
-    },
-  },
   created() {
     document.addEventListener('post-activity', event => {
       this.postPoll(event.detail);
