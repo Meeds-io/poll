@@ -17,7 +17,7 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 export const postPoll = (poll, spaceId) => {
-  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/v1/poll?spaceId=${spaceId || ''}`, {
+  return fetch(`/poll/rest/polls?spaceId=${spaceId || ''}`, {
     headers: {
       'Content-Type': 'application/json'
     },
@@ -34,7 +34,7 @@ export const postPoll = (poll, spaceId) => {
 };
 
 export const getPollById = (pollId) => {
-  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/v1/poll/${pollId}`, {
+  return fetch(`/poll/rest/polls/${pollId}`, {
     credentials: 'include',
     method: 'GET',
   }).then(resp => {
@@ -47,7 +47,7 @@ export const getPollById = (pollId) => {
 };
 
 export const vote = (optionId) => {
-  return fetch(`${eXo.env.portal.context}/${eXo.env.portal.rest}/v1/poll/vote/${optionId}`, {
+  return fetch(`/poll/rest/poll/vote/${optionId}`, {
     headers: {
       'Content-Type': 'application/json'
     },

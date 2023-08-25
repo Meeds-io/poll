@@ -18,18 +18,20 @@
  */
 package io.meeds.poll.dao;
 
+import java.util.Collections;
 import java.util.List;
 
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
+
+import org.springframework.stereotype.Component;
 
 import org.exoplatform.commons.persistence.impl.GenericDAOJPAImpl;
 
 import io.meeds.poll.entity.PollOptionEntity;
 import io.meeds.poll.utils.PollUtils;
 
-import java.util.Collections;
-
+@Component
 public class PollOptionDAO extends GenericDAOJPAImpl<PollOptionEntity, Long> {
 
   public List<PollOptionEntity> findPollOptionsByPollId(Long pollId) {

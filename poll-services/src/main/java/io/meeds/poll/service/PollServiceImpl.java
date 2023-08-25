@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.springframework.context.annotation.Primary;
+import org.springframework.stereotype.Component;
 
 import org.exoplatform.portal.config.UserACL;
 import org.exoplatform.social.core.activity.model.ActivityFile;
@@ -43,6 +45,8 @@ import io.meeds.poll.model.PollVote;
 import io.meeds.poll.storage.PollStorage;
 import io.meeds.poll.utils.PollUtils;
 
+@Primary
+@Component
 public class PollServiceImpl implements PollService {
 
   private PollStorage     pollStorage;
@@ -55,7 +59,6 @@ public class PollServiceImpl implements PollService {
   
   private UserACL userACL;
 
-
   public PollServiceImpl(PollStorage pollStorage, SpaceService spaceService, IdentityManager identityManager, ActivityManager activityManager, UserACL userACL) {
     this.pollStorage = pollStorage;
     this.spaceService = spaceService;
@@ -64,9 +67,6 @@ public class PollServiceImpl implements PollService {
     this.userACL = userACL;
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public Poll createPoll(Poll poll,
                          List<PollOption> pollOptions,

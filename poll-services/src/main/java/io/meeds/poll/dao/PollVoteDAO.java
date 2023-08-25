@@ -21,10 +21,13 @@ package io.meeds.poll.dao;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 
+import org.springframework.stereotype.Component;
+
 import org.exoplatform.commons.persistence.impl.GenericDAOJPAImpl;
 
 import io.meeds.poll.entity.PollVoteEntity;
 
+@Component
 public class PollVoteDAO extends GenericDAOJPAImpl<PollVoteEntity, Long> {
 
   public int countPollOptionTotalVotes(long pollOptionId) {

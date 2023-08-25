@@ -16,6 +16,20 @@
   </properties>
   <dependencies>
     <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-security</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-configuration-processor</artifactId>
+      <optional>true</optional>
+    </dependency>
+
+    <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>poll-api</artifactId>
       <scope>provided</scope>
@@ -52,6 +66,8 @@
         <groupId>io.openapitools.swagger</groupId>
         <artifactId>swagger-maven-plugin</artifactId>
         <configuration>
+          <!-- Should be changed, using https://www.baeldung.com/swagger-2-documentation-for-spring-rest-api -->
+          <skip>true</skip>
           <useResourcePackagesChildren>true</useResourcePackagesChildren>
           <resourcePackages>
             <locations>io.meeds.poll.rest</locations>

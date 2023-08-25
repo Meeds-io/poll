@@ -29,12 +29,22 @@
     <org.exoplatform.social.version>6.5.x-SNAPSHOT</org.exoplatform.social.version>
     <org.exoplatform.platform-ui.version>6.5.x-SNAPSHOT</org.exoplatform.platform-ui.version>
     <addon.exo.analytics.version>1.4.x-SNAPSHOT</addon.exo.analytics.version>
-   
+
+    <!-- Spring 5 / Spring Boot 2 -->
+    <spring-boot-dependencies.version>2.7.14</spring-boot-dependencies.version>
+
     <!-- Sonar properties -->
     <sonar.organization>meeds-io</sonar.organization>
   </properties>
   <dependencyManagement>
     <dependencies>
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-dependencies</artifactId>
+        <version>${spring-boot-dependencies.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
       <!-- Import versions from platform project -->
       <dependency>
         <groupId>org.exoplatform.social</groupId>
