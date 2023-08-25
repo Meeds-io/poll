@@ -86,10 +86,16 @@ export default {
         document.dispatchEvent(new CustomEvent('activity-composer-edited'));
       }
     });
+    document.addEventListener('update-composer-poll-label', event => {
+      this.updateComposerPollLabel(event.detail);
+    });
   },
   methods: {
     openCreatePollDrawer() {
       this.$refs.createPollDrawer.openDrawer();
+    },
+    updateComposerPollLabel(pollStatus) {
+      this.pollAction = pollStatus;            
     },
     createPoll(poll) {
       Object.assign(this.savedPoll, poll);
@@ -118,7 +124,7 @@ export default {
           this.savedPoll = {};
         })
         .catch(error => {
-          console.error(`Error when posting message: ${error}`);
+          this.$root.$emit('alert-message', this.$t('composer.poll.create.drawer.error.message', {0: error}), 'error');
         })
         .finally(() => {
           document.dispatchEvent(new CustomEvent('activity-composer-closed'));

@@ -34,12 +34,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 </template>
 <script>
 export default {
-  data() {
-    return {
-      pollAction: 'create',
-      savedPoll: {}
-    };
-  },
   props: {
     activityId: {
       type: String,
@@ -48,10 +42,6 @@ export default {
     message: {
       type: String,
       default: null,
-    },
-    maxMessageLength: {
-      type: Number,
-      default: 0,
     },
     templateParams: {
       type: Object,
@@ -66,13 +56,21 @@ export default {
       default: null,
     },
   },
+  data() {
+    return {
+      pollAction: 'create',
+      savedPoll: {},
+      pollActivity: this.activityType
+    };
+  },
   created() {
-    document.addEventListener('post-activity', event => {
+    document.addEventListener('create-poll-toolbar-action', this.createPollToolbarAction);
+    document.addEventListener('post-activity-toolbar-action', event => {
       this.postPoll(event.detail);
     });
     document.addEventListener('message-composer-opened', () => {
       if (this.pollAction === 'update') {
-        this.activityType.push('poll');
+        this.pollActivity.push('poll');
         document.dispatchEvent(new CustomEvent('activity-composer-edited'));
       }
     });
@@ -84,16 +82,16 @@ export default {
         activityBody: this.message,
         activityParams: this.templateParams,
         files: this.files,
-        activityType: this.activityType,
+        activityType: this.pollActivity,
+        activityToolbarAction: true
       }}));
       window.setTimeout(() => {
-        document.dispatchEvent(new CustomEvent('exo-poll-open-drawer'));
+        document.dispatchEvent(new CustomEvent('exo-poll-open-drawer', {detail: {activityToolbarAction: true}}));
       }, 200);
     },
-    createPoll(poll) {
-      Object.assign(this.savedPoll, poll);
-      this.pollAction = 'update';
-      this.activityType.push('poll');
+    createPollToolbarAction(event) {
+      Object.assign(this.savedPoll, event?.detail?.poll);
+      this.pollActivity.push('poll');
       document.dispatchEvent(new CustomEvent('activity-composer-edited'));
     },
     postPoll(message) {
@@ -117,7 +115,7 @@ export default {
           this.savedPoll = {};
         })
         .catch(error => {
-          console.error(`Error when posting message: ${error}`);
+          this.$root.$emit('alert-message', this.$t('composer.poll.create.drawer.error.message', {0: error}), 'error');
         })
         .finally(() => {
           document.dispatchEvent(new CustomEvent('activity-composer-closed'));
