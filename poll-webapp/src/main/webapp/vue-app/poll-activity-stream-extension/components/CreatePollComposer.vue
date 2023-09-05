@@ -17,7 +17,11 @@ along with this program; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <div>
+  <v-card
+    class="mx-4 px-6 py-3"
+    outlined 
+    flat 
+    hover>
     <div
       class="d-flex flex-row align-center"
       @click="openCreatePollDrawer">
@@ -35,7 +39,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       ref="createPollDrawer"
       :saved-poll="savedPoll"
       @poll-created="createPoll" />
-  </div>
+  </v-card>
 </template>
 <script>
 export default {
