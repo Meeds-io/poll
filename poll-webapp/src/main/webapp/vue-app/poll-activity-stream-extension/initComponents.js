@@ -18,12 +18,14 @@
  */
 import CreatePollDrawer from './components/CreatePollDrawer.vue';
 import CreatePollComposer from './components/CreatePollComposer.vue';
+import CreatePollToolbarAction from './components/CreatePollToolbarAction.vue';
 import PollActivityStream from './components/PollActivityStream.vue';
 import PollActivity from './components/PollActivity.vue';
 
 const components = {
   'create-poll-drawer': CreatePollDrawer,
   'create-poll-composer': CreatePollComposer,
+  'create-poll-toolbar-action': CreatePollToolbarAction,
   'poll-activity-stream': PollActivityStream,
   'poll-activity': PollActivity,
 };

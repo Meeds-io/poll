@@ -1,7 +1,7 @@
 <!--
 This file is part of the Meeds project (https://meeds.io/).
  
-Copyright (C) 2022 Meeds Association contact@meeds.io
+Copyright (C) 2023 Meeds Association contact@meeds.io
  
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -17,34 +17,23 @@ along with this program; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <div>
-    <div
-      class="d-flex flex-row align-center"
-      @click="openCreatePollDrawer">
-      <v-icon
-        color="amber darken-1"
-        class="my-1"
-        size="42">
-        fa-poll
-      </v-icon>
-      <v-span class="caption font-weight-bold ms-5">
-        {{ pollActionLabel }}
-      </v-span>
-    </div>
-    <create-poll-drawer
-      ref="createPollDrawer"
-      :saved-poll="savedPoll"
-      @poll-created="createPoll" />
-  </div>
+  <v-btn
+    :ripple="false"
+    class="d-flex flex-row align-center py-2"
+    text
+    @click="openCreatePollDrawer">
+    <v-icon
+      color="amber darken-1"
+      size="27">
+      fa-poll
+    </v-icon>
+    <v-span class="body-2 font-weight-bold ms-5 mt-1 dark-grey-color">
+      {{ $t('poll.title') }}
+    </v-span>
+  </v-btn>
 </template>
 <script>
 export default {
-  data() {
-    return {
-      pollAction: 'create',
-      savedPoll: {}
-    };
-  },
   props: {
     activityId: {
       type: String,
@@ -53,10 +42,6 @@ export default {
     message: {
       type: String,
       default: null,
-    },
-    maxMessageLength: {
-      type: Number,
-      default: 0,
     },
     templateParams: {
       type: Object,
@@ -71,36 +56,42 @@ export default {
       default: null,
     },
   },
-  computed: {
-    pollActionLabel() {
-      return this.$t(`composer.poll.${this.pollAction}.drawer.label`);
-    },
+  data() {
+    return {
+      pollAction: 'create',
+      savedPoll: {},
+      pollActivity: this.activityType
+    };
   },
   created() {
-    document.addEventListener('post-activity', event => {
+    document.addEventListener('create-poll-toolbar-action', this.createPollToolbarAction);
+    document.addEventListener('post-activity-toolbar-action', event => {
       this.postPoll(event.detail);
     });
     document.addEventListener('message-composer-opened', () => {
       if (this.pollAction === 'update') {
-        this.activityType.push('poll');
+        this.pollActivity.push('poll');
         document.dispatchEvent(new CustomEvent('activity-composer-edited'));
       }
-    });
-    document.addEventListener('update-composer-poll-label', event => {
-      this.updateComposerPollLabel(event.detail);
     });
   },
   methods: {
     openCreatePollDrawer() {
-      this.$refs.createPollDrawer.openDrawer();
+      document.dispatchEvent(new CustomEvent('activity-composer-drawer-open', {detail: {
+        activityId: this.activityId,
+        activityBody: this.message,
+        activityParams: this.templateParams,
+        files: this.files,
+        activityType: this.pollActivity,
+        activityToolbarAction: true
+      }}));
+      window.setTimeout(() => {
+        document.dispatchEvent(new CustomEvent('exo-poll-open-drawer', {detail: {activityToolbarAction: true}}));
+      }, 200);
     },
-    updateComposerPollLabel(pollStatus) {
-      this.pollAction = pollStatus;            
-    },
-    createPoll(poll) {
-      Object.assign(this.savedPoll, poll);
-      this.pollAction = 'update';
-      this.activityType.push('poll');
+    createPollToolbarAction(event) {
+      Object.assign(this.savedPoll, event?.detail?.poll);
+      this.pollActivity.push('poll');
       document.dispatchEvent(new CustomEvent('activity-composer-edited'));
     },
     postPoll(message) {
