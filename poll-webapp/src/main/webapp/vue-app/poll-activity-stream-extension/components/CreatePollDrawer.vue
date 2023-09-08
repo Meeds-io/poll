@@ -117,7 +117,8 @@ export default {
       MAX_LENGTH: 1000,
       poll: {},
       options: [],
-      pollCreated: false
+      pollCreated: false,
+      activityToolbarAction: false
     };
   },
   props: {
@@ -152,6 +153,9 @@ export default {
       return this.$t('composer.poll.create.drawer.action.cancel');
     }
   },
+  created() {
+    document.addEventListener('exo-poll-open-drawer', this.openDrawer);
+  },
   methods: {
     intializeDrawerFields() {
       this.poll = {};
@@ -180,7 +184,10 @@ export default {
       this.poll.duration = '1week';
       this.pollCreated = false;
     },
-    openDrawer() {
+    openDrawer(event) {
+      if (event) {
+        this.activityToolbarAction = event?.detail?.activityToolbarAction;
+      }
       if (!Object.values(this.savedPoll).length) {
         this.intializeDrawerFields();
       }
@@ -200,8 +207,14 @@ export default {
         }
         this.poll.options = this.options;
         this.pollCreated = true;
-
-        this.$emit('poll-created', this.poll);
+        if (this.activityToolbarAction) {
+          document.dispatchEvent(new CustomEvent('create-poll-toolbar-action', {detail: {
+            poll: this.poll
+          }}));
+          document.dispatchEvent(new CustomEvent('update-composer-poll-label', {detail: 'update'}));
+        } else {
+          this.$emit('poll-created', this.poll);
+        }
         this.closeDrawer();
       }
     },
