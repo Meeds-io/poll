@@ -24,13 +24,12 @@ export function initExtensions() {
       vueComponent: Vue.options.components['create-poll-composer'],
       rank: 20,
     });
+    extensionRegistry.registerComponent('ActivityToolbarAction', 'activity-toolbar-action', {
+      id: 'createPollToolbarButton',
+      vueComponent: Vue.options.components['create-poll-toolbar-action'],
+      rank: 25,
+    });
   }
-
-  extensionRegistry.registerComponent('ActivityToolbarAction', 'activity-toolbar-action', {
-    id: 'createPollToolbarButton',
-    vueComponent: Vue.options.components['create-poll-toolbar-action'],
-    rank: 25,
-  });
 
   extensionRegistry.registerComponent('ActivityContent', 'activity-content-extensions', {
     id: 'poll',
