@@ -122,7 +122,13 @@ export default {
         files: this.files
       };
       this.$pollService.postPoll(poll, eXo.env.portal.spaceId)
-        .then(this.postSaveMessage)
+        .then((poll) => {
+          const activityObject = {
+            id: poll?.activityId,
+            type: 'activity'
+          };
+          this.postSaveMessage(activityObject);
+        })
         .then(() => {
           document.dispatchEvent(new CustomEvent('activity-created', {detail: this.activityId}));
           this.pollAction = 'create';
