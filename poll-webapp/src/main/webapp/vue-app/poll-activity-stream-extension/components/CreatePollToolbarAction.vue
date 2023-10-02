@@ -28,7 +28,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       size="27">
       fa-poll
     </v-icon>
-    <v-span class="body-2 font-weight-bold ms-5 mt-1 dark-grey-color">
+    <v-span class="body-2 font-weight-bold ms-5 dark-grey-color">
       {{ $t('poll.title') }}
     </v-span>
   </v-btn>
