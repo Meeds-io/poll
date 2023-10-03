@@ -28,7 +28,6 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       @click="openCreatePollDrawer">
       <v-icon
         color="amber darken-1"
-        class="my-1"
         size="50">
         fa-poll
       </v-icon>
