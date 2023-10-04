@@ -121,6 +121,13 @@ export default {
         files: this.files
       };
       this.$pollService.postPoll(poll, eXo.env.portal.spaceId)
+        .then((poll) => {
+          const activityObject = {
+            id: poll?.activityId,
+            type: 'activity'
+          };
+          this.postSaveMessage(activityObject);
+        })
         .then(() => {
           document.dispatchEvent(new CustomEvent('activity-created', {detail: this.activityId}));
           this.pollAction = 'create';
@@ -132,7 +139,22 @@ export default {
         .finally(() => {
           document.dispatchEvent(new CustomEvent('activity-composer-closed'));
         });
-    }
+    },
+    postSaveMessage(activity) {
+      const postSaveOperations = extensionRegistry.loadExtensions('activity', 'saveAction');
+      if (postSaveOperations?.length) {
+        const promises = [];
+        postSaveOperations.forEach(extension => {
+          if (extension.postSave) {
+            const result = extension.postSave(activity);
+            if (result?.then) {
+              promises.push(result);
+            }
+          }
+        });
+        return Promise.all(promises).then(() => activity);
+      }
+    },
   },
 };
 </script> 
