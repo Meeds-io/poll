@@ -19,7 +19,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 <template>
   <v-card
     id="createPollComposerButton"
-    class="mx-4 mb-3 px-6 py-3"
+    class="mx-4 mb-3 px-6 py-3 card-border-radius"
     outlined 
     flat 
     hover>
