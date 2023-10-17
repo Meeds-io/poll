@@ -17,29 +17,31 @@ along with this program; if not, write to the Free Software Foundation,
 Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
 <template>
-  <v-card
-    id="createPollComposerButton"
-    class="mx-4 mb-3 px-6 py-3 card-border-radius"
-    outlined 
-    flat 
-    hover>
-    <div
-      class="d-flex flex-row align-center"
-      @click="openCreatePollDrawer">
-      <v-icon
-        color="amber darken-1"
-        size="50">
-        fa-poll
-      </v-icon>
-      <v-span class="caption font-weight-bold ms-5">
-        {{ pollActionLabel }}
-      </v-span>
-    </div>
+  <div>
+    <v-card
+      id="createPollComposerButton"
+      class="mx-4 mb-3 px-6 py-3 card-border-radius"
+      outlined 
+      flat 
+      hover>
+      <div
+        class="d-flex flex-row align-center"
+        @click="openCreatePollDrawer">
+        <v-icon
+          color="amber darken-1"
+          size="50">
+          fa-poll
+        </v-icon>
+        <v-span class="caption font-weight-bold ms-5">
+          {{ pollActionLabel }}
+        </v-span>
+      </div>
+    </v-card>
     <create-poll-drawer
       ref="createPollDrawer"
       :saved-poll="savedPoll"
       @poll-created="createPoll" />
-  </v-card>
+  </div>
 </template>
 <script>
 export default {
