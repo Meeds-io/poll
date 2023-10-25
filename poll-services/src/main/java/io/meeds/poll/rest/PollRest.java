@@ -22,28 +22,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.security.RolesAllowed;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.CacheControl;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import org.exoplatform.common.http.HTTPStatus;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
-import org.exoplatform.services.rest.resource.ResourceContainer;
 import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.services.security.Identity;
 
@@ -55,26 +50,34 @@ import io.meeds.poll.rest.model.PollRestEntity;
 import io.meeds.poll.service.PollService;
 import io.meeds.poll.utils.RestEntityBuilder;
 
-@Path("/v1/poll")
-@Tag(name = "/v1/poll", description = "Managing poll")
-public class PollRest implements ResourceContainer {
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
+@RestController
+@RequestMapping("/polls")
+@Tag(name = "/polls", description = "Managing poll")
+public class PollRest {
+
   private static final Log LOG = ExoLogger.getLogger(PollRest.class);
 
+  @Autowired
   private PollService      pollService;
 
-  public PollRest(PollService pollService) {
-    this.pollService = pollService;
-  }
-
-  @POST
-  @Consumes(MediaType.APPLICATION_JSON)
-  @Produces(MediaType.APPLICATION_JSON)
+  @PostMapping(consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
   @RolesAllowed("users")
   @Operation(summary = "Create a new poll", method = "POST", description = "Create a new poll")
   @ApiResponses(value = { @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
                           @ApiResponse(responseCode = "50", description = "Internal server error"), })
-  public Response createPoll(@Parameter(description = "space identifier") @QueryParam("spaceId") String spaceId,
-                             @RequestBody(description = "Poll object to create", required = true) PollRestEntity pollRestEntity) {
+  public Response createPoll(
+                             @Parameter(description = "space identifier")
+                             @RequestParam("spaceId")
+                             String spaceId,
+                             @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Poll object to create", required = true)
+                             @RequestBody
+                             PollRestEntity pollRestEntity) {
     if (pollRestEntity == null) {
       return Response.status(Response.Status.BAD_REQUEST).build();
     }
@@ -93,24 +96,25 @@ public class PollRest implements ResourceContainer {
     }
   }
 
-  @GET
-  @Path("{id}")
+  @GetMapping(path = "{id}", produces = MediaType.APPLICATION_JSON)
   @RolesAllowed("users")
-  @Produces(MediaType.APPLICATION_JSON)
   @Operation(summary = "Get a poll", method = "GET", description = "This gets the poll with the given id if the authenticated user is a member of the space.")
   @ApiResponses(value = { @ApiResponse(responseCode = "400", description = "Invalid query input"),
                           @ApiResponse(responseCode = "404", description = "Poll not found"),
                           @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
                           @ApiResponse(responseCode = "500", description = "Internal server error"), })
-  public Response getPollById(@Parameter(description = "Poll id", required = true) @PathParam("id") String pollId) {
+  public ResponseEntity<PollRestEntity> getPollById(
+                                                    @Parameter(description = "Poll id", required = true)
+                                                    @PathVariable("id")
+                                                    String pollId) {
     Identity currentIdentity = ConversationState.getCurrent().getIdentity();
     try {
       if (StringUtils.isBlank(pollId)) {
-        return Response.status(Response.Status.BAD_REQUEST).build();
+        return ResponseEntity.badRequest().build();
       }
       Poll poll = pollService.getPollById(Long.parseLong(pollId), currentIdentity);
       if (poll == null) {
-        return Response.status(Response.Status.NOT_FOUND).build();
+        return ResponseEntity.badRequest().build();
       }
       List<PollOption> pollOptions = pollService.getPollOptionsByPollId(Long.parseLong(pollId), currentIdentity);
       List<PollOptionRestEntity> pollOptionRestEntities = new ArrayList<>();
@@ -121,26 +125,27 @@ public class PollRest implements ResourceContainer {
         pollOptionRestEntities.add(pollOptionRestEntity);
       }
       PollRestEntity pollRestEntity = RestEntityBuilder.fromPoll(poll, pollOptionRestEntities);
-      return Response.ok(pollRestEntity).build();
+      return ResponseEntity.ok().cacheControl(CacheControl.noStore()).body(pollRestEntity);
     } catch (IllegalAccessException e) {
       LOG.warn("User '{}' attempts to get a non authorized poll with id {}", currentIdentity.getUserId(), pollId, e);
-      return Response.status(Response.Status.UNAUTHORIZED).build();
+      return ResponseEntity.status(Response.Status.UNAUTHORIZED.getStatusCode()).build();
     } catch (Exception e) {
       LOG.error("Error when getting a poll by id {} ", pollId, e);
-      return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+      return ResponseEntity.internalServerError().build();
     }
   }
 
-  @POST
-  @Path("/vote/{optionId}")
-  @Produces(MediaType.APPLICATION_JSON)
+  @PostMapping(path="/vote/{optionId}", consumes = MediaType.APPLICATION_FORM_URLENCODED, produces = MediaType.APPLICATION_JSON)
   @RolesAllowed("users")
   @Operation(summary = "Vote in a poll", method = "POST", description = "Vote in a poll")
   @ApiResponses(value = { @ApiResponse(responseCode = "400", description = "Invalid query input"),
                           @ApiResponse(responseCode = "404", description = "Poll option not found"),
                           @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
                           @ApiResponse(responseCode = "500", description = "Internal server error"), })
-  public Response vote(@Parameter(description = "Poll option id", required = true) @PathParam("optionId") String optionId) {
+  public Response vote(
+                       @Parameter(description = "Poll option id", required = true)
+                       @PathVariable("optionId")
+                       String optionId) {
     Identity currentIdentity = ConversationState.getCurrent().getIdentity();
     try {
       PollOption pollOption = pollService.getPollOptionById(Long.parseLong(optionId), currentIdentity);
@@ -164,4 +169,5 @@ public class PollRest implements ResourceContainer {
       return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
     }
   }
+
 }

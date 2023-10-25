@@ -1,29 +1,30 @@
-/*
+/**
  * This file is part of the Meeds project (https://meeds.io/).
- * 
- * Copyright (C) 2022 Meeds Association contact@meeds.io
- * 
+ *
+ * Copyright (C) 2020 - 2023 Meeds Association contact@meeds.io
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 3 of the License, or (at your option) any later version.
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-package io.meeds.poll.dao;
 
-import org.springframework.stereotype.Component;
+package io.meeds.spring.integration.web.filter;
 
-import org.exoplatform.commons.persistence.impl.GenericDAOJPAImpl;
+import org.exoplatform.services.security.web.SetCurrentIdentityFilter;
 
-import io.meeds.poll.entity.PollEntity;
+/**
+ * A Web filter to retrieve currently authenticated user Identity to current Web
+ * context session
+ */
+public class PortalIdentityFilter extends SetCurrentIdentityFilter {
 
-@Component
-public class PollDAO extends GenericDAOJPAImpl<PollEntity, Long> {
 }
