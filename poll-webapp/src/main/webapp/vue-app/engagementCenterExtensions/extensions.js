@@ -7,7 +7,8 @@ export function init() {
       icon: 'fas fa-poll',
       match: (actionLabel) => userActions.includes(actionLabel),
       getLink: (realization) => {
-        Vue.prototype.$set(realization, 'link', `${eXo.env.portal.context}/${eXo.env.portal.portalName}/activity?activity?id=${realization.objectId}`);
+        realization.link = `${eXo.env.portal.context}/${eXo.env.portal.defaultPortal}/activity?id=${realization.objectId}`;
+        return realization.link;
       }
     },
   });
