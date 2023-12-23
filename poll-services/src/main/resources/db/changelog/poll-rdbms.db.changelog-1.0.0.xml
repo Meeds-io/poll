@@ -89,4 +89,11 @@
       <append value=" ENGINE=INNODB CHARSET=UTF8 COLLATE utf8_general_ci"/>
     </modifySql>
   </changeSet>
+
+  <changeSet author="poll" id="1.0.0-5" dbms="hsqldb">
+    <createSequence sequenceName="SEQ_POLL_ID" startValue="1"/>
+    <createSequence sequenceName="SEQ_POLL_OPTION_ID" startValue="1"/>
+    <createSequence sequenceName="SEQ_POLL_VOTE_ID" startValue="1"/>
+  </changeSet>
+
 </databaseChangeLog>
