@@ -36,6 +36,10 @@ import static io.meeds.poll.utils.PollUtils.VOTE_POLL_OPERATION_NAME;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
+
+import org.springframework.stereotype.Component;
+
 import org.exoplatform.services.listener.Asynchronous;
 import org.exoplatform.services.listener.Event;
 import org.exoplatform.services.listener.Listener;
@@ -49,18 +53,27 @@ import org.exoplatform.social.core.manager.IdentityManager;
 import io.meeds.poll.model.Poll;
 
 @Asynchronous
+@Component
 public class GamificationPollListener extends Listener<String, Poll> {
 
-  private static final Log LOG = ExoLogger.getLogger(GamificationPollListener.class);
+  private static final Log      LOG             = ExoLogger.getLogger(GamificationPollListener.class);
 
-  private IdentityManager  identityManager;
+  private static final String[] LISTENER_EVENTS = { "meeds.poll.createPoll", "meeds.poll.votePoll" };
 
-  private ListenerService  listenerService;
+  private IdentityManager       identityManager;
 
-  public GamificationPollListener(IdentityManager identityManager,
-                                  ListenerService listenerService) {
+  private ListenerService       listenerService;
+
+  public GamificationPollListener(IdentityManager identityManager, ListenerService listenerService) {
     this.identityManager = identityManager;
     this.listenerService = listenerService;
+  }
+
+  @PostConstruct
+  public void init() {
+    for (String eventName : LISTENER_EVENTS) {
+      listenerService.addListener(eventName, this);
+    }
   }
 
   @Override
