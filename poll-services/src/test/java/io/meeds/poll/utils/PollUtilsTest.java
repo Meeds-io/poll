@@ -18,10 +18,6 @@
  */
 package io.meeds.poll.utils;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.ZoneOffset;
@@ -33,18 +29,17 @@ import java.util.Locale;
 
 import org.junit.Test;
 
+import io.meeds.poll.BasePollTest;
 import io.meeds.poll.model.Poll;
 import io.meeds.poll.model.PollOption;
-import io.meeds.poll.service.BasePollTest;
 
-public class PollUtilsTest extends BasePollTest {
-  
+public class PollUtilsTest extends BasePollTest { // NOSONAR
+
   private Date                createdDate = new Date(1508484583259L);
 
   private Date                endDate     = new Date(11508484583260L);
 
-  private final static String MESSAGE     = "Activity title";
-
+  private static final String MESSAGE     = "Activity title";
 
   @Test
   public void testGetPollDuration() throws IllegalAccessException {
@@ -70,7 +65,7 @@ public class PollUtilsTest extends BasePollTest {
     // Then
     assertEquals(115740L, pollDuration);
   }
-  
+
   @Test
   public void testToDate() throws ParseException {
     // Given
@@ -78,23 +73,24 @@ public class PollUtilsTest extends BasePollTest {
     String dateInString = "7-Jun-2013";
     Date date = formatter.parse(dateInString);
     ZonedDateTime zonedDateTime = ZonedDateTime.ofInstant(date.toInstant(), ZoneOffset.UTC);
-    
+
     // When
     Date nullConvertedDate = PollUtils.toDate(null);
     Date convertedDate = PollUtils.toDate(zonedDateTime);
-    
+
     // Then
     assertNull(nullConvertedDate);
     assertNotNull(convertedDate);
     assertEquals(date.getTime(), convertedDate.getTime());
   }
-  
+
   @Test
-  public void testGetCurrentUserIdentityId() {
+  public void testGetUserIdentityId() {
     // When
-    long user1IdentityId = PollUtils.getCurrentUserIdentityId(identityManager, "testuser1");
-    
+    long user1IdentityId = PollUtils.getUserIdentityId(identityManager, "testuser1");
+
     // Then
     assertEquals(Long.parseLong(user1Identity.getId()), user1IdentityId);
   }
+
 }

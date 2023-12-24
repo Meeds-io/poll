@@ -18,9 +18,12 @@
  */
 package io.meeds.poll.dao;
 
+import org.springframework.stereotype.Component;
+
 import org.exoplatform.commons.persistence.impl.GenericDAOJPAImpl;
 
 import io.meeds.poll.entity.PollEntity;
 
+@Component
 public class PollDAO extends GenericDAOJPAImpl<PollEntity, Long> {
 }

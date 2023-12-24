@@ -23,6 +23,8 @@ import java.util.List;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.TypedQuery;
 
+import org.springframework.stereotype.Component;
+
 import org.exoplatform.commons.persistence.impl.GenericDAOJPAImpl;
 
 import io.meeds.poll.entity.PollOptionEntity;
@@ -30,6 +32,7 @@ import io.meeds.poll.utils.PollUtils;
 
 import java.util.Collections;
 
+@Component
 public class PollOptionDAO extends GenericDAOJPAImpl<PollOptionEntity, Long> {
 
   public List<PollOptionEntity> findPollOptionsByPollId(Long pollId) {

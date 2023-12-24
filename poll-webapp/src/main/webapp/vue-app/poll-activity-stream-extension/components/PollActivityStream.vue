@@ -19,15 +19,17 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 <template>
   <div id="poll-activity-stream" v-if="poll">
     <v-card
+      :loading="loading"
       class="border-color card-border-radius my-3 pa-5"
       outlined>
       <poll-activity
+        v-if="!loading"
         :poll="poll"
-        @submit-vote="submitVote"
         :show-results="showResults"
         :final-results="finalResults"
         :is-space-member="isSpaceMember"
-        :is-poll-creator="isPollCreator" />
+        :is-poll-creator="isPollCreator"
+        @submit-vote="submitVote" />
     </v-card>
     <div
       class="votes-remaining-state"
@@ -46,7 +48,8 @@ export default {
     },
   },
   data: () => ({
-    poll: null
+    poll: null,
+    loading: false,
   }),
   computed: {
     remainingTime() {
@@ -86,22 +89,22 @@ export default {
   },
   methods: {
     retrievePoll() {
+      this.loading = true;
       this.$pollService.getPollById(this.pollId)
         .then(poll => {
           this.poll = poll;
           if (!this.poll) {
             this.$root.$emit('activity-extension-abort', this.activityId);
           }
+          return this.$nextTick();
         })
-        .catch(() => {
-          this.$root.$emit('activity-extension-abort', this.activityId);
-        });
+        .catch(() => this.$root.$emit('activity-extension-abort', this.activityId))
+        .finally(() => this.loading = false);
     },
     submitVote(optionId) {
       this.$pollService.vote(optionId)
-        .catch(error => {
-          console.error(`Error when voting: ${error}`);
-        });
+        .then(() => this.retrievePoll())
+        .catch(() => this.$root.$emit('alert-message', this.$t('activity.poll.errorSubmittingVote'), 'error'));
     }
   }
 };

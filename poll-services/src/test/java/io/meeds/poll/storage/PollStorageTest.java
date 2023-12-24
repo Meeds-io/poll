@@ -21,6 +21,7 @@ package io.meeds.poll.storage;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
@@ -36,7 +37,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import io.meeds.poll.dao.PollDAO;
@@ -88,8 +88,8 @@ public class PollStorageTest {
     PollOption pollOption = createPollOption(poll);
     PollEntity pollEntity = createPollEntity();
     PollOptionEntity pollOptionEntity = createPollOptionEntity(pollEntity);
-    when(pollDAO.create(Mockito.any())).thenReturn(pollEntity);
-    when(pollOptionDAO.create(Mockito.any())).thenReturn(pollOptionEntity);
+    when(pollDAO.create(any())).thenReturn(pollEntity);
+    when(pollOptionDAO.create(any())).thenReturn(pollOptionEntity);
     entityMapper.when(() -> EntityMapper.toPollEntity(poll)).thenReturn(pollEntity);
     entityMapper.when(() -> EntityMapper.fromPollEntity(pollEntity)).thenReturn(poll);
     entityMapper.when(() -> EntityMapper.fromPollOptionEntity(pollOptionEntity)).thenReturn(pollOption);
@@ -108,7 +108,7 @@ public class PollStorageTest {
     // Given
     Poll poll = createPoll();
     PollEntity pollEntity = createPollEntity();
-    when(pollDAO.find(Mockito.any())).thenReturn(pollEntity);
+    when(pollDAO.find(any())).thenReturn(pollEntity);
     entityMapper.when(() -> EntityMapper.fromPollEntity(pollEntity)).thenReturn(poll);
 
     // When
@@ -128,7 +128,7 @@ public class PollStorageTest {
     PollOption pollOption = createPollOption(poll);
     PollOptionEntity pollOptionEntity = createPollOptionEntity(pollEntity);
     List<PollOptionEntity> pollOptionEntities = Arrays.asList(pollOptionEntity);
-    when(pollOptionDAO.findPollOptionsByPollId(Mockito.any())).thenReturn(pollOptionEntities);
+    when(pollOptionDAO.findPollOptionsByPollId(any())).thenReturn(pollOptionEntities);
     entityMapper.when(() -> EntityMapper.fromPollOptionEntity(pollOptionEntity)).thenReturn(pollOption);
     // When
     List<PollOption> retrievedPollOptions = pollStorage.getPollOptionsByPollId(poll.getId());
@@ -144,7 +144,7 @@ public class PollStorageTest {
     Poll poll = createPoll();
     PollEntity pollEntity = createPollEntity();
     poll.setActivityId(1L);
-    when(pollDAO.update(Mockito.any())).thenReturn(pollEntity);
+    when(pollDAO.update(any())).thenReturn(pollEntity);
     entityMapper.when(() -> EntityMapper.toPollEntity(poll)).thenReturn(pollEntity);
     entityMapper.when(() -> EntityMapper.fromPollEntity(pollEntity)).thenReturn(poll);
 
@@ -163,7 +163,7 @@ public class PollStorageTest {
     PollOption pollOption = createPollOption(poll);
     PollVoteEntity pollVoteEntity = createPollVoteEntity(pollOption.getId());
     PollVote pollVote = createPollVote(pollOption.getId());
-    when(pollVoteDAO.create(Mockito.any())).thenReturn(pollVoteEntity);
+    when(pollVoteDAO.create(any())).thenReturn(pollVoteEntity);
     entityMapper.when(() -> EntityMapper.toPollVoteEntity(pollVote)).thenReturn(pollVoteEntity);
     entityMapper.when(() -> EntityMapper.fromPollVoteEntity(pollVoteEntity)).thenReturn(pollVote);
 
@@ -211,7 +211,7 @@ public class PollStorageTest {
     PollEntity pollEntity = createPollEntity();
     PollOption pollOption = createPollOption(poll);
     PollOptionEntity pollOptionEntity = createPollOptionEntity(pollEntity);
-    when(pollOptionDAO.find(Mockito.any())).thenReturn(pollOptionEntity);
+    when(pollOptionDAO.find(any())).thenReturn(pollOptionEntity);
     entityMapper.when(() -> EntityMapper.fromPollOptionEntity(pollOptionEntity)).thenReturn(pollOption);
     // When
     PollOption retrievedPollOption = pollStorage.getPollOptionById(poll.getId());

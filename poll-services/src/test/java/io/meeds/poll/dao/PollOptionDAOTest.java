@@ -21,55 +21,31 @@ package io.meeds.poll.dao;
 import java.util.Date;
 import java.util.List;
 
-import org.exoplatform.container.ExoContainerContext;
-import org.exoplatform.container.PortalContainer;
-import org.exoplatform.container.RootContainer;
-import org.exoplatform.container.component.RequestLifeCycle;
-import org.exoplatform.services.naming.InitialContextInitializer;
-
+import io.meeds.poll.BasePollTest;
 import io.meeds.poll.entity.PollEntity;
 import io.meeds.poll.entity.PollOptionEntity;
-import junit.framework.TestCase;
 
-public class PollOptionDAOTest extends TestCase {
+public class PollOptionDAOTest extends BasePollTest { // NOSONAR
 
-  private Date            startDate   = new Date(1508484583259L);
+  private Date   startDate   = new Date(1508484583259L);
 
-  private Date            endDate     = new Date(11508484583260L);
+  private Date   endDate     = new Date(11508484583260L);
 
-  private String          question    = "q1";
+  private String question    = "q1";
 
-  private String          description = "pollOption description";
+  private String description = "pollOption description";
 
-  private Long            creatorId   = 1L;
+  private Long   creatorId   = 1L;
 
-  private Long            activityId  = 0L;
+  private Long   activityId  = 0L;
 
-  private Long            spaceId     = 1L;
-
-  private PortalContainer container;
-
-  private PollOptionDAO   pollOptionDAO;
-
-  private PollDAO         pollDAO;
-
-  @Override
-  protected void setUp() throws Exception {
-    RootContainer rootContainer = RootContainer.getInstance();
-    rootContainer.getComponentInstanceOfType(InitialContextInitializer.class);
-
-    container = PortalContainer.getInstance();
-    pollOptionDAO = container.getComponentInstanceOfType(PollOptionDAO.class);
-    pollDAO = container.getComponentInstanceOfType(PollDAO.class);
-    ExoContainerContext.setCurrentContainer(container);
-    begin();
-  }
+  private Long   spaceId     = 1L;
 
   public void testCreatePollOption() {
     // Given
     PollEntity createdPollEntity = createPollEntity();
     PollOptionEntity createdPollOption = createPollOptionEntity(createdPollEntity.getId());
-    
+
     // When
     createdPollOption = pollOptionDAO.create(createdPollOption);
 
@@ -85,7 +61,7 @@ public class PollOptionDAOTest extends TestCase {
     PollEntity createdPollEntity = createPollEntity();
     PollOptionEntity createdPollOption = createPollOptionEntity(createdPollEntity.getId());
     pollOptionDAO.create(createdPollOption);
-    
+
     // When
     List<PollOptionEntity> pollOptions = pollOptionDAO.findPollOptionsByPollId(createdPollEntity.getId());
 
@@ -94,7 +70,7 @@ public class PollOptionDAOTest extends TestCase {
     assertEquals(1, pollOptions.size());
 
   }
-  
+
   public void testCountPollOptionsByPollId() {
     // Given
     PollEntity createdPollEntity = createPollEntity();
@@ -107,7 +83,7 @@ public class PollOptionDAOTest extends TestCase {
     // Then
     assertEquals(1, pollOptionsNumber);
   }
-  
+
   protected PollEntity createPollEntity() {
     PollEntity pollEntity = new PollEntity();
     pollEntity.setQuestion(question);
@@ -126,16 +102,4 @@ public class PollOptionDAOTest extends TestCase {
     return pollOptionEntity;
   }
 
-  @Override
-  protected void tearDown() throws Exception {
-    end();
-  }
-
-  private void begin() {
-    RequestLifeCycle.begin(container);
-  }
-
-  private void end() {
-    RequestLifeCycle.end();
-  }
 }
