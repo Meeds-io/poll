@@ -14,6 +14,71 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.exoplatform.org/xml/ns/kernel_1_3.xsd http://www.exoplatform.org/xml/ns/kernel_1_3.xsd"
 	xmlns="http://www.exoplatform.org/xml/ns/kernel_1_3.xsd">
+  <component>
+    <type>io.meeds.poll.dao.PollDAO</type>
+  </component>
+
+  <component>
+    <type>io.meeds.poll.dao.PollOptionDAO</type>
+  </component>
+
+  <component>
+    <type>io.meeds.poll.dao.PollVoteDAO</type>
+  </component>
+
+  <component>
+    <key>io.meeds.poll.service.PollService</key>
+    <type>io.meeds.poll.service.PollServiceImpl</type>
+  </component>
+
+  <component>
+    <type>io.meeds.poll.storage.PollStorage</type>
+  </component>
+
+  <component>
+    <type>io.meeds.poll.rest.PollRest</type>
+  </component>
+
+  <external-component-plugins>
+    <target-component>org.exoplatform.social.core.manager.ActivityManager</target-component>
+    <component-plugin>
+      <name>PollActivityProcessor</name>
+      <set-method>addProcessorPlugin</set-method>
+      <type>io.meeds.poll.activity.processor.PollActivityProcessor</type>
+      <init-params>
+        <value-param>
+          <name>priority</name>
+          <description>priority of this processor (lower are executed first)</description>
+          <value>30</value>
+        </value-param>
+      </init-params>
+    </component-plugin>
+  </external-component-plugins>
+
+  <external-component-plugins>
+    <target-component>org.exoplatform.services.listener.ListenerService</target-component>
+    <component-plugin profiles="analytics">
+      <name>meeds.poll.createPoll</name>
+      <set-method>addListener</set-method>
+      <type>io.meeds.poll.listener.AnalyticsPollListener</type>
+    </component-plugin>
+    <component-plugin profiles="analytics">
+      <name>meeds.poll.votePoll</name>
+      <set-method>addListener</set-method>
+      <type>io.meeds.poll.listener.AnalyticsPollListener</type>
+    </component-plugin>
+    <component-plugin profiles="gamification">
+      <name>meeds.poll.createPoll</name>
+      <set-method>addListener</set-method>
+      <type>io.meeds.poll.listener.GamificationPollListener</type>
+    </component-plugin>
+    <component-plugin profiles="gamification">
+      <name>meeds.poll.votePoll</name>
+      <set-method>addListener</set-method>
+      <type>io.meeds.poll.listener.GamificationPollListener</type>
+    </component-plugin>
+  </external-component-plugins>
+
 
   <external-component-plugins>
     <target-component>org.exoplatform.services.organization.OrganizationService</target-component>
@@ -36,11 +101,13 @@
         <object-param>
           <name>configuration</name>
           <description>description</description>
-          <object type="org.exoplatform.services.organization.OrganizationConfig">
+          <object
+            type="org.exoplatform.services.organization.OrganizationConfig">
             <field name="user">
               <collection type="java.util.ArrayList">
                 <value>
-                  <object type="org.exoplatform.services.organization.OrganizationConfig$User">
+                  <object
+                    type="org.exoplatform.services.organization.OrganizationConfig$User">
                     <field name="userName">
                       <string>testuser1</string>
                     </field>
@@ -60,55 +127,57 @@
                       <string>member:/platform/users</string>
                     </field>
                   </object>
-		        </value>
-		        <value>
-		          <object type="org.exoplatform.services.organization.OrganizationConfig$User">
-		            <field name="userName">
-		              <string>testuser2</string>
-		            </field>
-		            <field name="password">
-		              <string>testuser</string>
-		            </field>
-		            <field name="firstName">
-		              <string>Test</string>
-		            </field>
-		            <field name="lastName">
-		              <string>User</string>
-		            </field>
-		            <field name="email">
-		              <string>testuser2@localhost</string>
-		            </field>
-		            <field name="groups">
-		              <string>member:/platform/users</string>
-		            </field>
-		          </object>
-		        </value>
+                </value>
                 <value>
-                  <object type="org.exoplatform.services.organization.OrganizationConfig$User">
+                  <object
+                    type="org.exoplatform.services.organization.OrganizationConfig$User">
                     <field name="userName">
-                      <string>testuser3</string>
-                  </field>
+                      <string>testuser2</string>
+                    </field>
                     <field name="password">
                       <string>testuser</string>
-                  </field>
+                    </field>
                     <field name="firstName">
                       <string>Test</string>
-                  </field>
+                    </field>
                     <field name="lastName">
                       <string>User</string>
-                  </field>
+                    </field>
                     <field name="email">
-                      <string>testuser3@localhost</string>
-                  </field>
+                      <string>testuser2@localhost</string>
+                    </field>
                     <field name="groups">
                       <string>member:/platform/users</string>
-                  </field>
+                    </field>
+                  </object>
+                </value>
+                <value>
+                  <object
+                    type="org.exoplatform.services.organization.OrganizationConfig$User">
+                    <field name="userName">
+                      <string>testuser3</string>
+                    </field>
+                    <field name="password">
+                      <string>testuser</string>
+                    </field>
+                    <field name="firstName">
+                      <string>Test</string>
+                    </field>
+                    <field name="lastName">
+                      <string>User</string>
+                    </field>
+                    <field name="email">
+                      <string>testuser3@localhost</string>
+                    </field>
+                    <field name="groups">
+                      <string>member:/platform/users</string>
+                    </field>
                   </object>
                 </value>
               </collection>
-		    </field>
-		  </object>
-		</object-param>
+            </field>
+          </object>
+        </object-param>
       </init-params>
     </component-plugin>
   </external-component-plugins>
