@@ -20,16 +20,10 @@ package io.meeds.poll.dao;
 
 import java.util.Date;
 
-import org.exoplatform.container.ExoContainerContext;
-import org.exoplatform.container.PortalContainer;
-import org.exoplatform.container.RootContainer;
-import org.exoplatform.container.component.RequestLifeCycle;
-import org.exoplatform.services.naming.InitialContextInitializer;
-
+import io.meeds.poll.BasePollTest;
 import io.meeds.poll.entity.PollEntity;
-import junit.framework.TestCase;
 
-public class PollDAOTest extends TestCase {
+public class PollDAOTest extends BasePollTest { // NOSONAR
 
   private Date            startDate   = new Date(1508484583259L);
 
@@ -44,21 +38,6 @@ public class PollDAOTest extends TestCase {
   private Long            activity2Id = 1L;
 
   private Long            spaceId     = 1L;
-
-  private PortalContainer container;
-
-  private PollDAO         pollDAO;
-
-  @Override
-  protected void setUp() throws Exception {
-    RootContainer rootContainer = RootContainer.getInstance();
-    rootContainer.getComponentInstanceOfType(InitialContextInitializer.class);
-
-    container = PortalContainer.getInstance();
-    pollDAO = container.getComponentInstanceOfType(PollDAO.class);
-    ExoContainerContext.setCurrentContainer(container);
-    begin();
-  }
 
   public void testCreatePoll() {
     // Given
@@ -121,16 +100,4 @@ public class PollDAOTest extends TestCase {
     return pollEntity;
   }
 
-  @Override
-  protected void tearDown() throws Exception {
-    end();
-  }
-
-  private void begin() {
-    RequestLifeCycle.begin(container);
-  }
-
-  private void end() {
-    RequestLifeCycle.end();
-  }
 }

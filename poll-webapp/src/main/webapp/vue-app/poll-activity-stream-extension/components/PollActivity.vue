@@ -208,10 +208,6 @@ export default {
     },
     handleVote(answer) {
       if (this.isSpaceMember) {
-        answer.votes ++;
-        answer.voted = true;
-        this.visibleResults = true;
-
         this.$emit('submit-vote', answer.id);
       }
     }

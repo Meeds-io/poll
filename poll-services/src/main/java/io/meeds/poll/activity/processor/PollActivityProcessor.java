@@ -22,13 +22,22 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
 import org.exoplatform.container.xml.InitParams;
+import org.exoplatform.container.xml.ValueParam;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.services.security.Identity;
 import org.exoplatform.social.core.BaseActivityProcessorPlugin;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
+import org.exoplatform.social.core.manager.ActivityManager;
 
 import io.meeds.poll.model.Poll;
 import io.meeds.poll.model.PollOption;
@@ -38,15 +47,34 @@ import io.meeds.poll.service.PollService;
 import io.meeds.poll.utils.PollUtils;
 import io.meeds.poll.utils.RestEntityBuilder;
 
+@Component
 public class PollActivityProcessor extends BaseActivityProcessorPlugin {
 
-  private PollService      pollService;
+  private static final Log    LOG                     = ExoLogger.getLogger(PollActivityProcessor.class);
 
-  private static final Log LOG = ExoLogger.getLogger(PollActivityProcessor.class);
+  private static final String ACTIVITY_PROCESSOR_NAME = "PollActivityProcessor";
 
-  public PollActivityProcessor(PollService pollService, InitParams initParams) {
-    super(initParams);
-    this.pollService = pollService;
+  @Value("${meeds.poll.activity.processor.priority:30}")
+  private static int          processorPriority;
+
+  @Autowired
+  private PollService         pollService;
+
+  @Autowired
+  private ActivityManager     activityManager;
+
+  public PollActivityProcessor() {
+    super(getPriorityInitParam());
+  }
+
+  @PostConstruct
+  public void init() {
+    activityManager.addProcessor(this);
+  }
+
+  @Override
+  public String getName() {
+    return ACTIVITY_PROCESSOR_NAME;
   }
 
   @Override
@@ -90,4 +118,25 @@ public class PollActivityProcessor extends BaseActivityProcessorPlugin {
       activity.getLinkedProcessedEntities().put(PollUtils.POLL_ACTIVITY_TYPE, pollRestEntity);
     }
   }
+
+  private static InitParams getPriorityInitParam() {
+    return new InitParams() {
+      private static final long serialVersionUID = 6692556831691417605L;
+
+      @Override
+      public ValueParam getValueParam(String name) {
+        if (StringUtils.equals("priority", name)) {
+          return new ValueParam() {
+            @Override
+            public String getValue() {
+              return String.valueOf(processorPriority);
+            }
+          };
+        } else {
+          return super.getValueParam(name);
+        }
+      }
+    };
+  }
+
 }

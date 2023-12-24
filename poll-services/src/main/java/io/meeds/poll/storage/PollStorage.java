@@ -21,6 +21,8 @@ package io.meeds.poll.storage;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.stereotype.Service;
+
 import io.meeds.poll.dao.PollDAO;
 import io.meeds.poll.dao.PollOptionDAO;
 import io.meeds.poll.dao.PollVoteDAO;
@@ -32,6 +34,7 @@ import io.meeds.poll.model.PollOption;
 import io.meeds.poll.model.PollVote;
 import io.meeds.poll.utils.EntityMapper;
 
+@Service
 public class PollStorage {
   private PollDAO       pollDAO;
 
