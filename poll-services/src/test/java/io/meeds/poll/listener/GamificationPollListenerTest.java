@@ -37,10 +37,10 @@ import static org.mockito.Mockito.when;
 
 import java.util.Map;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import org.exoplatform.services.listener.Event;
 import org.exoplatform.services.listener.ListenerService;
@@ -49,35 +49,39 @@ import org.exoplatform.social.core.manager.IdentityManager;
 
 import io.meeds.poll.model.Poll;
 
-@RunWith(MockitoJUnitRunner.class)
+@SpringBootTest(classes = {
+  GamificationPollListener.class,
+})
 public class GamificationPollListenerTest {
 
-  private static final long   CREATOR_ID  = 555l;
+  private static final long        CREATOR_ID  = 555l;
 
-  private static final String MODIFIER_ID = "556";
+  private static final String      MODIFIER_ID = "556";
 
-  private static final long   ACTIVITY_ID = 2553l;
+  private static final long        ACTIVITY_ID = 2553l;
 
-  private static final String MODIFIER    = "modfier";
+  private static final String      MODIFIER    = "modfier";
 
-  @Mock
-  private ListenerService     listenerService;
+  @MockBean
+  private ListenerService          listenerService;
 
-  @Mock
-  private IdentityManager     identityManager;
+  @MockBean
+  private IdentityManager          identityManager;
 
-  @Mock
-  private Poll                poll;
+  @MockBean
+  private Poll                     poll;
 
-  @Mock
-  private Identity            modifierIdentity;
+  @MockBean
+  private Identity                 modifierIdentity;
 
-  @Mock
-  private Event<String, Poll> event;
+  @MockBean
+  private Event<String, Poll>      event;
+
+  @Autowired
+  private GamificationPollListener gamificationListener;
 
   @Test
-  public void testOnCreateEvent() throws Exception {
-    GamificationPollListener gamificationListener = new GamificationPollListener(identityManager, listenerService);
+  public void createEvent() throws Exception {
     when(event.getEventName()).thenReturn(CREATE_POLL);
     when(event.getData()).thenReturn(poll);
     when(poll.getCreatorId()).thenReturn(CREATOR_ID);
@@ -102,8 +106,7 @@ public class GamificationPollListenerTest {
   }
 
   @Test
-  public void testOnVoteEvent() throws Exception {
-    GamificationPollListener gamificationListener = new GamificationPollListener(identityManager, listenerService);
+  public void voteEvent() throws Exception {
     when(event.getEventName()).thenReturn(VOTE_POLL);
     when(event.getSource()).thenReturn(MODIFIER);
     when(event.getData()).thenReturn(poll);

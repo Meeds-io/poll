@@ -18,31 +18,80 @@
  */
 package io.meeds.poll.service;
 
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import io.meeds.kernel.test.KernelExtension;
 import io.meeds.poll.BasePollTest;
+import io.meeds.poll.dao.PollDAO;
+import io.meeds.poll.dao.PollOptionDAO;
+import io.meeds.poll.dao.PollVoteDAO;
 import io.meeds.poll.model.Poll;
 import io.meeds.poll.model.PollOption;
 import io.meeds.poll.model.PollVote;
+import io.meeds.spring.AvailableIntegration;
 
+@ExtendWith({ SpringExtension.class, KernelExtension.class })
+@SpringBootApplication(scanBasePackages = {
+  BasePollTest.MODULE_NAME,
+  AvailableIntegration.KERNEL_MODULE,
+  AvailableIntegration.JPA_MODULE,
+  AvailableIntegration.LIQUIBASE_MODULE,
+})
+@EnableJpaRepositories(basePackages = BasePollTest.MODULE_NAME)
+@TestPropertySource(properties = {
+  "spring.liquibase.change-log=" + BasePollTest.CHANGELOG_PATH,
+})
 public class PollServiceTest extends BasePollTest { // NOSONAR
-
-  private Date                createdDate             = new Date(1508484583259L);
-
-  private Date                endDate                 = new Date(11508484583260L);
 
   private static final String MESSAGE                 = "Activity title";
 
   private static final String POLL_OPTION_DESCRIPTION = "pollOption";
 
+  @Autowired
+  private PollService         pollService;
+
+  @Autowired
+  private PollDAO             pollDAO;
+
+  @Autowired
+  private PollOptionDAO       pollOptionDAO;
+
+  @Autowired
+  private PollVoteDAO         pollVoteDAO;
+
+  private Date                createdDate             = new Date(1508484583259L);
+
+  private Date                endDate                 = new Date(11508484583260L);
+
+  @AfterEach
+  @Override
+  public void afterEach() {
+    pollVoteDAO.deleteAll();
+    pollOptionDAO.deleteAll();
+    pollDAO.deleteAll();
+    super.afterEach();
+  }
+
   @Test
-  public void testCreatePoll() throws IllegalAccessException {
+  public void createPoll() throws IllegalAccessException {
     // Given
     org.exoplatform.services.security.Identity testUser1Identity = new org.exoplatform.services.security.Identity(TESTUSER_1);
     Poll poll = new Poll();
@@ -76,16 +125,11 @@ public class PollServiceTest extends BasePollTest { // NOSONAR
     poll1.setSpaceId(1L);
 
     // When
-    try {
-      pollService.createPoll(poll1, pollOptionList, space.getId(), MESSAGE, testuser2Identity, new ArrayList<>());
-      fail("Should fail when a non redactor member attempts to create a poll");
-    } catch (IllegalAccessException e) {
-      // Expected
-    }
+    assertThrows(IllegalAccessException.class, () -> pollService.createPoll(poll1, pollOptionList, space.getId(), MESSAGE, testuser2Identity, new ArrayList<>()));
   }
 
   @Test
-  public void testGetPollById() throws IllegalAccessException {
+  public void getPollById() throws IllegalAccessException {
     // Given
     org.exoplatform.services.security.Identity testUser1Identity = new org.exoplatform.services.security.Identity(TESTUSER_1);
     Poll poll = new Poll();
@@ -112,17 +156,12 @@ public class PollServiceTest extends BasePollTest { // NOSONAR
     assertEquals(endDate, retrievedPoll.getEndDate());
 
     // When
-    try {
       org.exoplatform.services.security.Identity testUser3Identity = new org.exoplatform.services.security.Identity(TESTUSER_3);
-      pollService.getPollById(retrievedPoll.getId(), testUser3Identity);
-      fail("Should fail when a non member attempts to get the poll " + retrievedPoll.getId());
-    } catch (IllegalAccessException e) {
-      // Expected
-    }
+      assertThrows(IllegalAccessException.class, () -> pollService.getPollById(retrievedPoll.getId(), testUser3Identity));
   }
 
   @Test
-  public void testGetPollOptionById() throws IllegalAccessException {
+  public void getPollOptionById() throws IllegalAccessException {
     // Given
     org.exoplatform.services.security.Identity testUser1Identity = new org.exoplatform.services.security.Identity(TESTUSER_1);
     Poll poll = new Poll();
@@ -146,17 +185,12 @@ public class PollServiceTest extends BasePollTest { // NOSONAR
     assertEquals(POLL_OPTION_DESCRIPTION, retrievedPollOption.getDescription());
 
     // When
-    try {
-      org.exoplatform.services.security.Identity testUser3Identity = new org.exoplatform.services.security.Identity(TESTUSER_3);
-      pollService.getPollOptionById(createdPollOptions.get(0).getId(), testUser3Identity);
-      fail("Should fail when a non member attempts to get the poll option " + retrievedPollOption.getId());
-    } catch (IllegalAccessException e) {
-      // Expected
-    }
+    org.exoplatform.services.security.Identity testUser3Identity = new org.exoplatform.services.security.Identity(TESTUSER_3);
+    assertThrows(IllegalAccessException.class, () -> pollService.getPollOptionById(createdPollOptions.get(0).getId(), testUser3Identity));
   }
 
   @Test
-  public void testGetPollOptionsByPollId() throws IllegalAccessException {
+  public void getPollOptionsByPollId() throws IllegalAccessException {
     // Given
     org.exoplatform.services.security.Identity testUser1Identity = new org.exoplatform.services.security.Identity(TESTUSER_1);
     Poll poll = new Poll();
@@ -179,17 +213,12 @@ public class PollServiceTest extends BasePollTest { // NOSONAR
     assertEquals(1, retrievedPollOptions.size());
 
     // When
-    try {
-      org.exoplatform.services.security.Identity testUser3Identity = new org.exoplatform.services.security.Identity(TESTUSER_3);
-      pollService.getPollOptionsByPollId(createdPoll.getId(), testUser3Identity);
-      fail("Should fail when a non member attempts to get poll " + createdPoll.getId() + " options");
-    } catch (IllegalAccessException e) {
-      // Expected
-    }
+    org.exoplatform.services.security.Identity testUser3Identity = new org.exoplatform.services.security.Identity(TESTUSER_3);
+    assertThrows(IllegalAccessException.class, () -> pollService.getPollOptionsByPollId(createdPoll.getId(), testUser3Identity));
   }
 
   @Test
-  public void testVote() throws IllegalAccessException {
+  public void voteOnPoll() throws IllegalAccessException {
     // Given
     org.exoplatform.services.security.Identity testUser1Identity = new org.exoplatform.services.security.Identity(TESTUSER_1);
     Poll poll = new Poll();
@@ -215,17 +244,12 @@ public class PollServiceTest extends BasePollTest { // NOSONAR
     assertEquals(Long.parseLong(user1Identity.getId()), voteAdded.getVoterId());
 
     // When
-    try {
-      org.exoplatform.services.security.Identity testUser3Identity = new org.exoplatform.services.security.Identity(TESTUSER_3);
-      pollService.vote(String.valueOf(createdPollOptions.get(0).getId()), space.getId(), testUser3Identity);
-      fail("Should fail when a non member attempts to vote in poll " + createdPoll.getId());
-    } catch (IllegalAccessException e) {
-      // Expected
-    }
+    org.exoplatform.services.security.Identity testUser3Identity = new org.exoplatform.services.security.Identity(TESTUSER_3);
+    assertThrows(IllegalAccessException.class, () -> pollService.vote(String.valueOf(createdPollOptions.get(0).getId()), space.getId(), testUser3Identity));
   }
 
   @Test
-  public void testExpiredVote() throws IllegalAccessException {
+  public void voteOnExpiredPoll() throws IllegalAccessException {
     // Given
     org.exoplatform.services.security.Identity testUser1Identity = new org.exoplatform.services.security.Identity(TESTUSER_1);
     Poll poll = new Poll();
@@ -243,16 +267,11 @@ public class PollServiceTest extends BasePollTest { // NOSONAR
     List<PollOption> createdPollOptions = pollService.getPollOptionsByPollId(createdPoll.getId(), testUser1Identity);
 
     // When
-    try {
-      pollService.vote(String.valueOf(createdPollOptions.get(0).getId()), space.getId(), testUser1Identity);
-      fail("Should fail when a member attempts to vote in expired poll " + createdPoll.getId());
-    } catch (IllegalAccessException e) {
-      // Expected
-    }
+    assertThrows(IllegalAccessException.class, () -> pollService.vote(String.valueOf(createdPollOptions.get(0).getId()), space.getId(), testUser1Identity));
   }
 
   @Test
-  public void testGetPollOptionTotalVotes() throws IllegalAccessException {
+  public void getPollOptionTotalVotes() throws IllegalAccessException {
     // Given
     org.exoplatform.services.security.Identity testUser1Identity = new org.exoplatform.services.security.Identity(TESTUSER_1);
     org.exoplatform.services.security.Identity testUser2Identity = new org.exoplatform.services.security.Identity(TESTUSER_2);
@@ -287,17 +306,12 @@ public class PollServiceTest extends BasePollTest { // NOSONAR
     assertEquals(1, pollOption2Votes);
 
     // When
-    try {
-      org.exoplatform.services.security.Identity testUser3Identity = new org.exoplatform.services.security.Identity(TESTUSER_3);
-      pollService.getPollOptionTotalVotes(createdPollOptions.get(0).getId(), space.getId(), testUser3Identity);
-      fail("Should fail when a non member attempts to get the poll option " + createdPollOptions.get(0).getId() + " total votes");
-    } catch (IllegalAccessException e) {
-      // Expected
-    }
+    org.exoplatform.services.security.Identity testUser3Identity = new org.exoplatform.services.security.Identity(TESTUSER_3);
+    assertThrows(IllegalAccessException.class, () -> pollService.getPollOptionTotalVotes(createdPollOptions.get(0).getId(), space.getId(), testUser3Identity));
   }
 
   @Test
-  public void testIsPollOptionVoted() throws IllegalAccessException {
+  public void isPollOptionVoted() throws IllegalAccessException {
     // Given
     org.exoplatform.services.security.Identity testUser1Identity = new org.exoplatform.services.security.Identity(TESTUSER_1);
     org.exoplatform.services.security.Identity testUser2Identity = new org.exoplatform.services.security.Identity(TESTUSER_2);
@@ -342,18 +356,12 @@ public class PollServiceTest extends BasePollTest { // NOSONAR
     assertEquals(true, isPollOption2VotedByUser2);
 
     // When
-    try {
-      org.exoplatform.services.security.Identity testUser3Identity = new org.exoplatform.services.security.Identity(TESTUSER_3);
-      pollService.isPollOptionVoted(createdPollOptions.get(0).getId(), space.getId(), testUser3Identity);
-      fail("Should fail when a non member attempts to check if the poll option " + createdPollOptions.get(0).getId() +
-          " is voted");
-    } catch (IllegalAccessException e) {
-      // Expected
-    }
+    org.exoplatform.services.security.Identity testUser3Identity = new org.exoplatform.services.security.Identity(TESTUSER_3);
+    assertThrows(IllegalAccessException.class, () -> pollService.isPollOptionVoted(createdPollOptions.get(0).getId(), space.getId(), testUser3Identity));
   }
 
   @Test
-  public void testGetPollOptionsNumber() throws IllegalAccessException {
+  public void getPollOptionsNumber() throws IllegalAccessException {
     // Given
     org.exoplatform.services.security.Identity testUser1Identity = new org.exoplatform.services.security.Identity(TESTUSER_1);
     Poll poll = new Poll();
@@ -386,7 +394,7 @@ public class PollServiceTest extends BasePollTest { // NOSONAR
   }
 
   @Test
-  public void testGetPollTotalVotes() throws IllegalAccessException {
+  public void getPollTotalVotes() throws IllegalAccessException {
     // Given
     org.exoplatform.services.security.Identity testUser1Identity = new org.exoplatform.services.security.Identity(TESTUSER_1);
     org.exoplatform.services.security.Identity testUser2Identity = new org.exoplatform.services.security.Identity(TESTUSER_2);
@@ -423,7 +431,7 @@ public class PollServiceTest extends BasePollTest { // NOSONAR
   }
 
   @Test
-  public void testDidVote() throws IllegalAccessException {
+  public void didVote() throws IllegalAccessException {
     // Given
     org.exoplatform.services.security.Identity testUser1Identity = new org.exoplatform.services.security.Identity(TESTUSER_1);
     Poll poll = new Poll();

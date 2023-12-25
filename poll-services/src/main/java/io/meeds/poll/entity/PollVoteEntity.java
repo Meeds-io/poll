@@ -18,25 +18,24 @@
  */
 package io.meeds.poll.entity;
 
-import org.exoplatform.commons.api.persistence.ExoEntity;
-
-import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 
-@Entity(name = "PollVote")
-@ExoEntity
-@Table(name = "POLL_VOTE")
-@NamedQuery(name = "PollVote.countPollOptionTotalVotes", query = "SELECT COUNT(*) FROM PollVote pollVote where pollVote.pollOptionId = :pollOptionId")
-@NamedQuery(name = "PollVote.countPollOptionTotalVotesByUser", query = "SELECT COUNT(*) FROM PollVote pollVote where pollVote.pollOptionId = :pollOptionId "
-        + "AND pollVote.voterId = :userId")
-@NamedQuery(name = "PollVote.countPollTotalVotes",
-query = "SELECT COUNT(*) FROM PollVote pollVote, PollOption pollOption, Poll poll " +
-        "where pollVote.pollOptionId = pollOption.id AND pollOption.pollId = poll.id AND poll.id = :pollId ")
-@NamedQuery(name = "PollVote.countUserVotesInPoll", query = "select count(*) from PollVote pollVote "
-    + "inner join PollOption pollOption on pollVote.pollOptionId = pollOption.id "
-    + "inner join Poll poll on pollOption.pollId = poll.id where poll.id = :pollId and pollVote.voterId = :userId")
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
+import lombok.Data;
 
+@Entity(name = "PollVote")
+@Table(name = "POLL_VOTE")
+@Data
 public class PollVoteEntity implements Serializable {
 
   private static final long serialVersionUID = -7880849687372574040L;
@@ -47,8 +46,9 @@ public class PollVoteEntity implements Serializable {
   @Column(name = "POLL_VOTE_ID", nullable = false)
   private Long              id;
 
-  @Column(name = "POLL_OPTION_ID", nullable = false)
-  private Long              pollOptionId;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "POLL_OPTION_ID", nullable = false)
+  private PollOptionEntity  pollOption;
 
   @Column(name = "VOTE_DATE", nullable = false)
   private Date              voteDate;
@@ -56,35 +56,4 @@ public class PollVoteEntity implements Serializable {
   @Column(name = "VOTER_ID", nullable = false)
   private Long              voterId;
 
-  public Long getId() {
-    return id;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
-  }
-
-  public Long getPollOptionId() {
-    return pollOptionId;
-  }
-
-  public void setPollOptionId(Long pollOptionId) {
-    this.pollOptionId = pollOptionId;
-  }
-
-  public Date getVoteDate() {
-    return voteDate;
-  }
-
-  public void setVoteDate(Date voteDate) {
-    this.voteDate = voteDate;
-  }
-
-  public Long getVoterId() {
-    return voterId;
-  }
-
-  public void setVoterId(Long voterId) {
-    this.voterId = voterId;
-  }
 }

@@ -18,6 +18,8 @@
  */
 package io.meeds.poll.service;
 
+import org.springframework.stereotype.Service;
+
 import org.exoplatform.services.security.Identity;
 import org.exoplatform.social.core.activity.model.ActivityFile;
 
@@ -28,6 +30,7 @@ import org.exoplatform.social.core.space.model.Space;
 
 import java.util.List;
 
+@Service
 public interface PollService {
   /**
    * Creates a new poll

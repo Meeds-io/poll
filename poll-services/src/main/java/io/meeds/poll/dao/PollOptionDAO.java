@@ -20,35 +20,14 @@ package io.meeds.poll.dao;
 
 import java.util.List;
 
-import jakarta.persistence.NoResultException;
-import jakarta.persistence.TypedQuery;
-
-import org.springframework.stereotype.Component;
-
-import org.exoplatform.commons.persistence.impl.GenericDAOJPAImpl;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import io.meeds.poll.entity.PollOptionEntity;
-import io.meeds.poll.utils.PollUtils;
 
-import java.util.Collections;
+public interface PollOptionDAO extends JpaRepository<PollOptionEntity, Long> {
 
-@Component
-public class PollOptionDAO extends GenericDAOJPAImpl<PollOptionEntity, Long> {
+  List<PollOptionEntity> findByPollId(Long pollId);
 
-  public List<PollOptionEntity> findPollOptionsByPollId(Long pollId) {
-    TypedQuery<PollOptionEntity> query = getEntityManager().createNamedQuery("PollOption.findPollOptionsByPollId", PollOptionEntity.class);
-    query.setParameter(PollUtils.POLL_ID, pollId);
-    List<PollOptionEntity> resultList = query.getResultList();
-    return resultList == null ? Collections.emptyList() : resultList;
-  }
+  int countByPollId(long pollId);
 
-  public int countPollOptionsByPollId(long pollId) {
-    TypedQuery<Long> query = getEntityManager().createNamedQuery("PollOption.countPollOptionsByPollId", Long.class);
-    query.setParameter("pollId", pollId);
-    try {
-      return query.getSingleResult().intValue();
-    } catch (NoResultException e) {
-      throw new NoResultException();
-    }
-  }
 }

@@ -18,18 +18,39 @@
  */
 package io.meeds.poll.utils;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import io.meeds.kernel.test.KernelExtension;
 import io.meeds.poll.BasePollTest;
 import io.meeds.poll.model.Poll;
 import io.meeds.poll.model.PollOption;
 import io.meeds.poll.rest.model.PollOptionRestEntity;
 import io.meeds.poll.rest.model.PollRestEntity;
+import io.meeds.spring.AvailableIntegration;
 
+@ExtendWith({ SpringExtension.class, KernelExtension.class })
+@SpringBootApplication(scanBasePackages = {
+  BasePollTest.MODULE_NAME,
+  AvailableIntegration.KERNEL_MODULE,
+  AvailableIntegration.JPA_MODULE,
+  AvailableIntegration.LIQUIBASE_MODULE,
+})
+@EnableJpaRepositories(basePackages = BasePollTest.MODULE_NAME)
+@TestPropertySource(properties = {
+  "spring.liquibase.change-log=" + BasePollTest.CHANGELOG_PATH,
+})
 public class RestEntityBuilderTest extends BasePollTest { // NOSONAR
 
   private static final String POLL_OPTION_DESCRIPTION = "pollOption";
