@@ -65,21 +65,18 @@
         <groupId>${project.groupId}</groupId>
         <artifactId>poll-api</artifactId>
         <version>${project.version}</version>
-        <scope>provided</scope>
       </dependency>
 
       <dependency>
         <groupId>${project.groupId}</groupId>
         <artifactId>poll-services</artifactId>
         <version>${project.version}</version>
-        <scope>provided</scope>
       </dependency>
 
       <dependency>
         <groupId>${project.groupId}</groupId>
         <artifactId>poll-webapp</artifactId>
         <version>${project.version}</version>
-        <scope>provided</scope>
         <type>war</type>
       </dependency>
 
@@ -87,7 +84,6 @@
         <groupId>${project.groupId}</groupId>
         <artifactId>poll-packaging</artifactId>
         <version>${project.version}</version>
-        <scope>provided</scope>
         <type>zip</type>
       </dependency>
     </dependencies>

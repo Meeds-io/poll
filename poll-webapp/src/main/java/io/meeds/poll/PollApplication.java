@@ -15,54 +15,45 @@
  */
 package io.meeds.poll;
 
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
-import org.springframework.boot.ApplicationContextFactory;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfiguration;
-import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import io.meeds.spring.integration.kernel.PortalApplicationContext;
+import io.meeds.kernel.test.KernelExtension;
+import io.meeds.spring.AvailableIntegration;
 
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 
-@SpringBootApplication(
-  scanBasePackages = {
-      "io.meeds.poll",
-      "io.meeds.spring.integration"
-  },
-  exclude = {
-     LiquibaseAutoConfiguration.class
-  }
-)
-@PropertySource("classpath:application.properties")
+@ExtendWith({ SpringExtension.class, KernelExtension.class })
+@SpringBootApplication(scanBasePackages = {
+  PollApplication.MODULE_NAME,
+  AvailableIntegration.KERNEL_MODULE,
+  AvailableIntegration.JPA_MODULE,
+  AvailableIntegration.LIQUIBASE_MODULE,
+  AvailableIntegration.WEB_SECURITY_MODULE,
+  AvailableIntegration.WEB_TRANSACTION_MODULE,
+})
+@EnableJpaRepositories(basePackages = PollApplication.MODULE_NAME)
+@TestPropertySource(properties = {
+  "spring.liquibase.change-log=" + PollApplication.CHANGELOG_PATH,
+})
 public class PollApplication extends SpringBootServletInitializer {
 
-  private DefaultListableBeanFactory beanFactory;
+  public static final String MODULE_NAME    = "io.meeds.poll";
 
-  private ServletContext             servletContext;
+  public static final String CHANGELOG_PATH = "classpath:db/changelog/poll-rdbms.db.changelog.xml";
 
   @Override
   public void onStartup(ServletContext servletContext) throws ServletException {
     // Used to disable LogBack initialization in WebApp context after having
     // initialized it already in Meeds Server globally
     System.setProperty("org.springframework.boot.logging.LoggingSystem", "none");
-
-    this.servletContext = servletContext;
-    this.beanFactory = new DefaultListableBeanFactory();
     super.onStartup(servletContext);
-  }
-
-  @Override
-  protected SpringApplicationBuilder createSpringApplicationBuilder() {
-    return new SpringApplicationBuilder() {
-      @Override
-      public SpringApplicationBuilder contextFactory(ApplicationContextFactory factory) {
-        return super.contextFactory(w -> new PortalApplicationContext(servletContext, beanFactory));
-      }
-    };
   }
 
 }

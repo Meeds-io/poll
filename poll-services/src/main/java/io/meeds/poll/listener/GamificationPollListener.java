@@ -38,6 +38,7 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import org.exoplatform.services.listener.Asynchronous;
@@ -60,14 +61,11 @@ public class GamificationPollListener extends Listener<String, Poll> {
 
   private static final String[] LISTENER_EVENTS = { "meeds.poll.createPoll", "meeds.poll.votePoll" };
 
+  @Autowired
   private IdentityManager       identityManager;
 
+  @Autowired
   private ListenerService       listenerService;
-
-  public GamificationPollListener(IdentityManager identityManager, ListenerService listenerService) {
-    this.identityManager = identityManager;
-    this.listenerService = listenerService;
-  }
 
   @PostConstruct
   public void init() {
