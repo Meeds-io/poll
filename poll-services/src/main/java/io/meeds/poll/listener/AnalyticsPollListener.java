@@ -40,6 +40,7 @@ import org.springframework.stereotype.Component;
 
 import org.exoplatform.analytics.model.StatisticData;
 import org.exoplatform.analytics.utils.AnalyticsUtils;
+import org.exoplatform.container.ExoContainer;
 import org.exoplatform.services.listener.Asynchronous;
 import org.exoplatform.services.listener.Event;
 import org.exoplatform.services.listener.Listener;
@@ -81,6 +82,9 @@ public class AnalyticsPollListener extends Listener<String, Poll> {
 
   @Override
   public void onEvent(Event<String, Poll> event) throws Exception {
+    if (!ExoContainer.hasProfile("analytics")) {
+      return;
+    }
     Poll poll = event.getData();
     String operation = "";
     if (event.getEventName().equals(CREATE_POLL)) {

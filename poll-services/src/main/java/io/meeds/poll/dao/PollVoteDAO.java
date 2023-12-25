@@ -18,45 +18,33 @@
  */
 package io.meeds.poll.dao;
 
-import jakarta.persistence.NoResultException;
-import jakarta.persistence.TypedQuery;
-
-import org.springframework.stereotype.Component;
-
-import org.exoplatform.commons.persistence.impl.GenericDAOJPAImpl;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import io.meeds.poll.entity.PollVoteEntity;
 
-@Component
-public class PollVoteDAO extends GenericDAOJPAImpl<PollVoteEntity, Long> {
+public interface PollVoteDAO extends JpaRepository<PollVoteEntity, Long> {
 
-  public int countPollOptionTotalVotes(long pollOptionId) {
-    TypedQuery<Long> query = getEntityManager().createNamedQuery("PollVote.countPollOptionTotalVotes", Long.class);
-    query.setParameter("pollOptionId", pollOptionId);
-    return query.getSingleResult().intValue();
-  }
+  int countByPollOptionId(long pollOptionId);
 
-  public int countPollOptionTotalVotesByUser(long pollOptionId, long userId) {
-    TypedQuery<Long> query = getEntityManager().createNamedQuery("PollVote.countPollOptionTotalVotesByUser", Long.class);
-    query.setParameter("pollOptionId", pollOptionId);
-    query.setParameter("userId", userId);
-    return query.getSingleResult().intValue();
-  }
-  
-  public int countPollTotalVotes(long pollId) {
-    TypedQuery<Long> query = getEntityManager().createNamedQuery("PollVote.countPollTotalVotes", Long.class);
-    query.setParameter("pollId", pollId);
-    try {
-      return query.getSingleResult().intValue();
-    } catch (NoResultException e) {
-      return 0;
-    }
-  }
+  @Query("""
+          SELECT COUNT(pv) FROM PollVote pv
+          WHERE pv.pollOption.id = ?1
+          AND pv.voterId = ?2
+      """)
+  int countByPollOptionIdAndVoterId(long pollOptionId, long userId);
 
-  public long countUserVotesInPoll(Long pollId, long userId) {
-    TypedQuery<Long> query = getEntityManager().createNamedQuery("PollVote.countUserVotesInPoll", Long.class);
-    query.setParameter("pollId", pollId);
-    query.setParameter("userId", userId);
-    return query.getSingleResult();
-  }
+  @Query("""
+          SELECT COUNT(pv) FROM PollVote pv
+          INNER JOIN pv.pollOption po ON po.poll.id = ?1
+      """)
+  int countByPollId(long pollId);
+
+  @Query("""
+          SELECT COUNT(pv) FROM PollVote pv
+          INNER JOIN pv.pollOption po ON po.poll.id = ?1
+          WHERE pv.voterId = ?2
+      """)
+  long countByPollIdAndVoterId(Long pollId, long userId);
+
 }

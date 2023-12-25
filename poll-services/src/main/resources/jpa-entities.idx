@@ -1,0 +1,3 @@
+io.meeds.poll.entity.PollVoteEntity
+io.meeds.poll.entity.PollOptionEntity
+io.meeds.poll.entity.PollEntity

@@ -1,10 +1,28 @@
+/**
+ * This file is part of the Meeds project (https://meeds.io/).
+ *
+ * Copyright (C) 2020 - 2023 Meeds Association contact@meeds.io
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 3 of the License, or (at your option) any later version.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ */
 package io.meeds.poll;
 
 import java.util.Random;
 
-import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import org.exoplatform.commons.testing.BaseExoTestCase;
 import org.exoplatform.component.test.ConfigurationUnit;
 import org.exoplatform.component.test.ConfiguredBy;
 import org.exoplatform.component.test.ContainerScope;
@@ -13,32 +31,34 @@ import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
 
-import io.meeds.poll.dao.PollDAO;
-import io.meeds.poll.dao.PollOptionDAO;
-import io.meeds.poll.dao.PollVoteDAO;
-import io.meeds.poll.service.PollService;
-import io.meeds.poll.storage.PollStorage;
+import io.meeds.kernel.test.AbstractSpringTest;
 
 @ConfiguredBy({
-                @ConfigurationUnit(scope = ContainerScope.ROOT,
-                    path = "conf/configuration.xml"),
-                @ConfigurationUnit(scope = ContainerScope.PORTAL,
-                    path = "conf/portal/configuration.xml"),
-                @ConfigurationUnit(scope = ContainerScope.PORTAL,
-                    path = "conf/exo.poll.service-local-configuration.xml"),
+  @ConfigurationUnit(scope = ContainerScope.ROOT,
+      path = "conf/configuration.xml"),
+  @ConfigurationUnit(scope = ContainerScope.PORTAL,
+      path = "conf/portal/configuration.xml"),
+  @ConfigurationUnit(scope = ContainerScope.PORTAL,
+      path = "conf/exo.poll.service-local-configuration.xml"),
 })
-public abstract class BasePollTest extends BaseExoTestCase { // NOSONAR
+public abstract class BasePollTest extends AbstractSpringTest { // NOSONAR
 
-  private static final Random   RANDOM     = new Random();
+  public static final String    MODULE_NAME    = "io.meeds.poll";
 
-  protected static final String TESTUSER_1 = "testuser1";
+  public static final String    CHANGELOG_PATH = "classpath:db/changelog/poll-rdbms.db.changelog.xml";
 
-  protected static final String TESTUSER_2 = "testuser2";
+  protected static final String TESTUSER_1     = "testuser1";
 
-  protected static final String TESTUSER_3 = "testuser3";
+  protected static final String TESTUSER_2     = "testuser2";
 
+  protected static final String TESTUSER_3     = "testuser3";
+
+  private static final Random   RANDOM         = new Random();
+
+  @Autowired
   protected IdentityManager     identityManager;
 
+  @Autowired
   protected SpaceService        spaceService;
 
   protected Space               space;
@@ -49,40 +69,16 @@ public abstract class BasePollTest extends BaseExoTestCase { // NOSONAR
 
   protected Identity            user3Identity;
 
-  protected PollService         pollService;
-
-  protected PollStorage         pollStorage;
-
-  protected PollOptionDAO       pollOptionDAO;
-
-  protected PollDAO             pollDAO;
-
-  protected PollVoteDAO         pollVoteDAO;
-
-  @Before
-  @Override
-  public void setUp() throws Exception {
-    super.setUp();
-    initServices();
+  @BeforeEach
+  public void beforeEach() {
     begin();
     initUsers();
     injectSpace();
   }
 
-  @Override
-  protected void tearDown() throws Exception {
-    super.tearDown();
+  @AfterEach
+  protected void afterEach() {
     end();
-  }
-
-  private void initServices() {
-    identityManager = getContainer().getComponentInstanceOfType(IdentityManager.class);
-    spaceService = getContainer().getComponentInstanceOfType(SpaceService.class);
-    pollService = getContainer().getComponentInstanceOfType(PollService.class);
-    pollStorage = getContainer().getComponentInstanceOfType(PollStorage.class);
-    pollOptionDAO = getContainer().getComponentInstanceOfType(PollOptionDAO.class);
-    pollDAO = getContainer().getComponentInstanceOfType(PollDAO.class);
-    pollVoteDAO = getContainer().getComponentInstanceOfType(PollVoteDAO.class);
   }
 
   protected void initUsers() {
@@ -112,4 +108,10 @@ public abstract class BasePollTest extends BaseExoTestCase { // NOSONAR
     newSpace.setVisibility(Space.PRIVATE);
     return spaceService.createSpace(newSpace, "root");
   }
+
+  public void testNop() {
+    // Kept for Backward compatibility with JUnit 3
+    // Until the full upgrade to JUnit 5 is done
+  }
+
 }

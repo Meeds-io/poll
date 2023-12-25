@@ -18,16 +18,23 @@
  */
 package io.meeds.poll.entity;
 
-import org.exoplatform.commons.api.persistence.ExoEntity;
-
-import jakarta.persistence.*;
 import java.io.Serializable;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
+import lombok.Data;
+
 @Entity(name = "PollOption")
-@ExoEntity
 @Table(name = "POLL_OPTION")
-@NamedQuery(name = "PollOption.findPollOptionsByPollId", query = "SELECT pollOpt FROM PollOption pollOpt where pollOpt.pollId = :pollId")
-@NamedQuery(name = "PollOption.countPollOptionsByPollId", query = "SELECT COUNT(*) FROM PollOption pollOpt where pollOpt.pollId = :pollId")
+@Data
 public class PollOptionEntity implements Serializable {
 
   private static final long serialVersionUID = 8803249235458041880L;
@@ -38,33 +45,11 @@ public class PollOptionEntity implements Serializable {
   @Column(name = "POLL_OPTION_ID")
   private Long              id;
 
-  @Column(name = "POLL_ID", nullable = false)
-  private Long              pollId;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "POLL_ID", nullable = false)
+  private PollEntity        poll;
 
   @Column(name = "DESCRIPTION", nullable = false)
   private String            description;
 
-  public Long getId() {
-    return id;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
-  }
-
-  public Long getPollId() {
-    return pollId;
-  }
-
-  public void setPollId(Long pollId) {
-    this.pollId = pollId;
-  }
-
-  public String getDescription() {
-    return description;
-  }
-
-  public void setDescription(String description) {
-    this.description = description;
-  }
 }
