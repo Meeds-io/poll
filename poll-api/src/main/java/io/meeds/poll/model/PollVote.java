@@ -36,4 +36,11 @@ public class PollVote {
   private long voterId;
 
   private Date voteDate;
+
+  public PollVote(long pollOptionId, long voterId, Date voteDate) {
+    this.pollOptionId = pollOptionId;
+    this.voterId = voterId;
+    this.voteDate = voteDate;
+  }
+
 }

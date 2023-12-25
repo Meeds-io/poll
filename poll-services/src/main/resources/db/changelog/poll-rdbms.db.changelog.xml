@@ -96,4 +96,8 @@
     <createSequence sequenceName="SEQ_POLL_VOTE_ID" startValue="1"/>
   </changeSet>
 
+  <changeSet author="poll" id="1.0.0-6">
+    <addUniqueConstraint columnNames="POLL_OPTION_ID,VOTER_ID" tableName="POLL_VOTE" />
+  </changeSet>
+
 </databaseChangeLog>

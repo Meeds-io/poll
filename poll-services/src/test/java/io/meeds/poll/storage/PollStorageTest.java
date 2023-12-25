@@ -1,44 +1,43 @@
-/*
+/**
  * This file is part of the Meeds project (https://meeds.io/).
- * 
- * Copyright (C) 2022 Meeds Association contact@meeds.io
- * 
+ *
+ * Copyright (C) 2020 - 2023 Meeds Association contact@meeds.io
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 3 of the License, or (at your option) any later version.
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
- * 
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 package io.meeds.poll.storage;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.MockedStatic;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import io.meeds.kernel.test.KernelExtension;
+import io.meeds.poll.BasePollTest;
 import io.meeds.poll.dao.PollDAO;
 import io.meeds.poll.dao.PollOptionDAO;
 import io.meeds.poll.dao.PollVoteDAO;
@@ -48,226 +47,219 @@ import io.meeds.poll.entity.PollVoteEntity;
 import io.meeds.poll.model.Poll;
 import io.meeds.poll.model.PollOption;
 import io.meeds.poll.model.PollVote;
-import io.meeds.poll.utils.EntityMapper;
+import io.meeds.spring.AvailableIntegration;
 
-@RunWith(MockitoJUnitRunner.class)
-public class PollStorageTest {
+@ExtendWith({ SpringExtension.class, KernelExtension.class })
+@SpringBootApplication(scanBasePackages = {
+  BasePollTest.MODULE_NAME,
+  AvailableIntegration.KERNEL_MODULE,
+  AvailableIntegration.JPA_MODULE,
+  AvailableIntegration.LIQUIBASE_MODULE,
+})
+@EnableJpaRepositories(basePackages = BasePollTest.MODULE_NAME)
+@TestPropertySource(properties = {
+  "spring.liquibase.change-log=" + BasePollTest.CHANGELOG_PATH,
+})
+public class PollStorageTest extends BasePollTest { // NOSONAR
 
-  private static MockedStatic<EntityMapper> entityMapper;
+  private static final long STORED_POLL_CREATOR_ID = 653L;
 
-  private PollStorage                       pollStorage;
+  private static final long STORED_VOTER_ID        = 225L;
 
-  private PollDAO                           pollDAO;
+  @Autowired
+  private PollStorage       pollStorage;
 
-  private PollOptionDAO                     pollOptionDAO;
+  @Autowired
+  private PollDAO           pollDAO;
 
-  private PollVoteDAO                       pollVoteDAO;
+  @Autowired
+  private PollOptionDAO     pollOptionDAO;
 
-  @BeforeClass
-  public static void beforeClass() throws Exception { // NOSONAR
-    entityMapper = mockStatic(EntityMapper.class);
-  }
+  @Autowired
+  private PollVoteDAO       pollVoteDAO;
 
-  @AfterClass
-  public static void afterClass() throws Exception { // NOSONAR
-    entityMapper.close();
-  }
-
-  @Before
-  public void setUp() throws Exception { // NOSONAR
-    pollDAO = mock(PollDAO.class);
-    pollOptionDAO = mock(PollOptionDAO.class);
-    pollVoteDAO = mock(PollVoteDAO.class);
-    pollStorage = new PollStorage(pollDAO, pollOptionDAO, pollVoteDAO);
+  @AfterEach
+  public void teardown() {
+    pollVoteDAO.deleteAll();
+    pollOptionDAO.deleteAll();
+    pollDAO.deleteAll();
   }
 
   @Test
-  public void testCreatePoll() throws Exception { // NOSONAR
+  public void createPoll() throws Exception { // NOSONAR
     // Given
-    Poll poll = createPoll();
-    PollOption pollOption = createPollOption(poll);
-    PollEntity pollEntity = createPollEntity();
-    PollOptionEntity pollOptionEntity = createPollOptionEntity(pollEntity);
-    when(pollDAO.create(any())).thenReturn(pollEntity);
-    when(pollOptionDAO.create(any())).thenReturn(pollOptionEntity);
-    entityMapper.when(() -> EntityMapper.toPollEntity(poll)).thenReturn(pollEntity);
-    entityMapper.when(() -> EntityMapper.fromPollEntity(pollEntity)).thenReturn(poll);
-    entityMapper.when(() -> EntityMapper.fromPollOptionEntity(pollOptionEntity)).thenReturn(pollOption);
+    Poll poll = createPollInstance();
+    PollOption pollOption = createPollOptionInstance(poll);
 
     // When
     Poll createdPoll = pollStorage.createPoll(poll, Collections.singletonList(pollOption));
 
     // Then
     assertNotNull(createdPoll);
-    assertEquals(1L, createdPoll.getId());
-    assertEquals("q1", createdPoll.getQuestion());
+    assertEquals(poll.getQuestion(), createdPoll.getQuestion());
+    assertEquals(poll.getCreatedDate(), createdPoll.getCreatedDate());
+    assertEquals(poll.getEndDate(), createdPoll.getEndDate());
+    assertEquals(poll.getCreatorId(), createdPoll.getCreatorId());
   }
 
   @Test
-  public void testGetPollById() throws Exception { // NOSONAR
+  public void getPollById() throws Exception { // NOSONAR
     // Given
-    Poll poll = createPoll();
     PollEntity pollEntity = createPollEntity();
-    when(pollDAO.find(any())).thenReturn(pollEntity);
-    entityMapper.when(() -> EntityMapper.fromPollEntity(pollEntity)).thenReturn(poll);
 
     // When
-    Poll retrievedPoll = pollStorage.getPollById(poll.getId());
+    Poll poll = pollStorage.getPollById(pollEntity.getId());
 
     // Then
-    assertNotNull(retrievedPoll);
-    assertEquals(1L, retrievedPoll.getId());
-    assertEquals("q1", retrievedPoll.getQuestion());
+    assertNotNull(poll);
+    assertEquals(pollEntity.getId().longValue(), poll.getId());
+    assertEquals(pollEntity.getQuestion(), poll.getQuestion());
+    assertEquals(pollEntity.getCreatedDate(), poll.getCreatedDate());
+    assertEquals(pollEntity.getEndDate(), poll.getEndDate());
+    assertEquals(pollEntity.getCreatorId(), poll.getCreatorId());
   }
 
   @Test
-  public void testGetPollOptionsByPollId() throws Exception { // NOSONAR
-    // Given
-    Poll poll = createPoll();
+  public void getPollOptionsByPollId() throws Exception { // NOSONAR
     PollEntity pollEntity = createPollEntity();
-    PollOption pollOption = createPollOption(poll);
     PollOptionEntity pollOptionEntity = createPollOptionEntity(pollEntity);
-    List<PollOptionEntity> pollOptionEntities = Arrays.asList(pollOptionEntity);
-    when(pollOptionDAO.findPollOptionsByPollId(any())).thenReturn(pollOptionEntities);
-    entityMapper.when(() -> EntityMapper.fromPollOptionEntity(pollOptionEntity)).thenReturn(pollOption);
-    // When
-    List<PollOption> retrievedPollOptions = pollStorage.getPollOptionsByPollId(poll.getId());
 
-    // Then
+    List<PollOption> retrievedPollOptions = pollStorage.getPollOptionsByPollId(pollEntity.getId());
+
     assertNotNull(retrievedPollOptions);
-    assertEquals(1L, retrievedPollOptions.get(0).getId());
+    assertEquals((long) pollOptionEntity.getId(), retrievedPollOptions.get(0).getId());
+    assertEquals(pollOptionEntity.getDescription(), retrievedPollOptions.get(0).getDescription());
   }
 
   @Test
-  public void testUpdatePoll() throws Exception { // NOSONAR
-    // Given
-    Poll poll = createPoll();
+  public void updatePoll() throws Exception { // NOSONAR
     PollEntity pollEntity = createPollEntity();
-    poll.setActivityId(1L);
-    when(pollDAO.update(any())).thenReturn(pollEntity);
-    entityMapper.when(() -> EntityMapper.toPollEntity(poll)).thenReturn(pollEntity);
-    entityMapper.when(() -> EntityMapper.fromPollEntity(pollEntity)).thenReturn(poll);
 
-    // When
+    Poll poll = pollStorage.getPollById(pollEntity.getId());
+    poll.setActivityId(55468l);
+
     Poll updatedPoll = pollStorage.updatePoll(poll);
 
-    // Then
     assertNotNull(updatedPoll);
-    assertEquals(1L, updatedPoll.getActivityId());
+    assertEquals(poll.getActivityId(), updatedPoll.getActivityId());
+
+    updatedPoll = pollStorage.getPollById(pollEntity.getId());
+    assertEquals(poll.getActivityId(), updatedPoll.getActivityId());
   }
 
   @Test
-  public void testCreatePollVote() throws Exception { // NOSONAR
-    // Given
-    Poll poll = createPoll();
-    PollOption pollOption = createPollOption(poll);
-    PollVoteEntity pollVoteEntity = createPollVoteEntity(pollOption.getId());
-    PollVote pollVote = createPollVote(pollOption.getId());
-    when(pollVoteDAO.create(any())).thenReturn(pollVoteEntity);
-    entityMapper.when(() -> EntityMapper.toPollVoteEntity(pollVote)).thenReturn(pollVoteEntity);
-    entityMapper.when(() -> EntityMapper.fromPollVoteEntity(pollVoteEntity)).thenReturn(pollVote);
+  public void createPollVote() throws Exception { // NOSONAR
+    PollEntity pollEntity = createPollEntity();
+    PollOptionEntity pollOptionEntity = createPollOptionEntity(pollEntity);
+    PollVote pollVote = createPollVoteInstance(pollOptionEntity.getId());
 
-    // When
     PollVote createdPollVote = pollStorage.createPollVote(pollVote);
 
-    // Then
     assertNotNull(createdPollVote);
-    assertEquals(1L, createdPollVote.getVoterId());
-    assertEquals(1L, createdPollVote.getPollOptionId());
+    assertEquals(pollVote.getVoterId(), createdPollVote.getVoterId());
+    assertEquals(pollVote.getPollOptionId(), createdPollVote.getPollOptionId());
   }
 
   @Test
-  public void testCountPollOptionTotalVotes() throws Exception { // NOSONAR
-    // Given
-    Poll poll = createPoll();
-    PollOption pollOption = createPollOption(poll);
-    when(pollVoteDAO.countPollOptionTotalVotes(pollOption.getId())).thenReturn(1);
-
-    // When
-    int pollOptionTotalVotes = pollStorage.countPollOptionTotalVotes(pollOption.getId());
-
-    // Then
-    assertEquals(1, pollOptionTotalVotes);
-  }
-
-  @Test
-  public void testCountPollOptionTotalVotesByUser() throws Exception { // NOSONAR
-    // Given
-    Poll poll = createPoll();
-    PollOption pollOption = createPollOption(poll);
-    when(pollVoteDAO.countPollOptionTotalVotesByUser(pollOption.getId(), 1L)).thenReturn(1);
-
-    // When
-    int pollOptionTotalVotesByUser = pollStorage.countPollOptionTotalVotesByUser(pollOption.getId(), 1L);
-
-    // Then
-    assertEquals(1, pollOptionTotalVotesByUser);
-  }
-
-  @Test
-  public void testGetPollOptionById() throws Exception { // NOSONAR
-    // Given
-    Poll poll = createPoll();
+  public void countPollOptionTotalVotes() throws Exception { // NOSONAR
     PollEntity pollEntity = createPollEntity();
-    PollOption pollOption = createPollOption(poll);
     PollOptionEntity pollOptionEntity = createPollOptionEntity(pollEntity);
-    when(pollOptionDAO.find(any())).thenReturn(pollOptionEntity);
-    entityMapper.when(() -> EntityMapper.fromPollOptionEntity(pollOptionEntity)).thenReturn(pollOption);
+
+    assertEquals(0, pollStorage.countPollOptionTotalVotes(pollOptionEntity.getId()));
+
+    pollStorage.createPollVote(new PollVote(pollOptionEntity.getId(), 1l, new Date()));
+    assertEquals(1, pollStorage.countPollOptionTotalVotes(pollOptionEntity.getId()));
+
+    assertThrows(Exception.class, () -> pollStorage.createPollVote(new PollVote(pollOptionEntity.getId(), 1l, new Date())));
+    assertEquals(1, pollStorage.countPollOptionTotalVotes(pollOptionEntity.getId()));
+
+    pollStorage.createPollVote(new PollVote(pollOptionEntity.getId(), 2l, new Date()));
+    assertEquals(2, pollStorage.countPollOptionTotalVotes(pollOptionEntity.getId()));
+  }
+
+  @Test
+  public void countPollOptionTotalVotesByUser() throws Exception { // NOSONAR
+    PollEntity pollEntity = createPollEntity();
+    PollOptionEntity pollOptionEntity = createPollOptionEntity(pollEntity);
+
+    assertEquals(0, pollStorage.countPollOptionTotalVotesByUser(pollOptionEntity.getId(), 1l));
+    assertEquals(0, pollStorage.countPollOptionTotalVotesByUser(pollOptionEntity.getId(), 2l));
+
+    pollStorage.createPollVote(new PollVote(pollOptionEntity.getId(), 1l, new Date()));
+    assertEquals(1, pollStorage.countPollOptionTotalVotesByUser(pollOptionEntity.getId(), 1l));
+    assertEquals(0, pollStorage.countPollOptionTotalVotesByUser(pollOptionEntity.getId(), 2l));
+
+    assertThrows(Exception.class, () -> pollStorage.createPollVote(new PollVote(pollOptionEntity.getId(), 1l, new Date())));
+    assertEquals(1, pollStorage.countPollOptionTotalVotesByUser(pollOptionEntity.getId(), 1l));
+    assertEquals(0, pollStorage.countPollOptionTotalVotesByUser(pollOptionEntity.getId(), 2l));
+
+    pollStorage.createPollVote(new PollVote(pollOptionEntity.getId(), 2l, new Date()));
+    assertEquals(1, pollStorage.countPollOptionTotalVotesByUser(pollOptionEntity.getId(), 1l));
+    assertEquals(1, pollStorage.countPollOptionTotalVotesByUser(pollOptionEntity.getId(), 2l));
+  }
+
+  @Test
+  public void getPollOptionById() throws Exception { // NOSONAR
+    PollEntity pollEntity = createPollEntity();
+    PollOptionEntity pollOptionEntity = createPollOptionEntity(pollEntity);
+
     // When
-    PollOption retrievedPollOption = pollStorage.getPollOptionById(poll.getId());
+    PollOption retrievedPollOption = pollStorage.getPollOptionById(pollOptionEntity.getId());
 
     // Then
     assertNotNull(retrievedPollOption);
-    assertEquals(1L, retrievedPollOption.getId());
+    assertEquals((long) pollOptionEntity.getId(), retrievedPollOption.getId());
+    assertEquals((long) pollEntity.getId(), retrievedPollOption.getPollId());
+    assertEquals(pollOptionEntity.getDescription(), retrievedPollOption.getDescription());
   }
 
   @Test
-  public void testCountPollOptionsByPollId() throws Exception { // NOSONAR
-    // Given
-    Poll poll = createPoll();
-    createPollOption(poll);
-    when(pollOptionDAO.countPollOptionsByPollId(poll.getId())).thenReturn(1);
+  public void countPollOptionsByPollId() throws Exception { // NOSONAR
+    PollEntity pollEntity = createPollEntity();
 
-    // When
-    int pollOptionsNumber = pollStorage.countPollOptionsByPollId(poll.getId());
+    createPollOptionEntity(pollEntity);
+    assertEquals(1, pollStorage.countPollOptionsByPollId(pollEntity.getId()));
 
-    // Then
-    assertEquals(1, pollOptionsNumber);
+    createPollOptionEntity(pollEntity);
+    assertEquals(2, pollStorage.countPollOptionsByPollId(pollEntity.getId()));
   }
 
   @Test
-  public void testCountPollTotalVotes() throws Exception { // NOSONAR
-    // Given
-    Poll poll = createPoll();
-    createPollOption(poll);
-    when(pollVoteDAO.countPollTotalVotes(poll.getId())).thenReturn(1);
+  public void countPollTotalVotes() throws Exception { // NOSONAR
+    // NOSONAR
+    PollEntity pollEntity = createPollEntity();
+    PollOptionEntity pollOptionEntity = createPollOptionEntity(pollEntity);
 
-    // When
-    int pollTotalVotes = pollStorage.countPollTotalVotes(poll.getId());
+    assertEquals(0, pollStorage.countPollTotalVotes(pollEntity.getId()));
 
-    // Then
-    assertEquals(1, pollTotalVotes);
+    pollStorage.createPollVote(new PollVote(pollOptionEntity.getId(), 1l, new Date()));
+    assertEquals(1, pollStorage.countPollTotalVotes(pollEntity.getId()));
+
+    assertThrows(Exception.class, () -> pollStorage.createPollVote(new PollVote(pollOptionEntity.getId(), 1l, new Date())));
+    assertEquals(1, pollStorage.countPollTotalVotes(pollEntity.getId()));
+
+    pollStorage.createPollVote(new PollVote(pollOptionEntity.getId(), 2l, new Date()));
+    assertEquals(2, pollStorage.countPollTotalVotes(pollEntity.getId()));
   }
 
   @Test
-  public void testDidVote() throws Exception { // NOSONAR
+  public void didVote() throws Exception { // NOSONAR
     // Given
-    Poll poll = createPoll();
-    createPollOption(poll);
-    when(pollVoteDAO.countUserVotesInPoll(poll.getId(), 1L)).thenReturn(1L);
+    PollEntity pollEntity = createPollEntity();
+    PollOptionEntity pollOptionEntity = createPollOptionEntity(pollEntity);
 
-    // When
-    boolean didVote = pollStorage.didVote(1L, poll.getId());
+    boolean didVote = pollStorage.didVote(STORED_VOTER_ID, pollEntity.getId());
+    assertFalse(didVote);
 
-    // Then
+    createPollVoteEntity(pollOptionEntity);
+    didVote = pollStorage.didVote(STORED_VOTER_ID, pollEntity.getId());
     assertTrue(didVote);
   }
 
-  protected Poll createPoll() {
+  protected Poll createPollInstance() {
     Date createdDate = new Date(System.currentTimeMillis());
     Date endDate = new Date(11508484583260L);
     Poll poll = new Poll();
-    poll.setId(1L);
     poll.setQuestion("q1");
     poll.setCreatedDate(createdDate);
     poll.setEndDate(endDate);
@@ -275,20 +267,18 @@ public class PollStorageTest {
     return poll;
   }
 
-  protected PollOption createPollOption(Poll poll) {
+  protected PollOption createPollOptionInstance(Poll poll) {
     PollOption pollOption = new PollOption();
-    pollOption.setId(1L);
     pollOption.setPollId(poll.getId());
     pollOption.setDescription("pollOption description");
     return pollOption;
   }
 
-  protected PollVote createPollVote(long optionId) {
+  protected PollVote createPollVoteInstance(long optionId) {
     PollVote pollVote = new PollVote();
-    pollVote.setId(1L);
     pollVote.setVoteDate(new Date());
     pollVote.setPollOptionId(optionId);
-    pollVote.setVoterId(1L);
+    pollVote.setVoterId(8554L);
     return pollVote;
   }
 
@@ -296,28 +286,27 @@ public class PollStorageTest {
     Date createdDate = new Date(System.currentTimeMillis());
     Date endDate = new Date(11508484583260L);
     PollEntity pollEntity = new PollEntity();
-    pollEntity.setId(1L);
-    pollEntity.setQuestion("q1");
+    pollEntity.setQuestion("q" + System.currentTimeMillis());
     pollEntity.setCreatedDate(createdDate);
     pollEntity.setEndDate(endDate);
-    pollEntity.setCreatorId(1L);
-    return pollEntity;
+    pollEntity.setCreatorId(STORED_POLL_CREATOR_ID);
+    return pollDAO.save(pollEntity);
   }
 
   protected PollOptionEntity createPollOptionEntity(PollEntity pollEntity) {
     PollOptionEntity pollOptionEntity = new PollOptionEntity();
-    pollOptionEntity.setPollId(pollEntity.getId());
+    pollOptionEntity.setPoll(pollEntity);
     pollOptionEntity.setDescription("pollOption description");
-    pollOptionEntity.setId(1L);
-    return pollOptionEntity;
+    return pollOptionDAO.save(pollOptionEntity);
   }
 
-  protected PollVoteEntity createPollVoteEntity(long optionId) {
+  protected PollVoteEntity createPollVoteEntity(PollOptionEntity pollOptionEntity) {
     Date createdDate = new Date(System.currentTimeMillis());
     PollVoteEntity pollVoteEntity = new PollVoteEntity();
-    pollVoteEntity.setPollOptionId(optionId);
-    pollVoteEntity.setVoterId(1L);
+    pollVoteEntity.setPollOption(pollOptionEntity);
+    pollVoteEntity.setVoterId(STORED_VOTER_ID);
     pollVoteEntity.setVoteDate(createdDate);
-    return pollVoteEntity;
+    return pollVoteDAO.save(pollVoteEntity);
   }
+
 }
