@@ -51,7 +51,7 @@ import io.meeds.spring.AvailableIntegration;
 @ExtendWith({ SpringExtension.class, KernelExtension.class })
 @SpringBootApplication(scanBasePackages = {
   BasePollTest.MODULE_NAME,
-  AvailableIntegration.KERNEL_MODULE,
+  AvailableIntegration.KERNEL_TEST_MODULE,
   AvailableIntegration.JPA_MODULE,
   AvailableIntegration.LIQUIBASE_MODULE,
 })
@@ -156,8 +156,8 @@ public class PollServiceTest extends BasePollTest { // NOSONAR
     assertEquals(endDate, retrievedPoll.getEndDate());
 
     // When
-      org.exoplatform.services.security.Identity testUser3Identity = new org.exoplatform.services.security.Identity(TESTUSER_3);
-      assertThrows(IllegalAccessException.class, () -> pollService.getPollById(retrievedPoll.getId(), testUser3Identity));
+    org.exoplatform.services.security.Identity testUser3Identity = new org.exoplatform.services.security.Identity(TESTUSER_3);
+    assertThrows(IllegalAccessException.class, () -> pollService.getPollById(retrievedPoll.getId(), testUser3Identity));
   }
 
   @Test
