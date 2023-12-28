@@ -26,7 +26,8 @@
   <property name="now" value="sysdate" dbms="oracle"/>
   <property name="now" value="CURRENT_TIMESTAMP" dbms="mssql"/>
 
-  <changeSet author="poll" id="1.0.0-0" dbms="oracle,postgresql,hsql">
+  <changeSet author="poll" id="1.0.0-0" dbms="oracle,postgresql,hsqldb">
+    <validCheckSum>ANY</validCheckSum>
     <createSequence sequenceName="SEQ_POLL_ID" startValue="1"/>
     <createSequence sequenceName="SEQ_POLL_OPTION_ID" startValue="1"/>
   </changeSet>
@@ -68,7 +69,8 @@
     </addColumn>
   </changeSet>
 
-  <changeSet author="poll" id="1.0.0-3" dbms="oracle,postgresql,hsql">
+  <changeSet author="poll" id="1.0.0-3" dbms="oracle,postgresql,hsqldb">
+    <validCheckSum>ANY</validCheckSum>
     <createSequence sequenceName="SEQ_POLL_VOTE_ID" startValue="1"/>
   </changeSet>
 
@@ -88,12 +90,6 @@
     <modifySql dbms="mysql">
       <append value=" ENGINE=INNODB CHARSET=UTF8 COLLATE utf8_general_ci"/>
     </modifySql>
-  </changeSet>
-
-  <changeSet author="poll" id="1.0.0-5" dbms="hsqldb">
-    <createSequence sequenceName="SEQ_POLL_ID" startValue="1"/>
-    <createSequence sequenceName="SEQ_POLL_OPTION_ID" startValue="1"/>
-    <createSequence sequenceName="SEQ_POLL_VOTE_ID" startValue="1"/>
   </changeSet>
 
   <changeSet author="poll" id="1.0.0-6">
