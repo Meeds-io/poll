@@ -45,7 +45,7 @@ public abstract class BasePollTest extends AbstractSpringTest { // NOSONAR
 
   public static final String    MODULE_NAME    = "io.meeds.poll";
 
-  public static final String    CHANGELOG_PATH = "classpath:db/changelog/poll-rdbms.db.changelog.xml";
+  public static final String    CHANGELOG_PATH = "classpath:db/changelog/poll-rdbms.db.changelog-master.xml";
 
   protected static final String TESTUSER_1     = "testuser1";
 
