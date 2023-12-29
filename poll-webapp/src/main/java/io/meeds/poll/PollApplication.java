@@ -32,6 +32,7 @@ import io.meeds.spring.kernel.PortalApplicationContextInitializer;
 })
 @EnableJpaRepositories(basePackages = PollApplication.MODULE_NAME)
 @PropertySource("classpath:application.properties")
+@PropertySource("classpath:application-common.properties")
 @PropertySource("classpath:poll.properties")
 public class PollApplication extends PortalApplicationContextInitializer {
 
