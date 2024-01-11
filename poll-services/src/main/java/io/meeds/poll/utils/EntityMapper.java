@@ -34,7 +34,7 @@ public class EntityMapper {
     if (pollEntity == null) {
       return null;
     }
-    return new Poll(pollEntity.getId(),
+    return new Poll(pollEntity.getId() == null ? 0l : pollEntity.getId(),
                     pollEntity.getQuestion(),
                     pollEntity.getCreatedDate(),
                     pollEntity.getEndDate(),
@@ -60,35 +60,41 @@ public class EntityMapper {
     return pollEntity;
   }
 
-  public static PollOption fromPollOptionEntity(PollOptionEntity pollOptionEntity) {
+  public static PollOption fromPollOptionEntity(PollOptionEntity pollOptionEntity, long pollId) {
     if (pollOptionEntity == null) {
       return null;
     }
-    return new PollOption(pollOptionEntity.getId(), pollOptionEntity.getPollId(), pollOptionEntity.getDescription());
+    return new PollOption(pollOptionEntity.getId(),
+                          pollId == 0 ? pollOptionEntity.getPoll().getId() : pollId,
+                          pollOptionEntity.getDescription());
   }
 
-  public static PollOptionEntity toPollOptionEntity(PollOption pollOption, Long pollEntityId) {
+  public static PollOption fromPollOptionEntity(PollOptionEntity pollOptionEntity) {
+    return fromPollOptionEntity(pollOptionEntity, 0);
+  }
+
+  public static PollOptionEntity toPollOptionEntity(PollOption pollOption, PollEntity pollEntity) {
     if (pollOption == null) {
       return null;
     }
     PollOptionEntity pollOptionEntity = new PollOptionEntity();
-    pollOptionEntity.setPollId(pollEntityId);
+    pollOptionEntity.setPoll(pollEntity);
     pollOptionEntity.setDescription(pollOption.getDescription());
     return pollOptionEntity;
   }
 
-  public static PollVote fromPollVoteEntity(PollVoteEntity pollVoteEntity) {
-    if(pollVoteEntity == null) {
+  public static PollVote fromPollVoteEntity(PollVoteEntity pollVoteEntity, long pollOptionId) {
+    if (pollVoteEntity == null) {
       return null;
     }
     return new PollVote(pollVoteEntity.getId(),
-                        pollVoteEntity.getPollOptionId(),
+                        pollOptionId == 0 ? pollVoteEntity.getPollOption().getId() : pollOptionId,
                         pollVoteEntity.getVoterId(),
                         pollVoteEntity.getVoteDate());
 
   }
 
-  public static PollVoteEntity toPollVoteEntity(PollVote pollVote) {
+  public static PollVoteEntity toPollVoteEntity(PollVote pollVote, PollOptionEntity pollOptionEntity) {
     if (pollVote == null) {
       return null;
     }
@@ -96,9 +102,10 @@ public class EntityMapper {
     if (pollVote.getId() != 0) {
       pollVoteEntity.setId(pollVote.getId());
     }
-    pollVoteEntity.setPollOptionId(pollVote.getPollOptionId());
+    pollVoteEntity.setPollOption(pollOptionEntity);
     pollVoteEntity.setVoterId(pollVote.getVoterId());
     pollVoteEntity.setVoteDate(pollVote.getVoteDate());
     return pollVoteEntity;
   }
+
 }

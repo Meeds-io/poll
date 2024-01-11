@@ -19,7 +19,8 @@
 package io.meeds.poll.storage;
 
 import java.util.List;
-import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Repository;
 
 import io.meeds.poll.dao.PollDAO;
 import io.meeds.poll.dao.PollOptionDAO;
@@ -32,7 +33,9 @@ import io.meeds.poll.model.PollOption;
 import io.meeds.poll.model.PollVote;
 import io.meeds.poll.utils.EntityMapper;
 
+@Repository
 public class PollStorage {
+
   private PollDAO       pollDAO;
 
   private PollOptionDAO pollOptionDAO;
@@ -47,58 +50,60 @@ public class PollStorage {
 
   public Poll createPoll(Poll poll, List<PollOption> pollOptions) {
     PollEntity pollEntity = EntityMapper.toPollEntity(poll);
-    pollEntity = pollDAO.create(pollEntity);
+    pollEntity = pollDAO.save(pollEntity);
     for (PollOption pollOption : pollOptions) {
-      PollOptionEntity pollOptionEntity = EntityMapper.toPollOptionEntity(pollOption, pollEntity.getId());
-      pollOptionDAO.create(pollOptionEntity);
+      PollOptionEntity pollOptionEntity = EntityMapper.toPollOptionEntity(pollOption, pollEntity);
+      pollOptionDAO.save(pollOptionEntity);
     }
     return EntityMapper.fromPollEntity(pollEntity);
   }
 
   public Poll getPollById(long pollId) {
-    PollEntity pollEntity = pollDAO.find(pollId);
+    PollEntity pollEntity = pollDAO.findById(pollId).orElse(null);
     return EntityMapper.fromPollEntity(pollEntity);
   }
 
   public List<PollOption> getPollOptionsByPollId(long pollId) {
-    List<PollOptionEntity> pollOptionEntities = pollOptionDAO.findPollOptionsByPollId(pollId);
-    return pollOptionEntities.stream().map(EntityMapper::fromPollOptionEntity).collect(Collectors.toList());
+    List<PollOptionEntity> pollOptionEntities = pollOptionDAO.findByPollId(pollId);
+    return pollOptionEntities.stream().map(po -> EntityMapper.fromPollOptionEntity(po, pollId)).toList();
   }
 
   public Poll updatePoll(Poll poll) {
     PollEntity pollEntity = EntityMapper.toPollEntity(poll);
-    pollEntity = pollDAO.update(pollEntity);
+    pollEntity = pollDAO.save(pollEntity);
     return EntityMapper.fromPollEntity(pollEntity);
   }
 
   public PollVote createPollVote(PollVote pollVote) {
-    PollVoteEntity pollVoteEntity = EntityMapper.toPollVoteEntity(pollVote);
-    pollVoteEntity = pollVoteDAO.create(pollVoteEntity);
-    return EntityMapper.fromPollVoteEntity(pollVoteEntity);
+    PollOptionEntity pollOptionEntity = pollOptionDAO.findById(pollVote.getPollOptionId()).orElseThrow();
+    PollVoteEntity pollVoteEntity = EntityMapper.toPollVoteEntity(pollVote, pollOptionEntity);
+    pollVoteEntity = pollVoteDAO.save(pollVoteEntity);
+    return EntityMapper.fromPollVoteEntity(pollVoteEntity, pollVote.getPollOptionId());
   }
 
   public int countPollOptionTotalVotes(long pollOptionId) {
-    return pollVoteDAO.countPollOptionTotalVotes(pollOptionId);
+    return pollVoteDAO.countByPollOptionId(pollOptionId);
   }
 
   public int countPollOptionTotalVotesByUser(long pollOptionId, long userId) {
-    return pollVoteDAO.countPollOptionTotalVotesByUser(pollOptionId, userId);
+    return pollVoteDAO.countByPollOptionIdAndVoterId(pollOptionId, userId);
   }
 
   public PollOption getPollOptionById(long pollOptionId) {
-    PollOptionEntity pollOptionEntity = pollOptionDAO.find(pollOptionId);
+    PollOptionEntity pollOptionEntity = pollOptionDAO.findById(pollOptionId).orElse(null);
     return EntityMapper.fromPollOptionEntity(pollOptionEntity);
   }
 
   public int countPollOptionsByPollId(long pollId) {
-    return pollOptionDAO.countPollOptionsByPollId(pollId);
+    return pollOptionDAO.countByPollId(pollId);
   }
 
   public int countPollTotalVotes(long pollId) {
-    return pollVoteDAO.countPollTotalVotes(pollId);
+    return pollVoteDAO.countByPollId(pollId);
   }
 
   public boolean didVote(long currentUserIdentityId, Long pollId) {
-    return pollVoteDAO.countUserVotesInPoll(pollId, currentUserIdentityId) > 0;
+    return pollVoteDAO.countByPollIdAndVoterId(pollId, currentUserIdentityId) > 0;
   }
+
 }

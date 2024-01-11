@@ -18,26 +18,46 @@
  */
 package io.meeds.poll.utils;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import io.meeds.kernel.test.KernelExtension;
+import io.meeds.poll.BasePollTest;
 import io.meeds.poll.model.Poll;
 import io.meeds.poll.model.PollOption;
 import io.meeds.poll.rest.model.PollOptionRestEntity;
 import io.meeds.poll.rest.model.PollRestEntity;
-import io.meeds.poll.service.BasePollTest;
+import io.meeds.spring.AvailableIntegration;
 
-public class RestEntityBuilderTest extends BasePollTest {
-  
-  private Date                createdDate = new Date(1508484583259L);
+@ExtendWith({ SpringExtension.class, KernelExtension.class })
+@SpringBootApplication(scanBasePackages = {
+  BasePollTest.MODULE_NAME,
+  AvailableIntegration.KERNEL_TEST_MODULE,
+  AvailableIntegration.JPA_MODULE,
+  AvailableIntegration.LIQUIBASE_MODULE,
+})
+@EnableJpaRepositories(basePackages = BasePollTest.MODULE_NAME)
+@TestPropertySource(properties = {
+  "spring.liquibase.change-log=" + BasePollTest.CHANGELOG_PATH,
+})
+public class RestEntityBuilderTest extends BasePollTest { // NOSONAR
 
-  private Date                endDate     = new Date(11508484583260L);
+  private static final String POLL_OPTION_DESCRIPTION = "pollOption";
+
+  private Date                createdDate             = new Date(1508484583259L);
+
+  private Date                endDate                 = new Date(11508484583260L);
 
   @Test
   public void testFromPoll() {
@@ -50,7 +70,7 @@ public class RestEntityBuilderTest extends BasePollTest {
     poll.setCreatorId(Long.parseLong(user1Identity.getId()));
     poll.setSpaceId(1L);
     PollOptionRestEntity pollOptionRestEntity = new PollOptionRestEntity();
-    pollOptionRestEntity.setDescription("pollOption");
+    pollOptionRestEntity.setDescription(POLL_OPTION_DESCRIPTION);
     List<PollOptionRestEntity> pollOptionRestEntities = new ArrayList<>();
     pollOptionRestEntities.add(pollOptionRestEntity);
 
@@ -66,7 +86,7 @@ public class RestEntityBuilderTest extends BasePollTest {
     // Given
     PollOption pollOption = new PollOption();
     pollOption.setId(1);
-    pollOption.setDescription("pollOption");
+    pollOption.setDescription(POLL_OPTION_DESCRIPTION);
 
     // When
     PollOptionRestEntity pollOptionRestEntity = RestEntityBuilder.fromPollOption(pollOption, 2, true);
@@ -104,7 +124,7 @@ public class RestEntityBuilderTest extends BasePollTest {
   public void testToPollOptions() {
     // Given
     PollOptionRestEntity pollOptionRestEntity = new PollOptionRestEntity();
-    pollOptionRestEntity.setDescription("pollOption");
+    pollOptionRestEntity.setDescription(POLL_OPTION_DESCRIPTION);
     List<PollOptionRestEntity> pollOptionRestEntities = new ArrayList<>();
     pollOptionRestEntities.add(pollOptionRestEntity);
 
@@ -113,6 +133,6 @@ public class RestEntityBuilderTest extends BasePollTest {
 
     // Then
     assertEquals(1, options.size());
-    assertEquals("pollOption", options.get(0).getDescription());
+    assertEquals(POLL_OPTION_DESCRIPTION, options.get(0).getDescription());
   }
 }

@@ -18,9 +18,9 @@
  */
 package io.meeds.poll.dao;
 
-import org.exoplatform.commons.persistence.impl.GenericDAOJPAImpl;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import io.meeds.poll.entity.PollEntity;
 
-public class PollDAO extends GenericDAOJPAImpl<PollEntity, Long> {
+public interface PollDAO extends JpaRepository<PollEntity, Long> {
 }

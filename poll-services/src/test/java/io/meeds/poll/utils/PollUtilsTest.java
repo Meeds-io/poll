@@ -18,9 +18,9 @@
  */
 package io.meeds.poll.utils;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -31,23 +31,45 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import io.meeds.kernel.test.KernelExtension;
+import io.meeds.poll.BasePollTest;
 import io.meeds.poll.model.Poll;
 import io.meeds.poll.model.PollOption;
-import io.meeds.poll.service.BasePollTest;
+import io.meeds.poll.service.PollService;
+import io.meeds.spring.AvailableIntegration;
 
-public class PollUtilsTest extends BasePollTest {
-  
+@ExtendWith({ SpringExtension.class, KernelExtension.class })
+@SpringBootApplication(scanBasePackages = {
+  BasePollTest.MODULE_NAME,
+  AvailableIntegration.KERNEL_TEST_MODULE,
+  AvailableIntegration.JPA_MODULE,
+  AvailableIntegration.LIQUIBASE_MODULE,
+})
+@EnableJpaRepositories(basePackages = BasePollTest.MODULE_NAME)
+@TestPropertySource(properties = {
+  "spring.liquibase.change-log=" + BasePollTest.CHANGELOG_PATH,
+})
+public class PollUtilsTest extends BasePollTest { // NOSONAR
+
+  private static final String MESSAGE     = "Activity title";
+
   private Date                createdDate = new Date(1508484583259L);
 
   private Date                endDate     = new Date(11508484583260L);
 
-  private final static String MESSAGE     = "Activity title";
-
+  @Autowired
+  private PollService   pollService;
 
   @Test
-  public void testGetPollDuration() throws IllegalAccessException {
+  public void getPollDuration() throws IllegalAccessException {
     // Given
     org.exoplatform.services.security.Identity testUser1Identity = new org.exoplatform.services.security.Identity("testuser1");
     Poll poll = new Poll();
@@ -70,31 +92,32 @@ public class PollUtilsTest extends BasePollTest {
     // Then
     assertEquals(115740L, pollDuration);
   }
-  
+
   @Test
-  public void testToDate() throws ParseException {
+  public void formatToDate() throws ParseException {
     // Given
     SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH);
     String dateInString = "7-Jun-2013";
     Date date = formatter.parse(dateInString);
     ZonedDateTime zonedDateTime = ZonedDateTime.ofInstant(date.toInstant(), ZoneOffset.UTC);
-    
+
     // When
     Date nullConvertedDate = PollUtils.toDate(null);
     Date convertedDate = PollUtils.toDate(zonedDateTime);
-    
+
     // Then
     assertNull(nullConvertedDate);
     assertNotNull(convertedDate);
     assertEquals(date.getTime(), convertedDate.getTime());
   }
-  
+
   @Test
-  public void testGetCurrentUserIdentityId() {
+  public void getUserIdentityId() {
     // When
-    long user1IdentityId = PollUtils.getCurrentUserIdentityId(identityManager, "testuser1");
-    
+    long user1IdentityId = PollUtils.getUserIdentityId(identityManager, "testuser1");
+
     // Then
     assertEquals(Long.parseLong(user1Identity.getId()), user1IdentityId);
   }
+
 }

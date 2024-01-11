@@ -36,11 +36,13 @@
         <object-param>
           <name>configuration</name>
           <description>description</description>
-          <object type="org.exoplatform.services.organization.OrganizationConfig">
+          <object
+            type="org.exoplatform.services.organization.OrganizationConfig">
             <field name="user">
               <collection type="java.util.ArrayList">
                 <value>
-                  <object type="org.exoplatform.services.organization.OrganizationConfig$User">
+                  <object
+                    type="org.exoplatform.services.organization.OrganizationConfig$User">
                     <field name="userName">
                       <string>testuser1</string>
                     </field>
@@ -60,57 +62,60 @@
                       <string>member:/platform/users</string>
                     </field>
                   </object>
-		        </value>
-		        <value>
-		          <object type="org.exoplatform.services.organization.OrganizationConfig$User">
-		            <field name="userName">
-		              <string>testuser2</string>
-		            </field>
-		            <field name="password">
-		              <string>testuser</string>
-		            </field>
-		            <field name="firstName">
-		              <string>Test</string>
-		            </field>
-		            <field name="lastName">
-		              <string>User</string>
-		            </field>
-		            <field name="email">
-		              <string>testuser2@localhost</string>
-		            </field>
-		            <field name="groups">
-		              <string>member:/platform/users</string>
-		            </field>
-		          </object>
-		        </value>
+                </value>
                 <value>
-                  <object type="org.exoplatform.services.organization.OrganizationConfig$User">
+                  <object
+                    type="org.exoplatform.services.organization.OrganizationConfig$User">
                     <field name="userName">
-                      <string>testuser3</string>
-                  </field>
+                      <string>testuser2</string>
+                    </field>
                     <field name="password">
                       <string>testuser</string>
-                  </field>
+                    </field>
                     <field name="firstName">
                       <string>Test</string>
-                  </field>
+                    </field>
                     <field name="lastName">
                       <string>User</string>
-                  </field>
+                    </field>
                     <field name="email">
-                      <string>testuser3@localhost</string>
-                  </field>
+                      <string>testuser2@localhost</string>
+                    </field>
                     <field name="groups">
                       <string>member:/platform/users</string>
-                  </field>
+                    </field>
+                  </object>
+                </value>
+                <value>
+                  <object
+                    type="org.exoplatform.services.organization.OrganizationConfig$User">
+                    <field name="userName">
+                      <string>testuser3</string>
+                    </field>
+                    <field name="password">
+                      <string>testuser</string>
+                    </field>
+                    <field name="firstName">
+                      <string>Test</string>
+                    </field>
+                    <field name="lastName">
+                      <string>User</string>
+                    </field>
+                    <field name="email">
+                      <string>testuser3@localhost</string>
+                    </field>
+                    <field name="groups">
+                      <string>member:/platform/users</string>
+                    </field>
                   </object>
                 </value>
               </collection>
-		    </field>
-		  </object>
-		</object-param>
+            </field>
+          </object>
+        </object-param>
       </init-params>
     </component-plugin>
   </external-component-plugins>
 
+  <remove-configuration>org.exoplatform.web.security.codec.CodecInitializer</remove-configuration>
 </configuration>

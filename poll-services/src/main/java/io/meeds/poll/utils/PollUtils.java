@@ -27,7 +27,6 @@ import org.exoplatform.services.listener.ListenerService;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.social.core.identity.model.Identity;
-import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
 import org.exoplatform.social.core.manager.IdentityManager;
 
 import io.meeds.poll.model.Poll;
@@ -87,8 +86,8 @@ public class PollUtils {
   private PollUtils() {
   }
 
-  public static final long getCurrentUserIdentityId(IdentityManager identityManager, String currentUser) {
-    Identity identity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, currentUser);
+  public static final long getUserIdentityId(IdentityManager identityManager, String currentUser) {
+    Identity identity = identityManager.getOrCreateUserIdentity(currentUser);
     return identity == null ? 0 : Long.parseLong(identity.getId());
   }
 

@@ -18,16 +18,21 @@
  */
 package io.meeds.poll.entity;
 
-import org.exoplatform.commons.api.persistence.ExoEntity;
-
-import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 
-@Entity(name = "Poll")
-@ExoEntity
-@Table(name = "POLL")
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
+import lombok.Data;
 
+@Entity(name = "Poll")
+@Table(name = "POLL")
+@Data
 public class PollEntity implements Serializable {
 
   private static final long serialVersionUID = 5290107403575974438L;
@@ -48,67 +53,11 @@ public class PollEntity implements Serializable {
   private Date              endDate;
 
   @Column(name = "CREATOR_ID", nullable = false)
-  private Long              creatorId;
+  private long              creatorId;
 
   @Column(name = "ACTIVITY_ID")
-  private Long              activityId;
+  private long              activityId;
   
   @Column(name = "SPACE_ID")
-  private Long              spaceId;
-
-  public Long getId() {
-    return id;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
-  }
-
-  public String getQuestion() {
-    return question;
-  }
-
-  public void setQuestion(String question) {
-    this.question = question;
-  }
-
-  public Date getCreatedDate() {
-    return createdDate;
-  }
-
-  public void setCreatedDate(Date createdDate) {
-    this.createdDate = createdDate;
-  }
-
-  public Date getEndDate() {
-    return endDate;
-  }
-
-  public void setEndDate(Date endDate) {
-    this.endDate = endDate;
-  }
-
-  public Long getCreatorId() {
-    return creatorId;
-  }
-
-  public void setCreatorId(Long creatorId) {
-    this.creatorId = creatorId;
-  }
-
-  public Long getActivityId() {
-    return activityId;
-  }
-
-  public void setActivityId(Long activityId) {
-    this.activityId = activityId;
-  }
-
-  public Long getSpaceId() {
-    return spaceId;
-  }
-
-  public void setSpaceId(Long spaceId) {
-    this.spaceId = spaceId;
-  }
+  private long              spaceId;
 }

@@ -72,6 +72,12 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                       v-if="answer.percent"
                       class="vote-percent"
                       v-text="answer.percent"></span>
+                    <v-icon
+                      v-if="answer.voted"
+                      size="11"
+                      class="me-3 my-auto text-color">
+                      fa-check
+                    </v-icon>
                     <span
                       class="vote-content text-truncate"
                       :title="answer.description"
@@ -208,10 +214,6 @@ export default {
     },
     handleVote(answer) {
       if (this.isSpaceMember) {
-        answer.votes ++;
-        answer.voted = true;
-        this.visibleResults = true;
-
         this.$emit('submit-vote', answer.id);
       }
     }

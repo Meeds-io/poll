@@ -33,14 +33,19 @@ import static io.meeds.poll.utils.PollUtils.getPollDuration;
 import java.util.Arrays;
 import java.util.HashSet;
 
+import javax.annotation.PostConstruct;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import org.exoplatform.analytics.model.StatisticData;
 import org.exoplatform.analytics.utils.AnalyticsUtils;
-import org.exoplatform.container.ExoContainerContext;
+import org.exoplatform.container.ExoContainer;
 import org.exoplatform.services.listener.Asynchronous;
 import org.exoplatform.services.listener.Event;
 import org.exoplatform.services.listener.Listener;
+import org.exoplatform.services.listener.ListenerService;
 import org.exoplatform.social.core.identity.model.Identity;
-import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
 import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
@@ -49,18 +54,37 @@ import io.meeds.poll.model.Poll;
 import io.meeds.poll.service.PollService;
 
 @Asynchronous
+@Component
 public class AnalyticsPollListener extends Listener<String, Poll> {
 
-  private static final String POLL_ID                    = "PollId";
+  private static final String   POLL_ID         = "PollId";
 
-  private IdentityManager     identityManager;
+  private static final String[] LISTENER_EVENTS = { "meeds.poll.createPoll", "meeds.poll.votePoll" };
 
-  private SpaceService        spaceService;
+  @Autowired
+  private IdentityManager       identityManager;
 
-  private PollService         pollService;
+  @Autowired
+  private SpaceService          spaceService;
+
+  @Autowired
+  private PollService           pollService;
+
+  @Autowired
+  private ListenerService       listenerService;
+
+  @PostConstruct
+  public void init() {
+    for (String eventName : LISTENER_EVENTS) {
+      listenerService.addListener(eventName, this);
+    }
+  }
 
   @Override
   public void onEvent(Event<String, Poll> event) throws Exception {
+    if (!ExoContainer.hasProfile("analytics")) {
+      return;
+    }
     Poll poll = event.getData();
     String operation = "";
     if (event.getEventName().equals(CREATE_POLL)) {
@@ -70,47 +94,30 @@ public class AnalyticsPollListener extends Listener<String, Poll> {
     }
     String userName = event.getSource();
     long userId = 0;
-    Identity identity = getIdentityManager().getOrCreateIdentity(OrganizationIdentityProvider.NAME, userName);
+    Identity identity = identityManager.getOrCreateUserIdentity(userName);
     if (identity != null) {
       userId = Long.parseLong(identity.getId());
     }
     StatisticData statisticData = new StatisticData();
-    Space space = getSpaceService().getSpaceById(String.valueOf(poll.getSpaceId()));
+    Space space = spaceService.getSpaceById(String.valueOf(poll.getSpaceId()));
     statisticData.setModule(POLL_MODULE);
     statisticData.setSubModule(POLL_MODULE);
     statisticData.setOperation(operation);
     statisticData.setUserId(userId);
     statisticData.addParameter(POLL_ID, poll.getId());
     statisticData.addParameter(POLL_ACTIVITY_ID, poll.getActivityId());
-    statisticData.addParameter(POLL_OPTIONS_NUMBER, getPollService().getPollOptionsNumber(poll.getId(), new org.exoplatform.services.security.Identity(userName)));
+    statisticData.addParameter(POLL_OPTIONS_NUMBER,
+                               pollService.getPollOptionsNumber(poll.getId(),
+                                                                new org.exoplatform.services.security.Identity(userName)));
     statisticData.addParameter(POLL_DURATION, getPollDuration(poll));
-    statisticData.addParameter(POLL_TOTAL_VOTES, getPollService().getPollTotalVotes(poll.getId(), new org.exoplatform.services.security.Identity(userName)));
+    statisticData.addParameter(POLL_TOTAL_VOTES,
+                               pollService.getPollTotalVotes(poll.getId(),
+                                                             new org.exoplatform.services.security.Identity(userName)));
     statisticData.addParameter(POLL_SPACE_MEMBERS_COUNT, getSize(space.getMembers()));
 
     AnalyticsUtils.addStatisticData(statisticData);
   }
 
-  public IdentityManager getIdentityManager() {
-    if (identityManager == null) {
-      identityManager = ExoContainerContext.getService(IdentityManager.class);
-    }
-    return identityManager;
-  }
-
-  public SpaceService getSpaceService() {
-    if (spaceService == null) {
-      spaceService = ExoContainerContext.getService(SpaceService.class);
-    }
-    return spaceService;
-  }
-
-  public PollService getPollService() {
-    if (pollService == null) {
-      pollService = ExoContainerContext.getService(PollService.class);
-    }
-    return pollService;
-  }
-  
   private static int getSize(String[] array) {
     return array == null ? 0 : new HashSet<>(Arrays.asList(array)).size();
   }
