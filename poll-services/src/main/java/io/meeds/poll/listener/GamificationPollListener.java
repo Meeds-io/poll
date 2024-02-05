@@ -66,12 +66,10 @@ public class GamificationPollListener extends Listener<String, Poll> {
     Poll poll = event.getData();
     String activityId = String.valueOf(poll.getActivityId());
     String creatorIdentityId = String.valueOf(poll.getCreatorId());
-    String eventDetails;
+    String eventDetails = "{spaceId: " + poll.getSpaceId() + ", activityId: " + activityId + "}";
     if (event.getEventName().equals(CREATE_POLL)) {
-      eventDetails = "{spaceId: " + poll.getSpaceId() + "}";
       createRealizations(CREATE_POLL_OPERATION_NAME, activityId, creatorIdentityId, creatorIdentityId, eventDetails);
     } else if (event.getEventName().equals(VOTE_POLL)) {
-      eventDetails = "{spaceId: " + poll.getSpaceId() + ", activityId: " + activityId + "}";
       Identity identity = identityManager.getOrCreateUserIdentity(event.getSource());
       createRealizations(VOTE_POLL_OPERATION_NAME, activityId, identity.getId(), creatorIdentityId, eventDetails);
       createRealizations(RECEIVE_POLL_VOTE_OPERATION_NAME, activityId, creatorIdentityId, identity.getId(), eventDetails);
