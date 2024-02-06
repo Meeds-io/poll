@@ -76,6 +76,8 @@ public class PollUtils {
   public static final String GAMIFICATION_OBJECT_TYPE          = "objectType";
 
   public static final String GAMIFICATION_ACTIVITY_OBJECT_TYPE = "activity";
+  
+  public static final String GAMIFICATION_EVENT_DETAILS        = "eventDetails";
 
   public static final String GAMIFICATION_GENERIC_EVENT_NAME   = "exo.gamification.generic.action";
 
