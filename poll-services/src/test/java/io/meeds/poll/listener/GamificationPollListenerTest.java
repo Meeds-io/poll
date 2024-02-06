@@ -17,18 +17,7 @@
  */
 package io.meeds.poll.listener;
 
-import static io.meeds.poll.utils.PollUtils.CREATE_POLL;
-import static io.meeds.poll.utils.PollUtils.CREATE_POLL_OPERATION_NAME;
-import static io.meeds.poll.utils.PollUtils.GAMIFICATION_ACTIVITY_OBJECT_TYPE;
-import static io.meeds.poll.utils.PollUtils.GAMIFICATION_GENERIC_EVENT_NAME;
-import static io.meeds.poll.utils.PollUtils.GAMIFICATION_OBJECT_ID;
-import static io.meeds.poll.utils.PollUtils.GAMIFICATION_OBJECT_TYPE;
-import static io.meeds.poll.utils.PollUtils.GAMIFICATION_RECEIVER_ID;
-import static io.meeds.poll.utils.PollUtils.GAMIFICATION_SENDER_ID;
-import static io.meeds.poll.utils.PollUtils.GAMIFICATION_TRIGGER_NAME;
-import static io.meeds.poll.utils.PollUtils.RECEIVE_POLL_VOTE_OPERATION_NAME;
-import static io.meeds.poll.utils.PollUtils.VOTE_POLL;
-import static io.meeds.poll.utils.PollUtils.VOTE_POLL_OPERATION_NAME;
+import static io.meeds.poll.utils.PollUtils.*;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
@@ -49,18 +38,20 @@ import org.exoplatform.social.core.manager.IdentityManager;
 
 import io.meeds.poll.model.Poll;
 
-@SpringBootTest(classes = {
-  GamificationPollListener.class,
-})
+@SpringBootTest(classes = { GamificationPollListener.class, })
 public class GamificationPollListenerTest {
 
-  private static final long        CREATOR_ID  = 555l;
+  private static final long        CREATOR_ID    = 555l;
 
-  private static final String      MODIFIER_ID = "556";
+  private static final String      MODIFIER_ID   = "556";
 
-  private static final long        ACTIVITY_ID = 2553l;
+  private static final long        ACTIVITY_ID   = 2553l;
 
-  private static final String      MODIFIER    = "modfier";
+  private static final long        SPACE_ID      = 1L;
+
+  private static final String      MODIFIER      = "modfier";
+
+  private static final String      EVENT_DETAILS = "{spaceId: " + SPACE_ID + ", activityId: " + ACTIVITY_ID + "}";
 
   @MockBean
   private ListenerService          listenerService;
@@ -86,22 +77,20 @@ public class GamificationPollListenerTest {
     when(event.getData()).thenReturn(poll);
     when(poll.getCreatorId()).thenReturn(CREATOR_ID);
     when(poll.getActivityId()).thenReturn(ACTIVITY_ID);
+    when(poll.getSpaceId()).thenReturn(SPACE_ID);
 
     gamificationListener.onEvent(event);
 
-    verify(listenerService,
-           times(1)).broadcast(eq(GAMIFICATION_GENERIC_EVENT_NAME),
-                               argThat((Map<String, String> source) -> source.get(GAMIFICATION_TRIGGER_NAME)
-                                                                             .equals(CREATE_POLL_OPERATION_NAME)
-                                   && source.get(GAMIFICATION_SENDER_ID)
-                                            .equals(String.valueOf(CREATOR_ID))
-                                   && source.get(GAMIFICATION_RECEIVER_ID)
-                                            .equals(String.valueOf(CREATOR_ID))
-                                   && source.get(GAMIFICATION_OBJECT_TYPE)
-                                            .equals(GAMIFICATION_ACTIVITY_OBJECT_TYPE)
-                                   && source.get(GAMIFICATION_OBJECT_ID)
-                                            .equals(String.valueOf(ACTIVITY_ID))),
-                               eq(null));
+    verify(listenerService, times(1)).broadcast(eq(GAMIFICATION_GENERIC_EVENT_NAME),
+                                                argThat((Map<String, String> source) -> source.get(GAMIFICATION_TRIGGER_NAME)
+                                                                                              .equals(CREATE_POLL_OPERATION_NAME)
+                                                    && source.get(GAMIFICATION_SENDER_ID).equals(String.valueOf(CREATOR_ID))
+                                                    && source.get(GAMIFICATION_RECEIVER_ID).equals(String.valueOf(CREATOR_ID))
+                                                    && source.get(GAMIFICATION_OBJECT_TYPE)
+                                                             .equals(GAMIFICATION_ACTIVITY_OBJECT_TYPE)
+                                                    && source.get(GAMIFICATION_OBJECT_ID).equals(String.valueOf(ACTIVITY_ID))
+                                                    && source.get(GAMIFICATION_EVENT_DETAILS).equals(EVENT_DETAILS)),
+                                                eq(null));
 
   }
 
@@ -112,37 +101,32 @@ public class GamificationPollListenerTest {
     when(event.getData()).thenReturn(poll);
     when(poll.getCreatorId()).thenReturn(CREATOR_ID);
     when(poll.getActivityId()).thenReturn(ACTIVITY_ID);
+    when(poll.getSpaceId()).thenReturn(SPACE_ID);
     when(identityManager.getOrCreateUserIdentity(MODIFIER)).thenReturn(modifierIdentity);
     when(modifierIdentity.getId()).thenReturn(MODIFIER_ID);
 
     gamificationListener.onEvent(event);
 
-    verify(listenerService,
-           times(1)).broadcast(eq(GAMIFICATION_GENERIC_EVENT_NAME),
-                               argThat((Map<String, String> source) -> source.get(GAMIFICATION_TRIGGER_NAME)
-                                                                             .equals(VOTE_POLL_OPERATION_NAME)
-                                   && source.get(GAMIFICATION_SENDER_ID)
-                                            .equals(MODIFIER_ID)
-                                   && source.get(GAMIFICATION_RECEIVER_ID)
-                                            .equals(String.valueOf(CREATOR_ID))
-                                   && source.get(GAMIFICATION_OBJECT_TYPE)
-                                            .equals(GAMIFICATION_ACTIVITY_OBJECT_TYPE)
-                                   && source.get(GAMIFICATION_OBJECT_ID)
-                                            .equals(String.valueOf(ACTIVITY_ID))),
-                               eq(null));
+    verify(listenerService, times(1)).broadcast(eq(GAMIFICATION_GENERIC_EVENT_NAME),
+                                                argThat((Map<String, String> source) -> source.get(GAMIFICATION_TRIGGER_NAME)
+                                                                                              .equals(VOTE_POLL_OPERATION_NAME)
+                                                    && source.get(GAMIFICATION_SENDER_ID).equals(MODIFIER_ID)
+                                                    && source.get(GAMIFICATION_RECEIVER_ID).equals(String.valueOf(CREATOR_ID))
+                                                    && source.get(GAMIFICATION_OBJECT_TYPE)
+                                                             .equals(GAMIFICATION_ACTIVITY_OBJECT_TYPE)
+                                                    && source.get(GAMIFICATION_OBJECT_ID).equals(String.valueOf(ACTIVITY_ID))
+                                                    && source.get(GAMIFICATION_EVENT_DETAILS).equals(EVENT_DETAILS)),
+                                                eq(null));
 
     verify(listenerService,
            times(1)).broadcast(eq(GAMIFICATION_GENERIC_EVENT_NAME),
                                argThat((Map<String, String> source) -> source.get(GAMIFICATION_TRIGGER_NAME)
                                                                              .equals(RECEIVE_POLL_VOTE_OPERATION_NAME)
-                                   && source.get(GAMIFICATION_SENDER_ID)
-                                            .equals(String.valueOf(CREATOR_ID))
-                                   && source.get(GAMIFICATION_RECEIVER_ID)
-                                            .equals(MODIFIER_ID)
-                                   && source.get(GAMIFICATION_OBJECT_TYPE)
-                                            .equals(GAMIFICATION_ACTIVITY_OBJECT_TYPE)
-                                   && source.get(GAMIFICATION_OBJECT_ID)
-                                            .equals(String.valueOf(ACTIVITY_ID))),
+                                   && source.get(GAMIFICATION_SENDER_ID).equals(String.valueOf(CREATOR_ID))
+                                   && source.get(GAMIFICATION_RECEIVER_ID).equals(MODIFIER_ID)
+                                   && source.get(GAMIFICATION_OBJECT_TYPE).equals(GAMIFICATION_ACTIVITY_OBJECT_TYPE)
+                                   && source.get(GAMIFICATION_OBJECT_ID).equals(String.valueOf(ACTIVITY_ID))
+                                   && source.get(GAMIFICATION_EVENT_DETAILS).equals(EVENT_DETAILS)),
                                eq(null));
 
   }

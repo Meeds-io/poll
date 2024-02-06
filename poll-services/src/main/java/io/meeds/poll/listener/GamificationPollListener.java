@@ -18,21 +18,6 @@
  */
 package io.meeds.poll.listener;
 
-import static io.meeds.poll.utils.PollUtils.CREATE_POLL;
-import static io.meeds.poll.utils.PollUtils.CREATE_POLL_OPERATION_NAME;
-import static io.meeds.poll.utils.PollUtils.GAMIFICATION_ACTIVITY_OBJECT_TYPE;
-import static io.meeds.poll.utils.PollUtils.GAMIFICATION_GENERIC_EVENT_NAME;
-import static io.meeds.poll.utils.PollUtils.GAMIFICATION_OBJECT_ID;
-import static io.meeds.poll.utils.PollUtils.GAMIFICATION_OBJECT_TYPE;
-import static io.meeds.poll.utils.PollUtils.GAMIFICATION_RECEIVER_ID;
-import static io.meeds.poll.utils.PollUtils.GAMIFICATION_RECEIVER_TYPE;
-import static io.meeds.poll.utils.PollUtils.GAMIFICATION_SENDER_ID;
-import static io.meeds.poll.utils.PollUtils.GAMIFICATION_SENDER_TYPE;
-import static io.meeds.poll.utils.PollUtils.GAMIFICATION_TRIGGER_NAME;
-import static io.meeds.poll.utils.PollUtils.RECEIVE_POLL_VOTE_OPERATION_NAME;
-import static io.meeds.poll.utils.PollUtils.VOTE_POLL;
-import static io.meeds.poll.utils.PollUtils.VOTE_POLL_OPERATION_NAME;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -52,6 +37,8 @@ import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvide
 import org.exoplatform.social.core.manager.IdentityManager;
 
 import io.meeds.poll.model.Poll;
+
+import static io.meeds.poll.utils.PollUtils.*;
 
 @Asynchronous
 @Component
@@ -75,23 +62,25 @@ public class GamificationPollListener extends Listener<String, Poll> {
   }
 
   @Override
-  public void onEvent(Event<String, Poll> event) throws Exception {
+  public void onEvent(Event<String, Poll> event) {
     Poll poll = event.getData();
     String activityId = String.valueOf(poll.getActivityId());
     String creatorIdentityId = String.valueOf(poll.getCreatorId());
+    String eventDetails = "{spaceId: " + poll.getSpaceId() + ", activityId: " + activityId + "}";
     if (event.getEventName().equals(CREATE_POLL)) {
-      createRealizations(CREATE_POLL_OPERATION_NAME, activityId, creatorIdentityId, creatorIdentityId);
+      createRealizations(CREATE_POLL_OPERATION_NAME, activityId, creatorIdentityId, creatorIdentityId, eventDetails);
     } else if (event.getEventName().equals(VOTE_POLL)) {
       Identity identity = identityManager.getOrCreateUserIdentity(event.getSource());
-      createRealizations(VOTE_POLL_OPERATION_NAME, activityId, identity.getId(), creatorIdentityId);
-      createRealizations(RECEIVE_POLL_VOTE_OPERATION_NAME, activityId, creatorIdentityId, identity.getId());
+      createRealizations(VOTE_POLL_OPERATION_NAME, activityId, identity.getId(), creatorIdentityId, eventDetails);
+      createRealizations(RECEIVE_POLL_VOTE_OPERATION_NAME, activityId, creatorIdentityId, identity.getId(), eventDetails);
     }
   }
 
   private void createRealizations(String gamificationEventName,
                                   String activityId,
                                   String earnerUsername,
-                                  String receiverUsername) {
+                                  String receiverUsername,
+                                  String eventDetails) {
     Map<String, String> gam = new HashMap<>();
     try {
       gam.put(GAMIFICATION_TRIGGER_NAME, gamificationEventName);
@@ -101,6 +90,7 @@ public class GamificationPollListener extends Listener<String, Poll> {
       gam.put(GAMIFICATION_SENDER_ID, earnerUsername);
       gam.put(GAMIFICATION_RECEIVER_TYPE, OrganizationIdentityProvider.NAME);
       gam.put(GAMIFICATION_RECEIVER_ID, receiverUsername);
+      gam.put(GAMIFICATION_EVENT_DETAILS, eventDetails);
       listenerService.broadcast(GAMIFICATION_GENERIC_EVENT_NAME, gam, null);
     } catch (Exception e) {
       LOG.warn("Error while broadcasting gamification event: {}", gam, e);

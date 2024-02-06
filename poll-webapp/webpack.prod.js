@@ -25,6 +25,7 @@ const config = {
   entry: {
     pollActivityStreamExtension: './src/main/webapp/vue-app/poll-activity-stream-extension/main.js',
     engagementCenterExtensions: './src/main/webapp/vue-app/engagementCenterExtensions/extensions.js',
+    connectorEventExtensions: './src/main/webapp/vue-app/connectorEventExtensions/extensions.js',
   },
   output: {
     path: path.join(__dirname, 'target/poll/'),
