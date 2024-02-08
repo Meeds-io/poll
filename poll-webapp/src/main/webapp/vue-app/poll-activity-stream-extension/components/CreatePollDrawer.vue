@@ -22,6 +22,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     id="createPollDrawer"
     :drawer-width="drawerWidth"
     :right="!$vuetify.rtl"
+    allow-expand
     disable-pull-to-refresh>
     <template slot="title">
       <div class="createPollDrawerHeader">
