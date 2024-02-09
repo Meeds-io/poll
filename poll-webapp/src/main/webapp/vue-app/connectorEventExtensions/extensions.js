@@ -22,7 +22,7 @@ export function init() {
   extensionRegistry.registerComponent('engagementCenterEvent', 'connector-event-extensions', {
     id: 'github-event',
     name: 'github',
-    vueComponent: Vue.options.components['poll-event-form'],
+    vueComponent: Vue.options.components['poll-event'],
     isEnabled: (params) => [
       'createPoll',
       'votePoll',
