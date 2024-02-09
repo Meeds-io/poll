@@ -15,10 +15,14 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
+import PollEvent from './components/PollEvent.vue';
 import PollEventForm from './components/PollEventForm.vue';
+import PollEventDisplay from './components/PollEventDisplay.vue';
 
 const components = {
+  'poll-event': PollEvent,
   'poll-event-form': PollEventForm,
+  'poll-event-display': PollEventDisplay,
 };
 
 for (const key in components) {
