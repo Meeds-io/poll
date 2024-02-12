@@ -55,18 +55,6 @@
         </v-list-item-content>
       </v-list-item>
     </template>
-    <template v-else>
-      <div class="subtitle-1 font-weight-bold mb-2">
-        {{ $t('gamification.event.display.goThere') }}
-      </div>
-      <div class="d-flex justify-center">
-        <v-btn
-          max-width="250"
-          class="ignore-vuetify-classes text-capitalize btn btn-primary">
-          {{ $t('gamification.event.display.browseActivities') }}
-        </v-btn>
-      </div>
-    </template>
   </v-app>
 </template>
 
