@@ -157,6 +157,9 @@ export default {
   created() {
     document.addEventListener('exo-poll-open-drawer', this.openDrawer);
   },
+  mounted() {
+    document.querySelector('#vuetify-apps').appendChild(this.$el);
+  },
   methods: {
     intializeDrawerFields() {
       this.poll = {};
