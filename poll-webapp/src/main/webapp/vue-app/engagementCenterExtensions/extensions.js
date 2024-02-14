@@ -34,4 +34,12 @@ export function init() {
       isExtensible: true
     },
   });
+
+  extensionRegistry.registerExtension('engagementCenterActions', 'activity-icon', {
+    id: 'poll-icon',
+    type: 'poll',
+    icon: 'fas fa-poll',
+    class: 'dark-yellow--color',
+    title: activity => activity?.poll?.question || activity.title,
+  });
 }
