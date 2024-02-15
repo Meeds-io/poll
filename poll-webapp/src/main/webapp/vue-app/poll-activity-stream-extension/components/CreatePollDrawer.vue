@@ -20,8 +20,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   <exo-drawer
     ref="createPollDrawer"
     id="createPollDrawer"
-    :drawer-width="drawerWidth"
     :right="!$vuetify.rtl"
+    allow-expand
     disable-pull-to-refresh>
     <template slot="title">
       <div class="createPollDrawerHeader">
@@ -131,9 +131,6 @@ export default {
     isMobile() {
       return this.$vuetify.breakpoint.name === 'xs' || this.$vuetify.breakpoint.name === 'sm';
     },
-    drawerWidth() {
-      return !this.isMobile ? '100%' : '420';
-    },
     checkPollOptionalOptions() {
       return this.options.slice(-2).every(option => !option.data || option.data.length <= this.MAX_LENGTH );
     },
@@ -155,6 +152,9 @@ export default {
   },
   created() {
     document.addEventListener('exo-poll-open-drawer', this.openDrawer);
+  },
+  mounted() {
+    document.querySelector('#vuetify-apps').appendChild(this.$el);
   },
   methods: {
     intializeDrawerFields() {
