@@ -35,25 +35,14 @@
         </v-list-item-content>
       </v-list-item>
     </template>
-    <template v-else-if="space">
+    <template v-else-if="spaces.length">
       <div class="subtitle-1 font-weight-bold mb-2">
         {{ $t('gamification.event.display.goThere') }}
       </div>
-      <v-list-item class="clickable" :href="spaceUrl">
-        <v-list-item-icon class="me-3 my-auto">
-          <exo-space-avatar
-            :space="space"
-            :size="25"
-            avatar />
-        </v-list-item-icon>
-        <v-list-item-content>
-          <v-list-item-title class="text-color body-2">
-            <p
-              class="ma-auto text-truncate"
-              v-sanitized-html="spaceName"></p>
-          </v-list-item-title>
-        </v-list-item-content>
-      </v-list-item>
+      <meeds-stream-event-space-item
+        v-for="space in spaces"
+        :key="space.spaceId"
+        :space="space" />
     </template>
   </v-app>
 </template>
@@ -73,12 +62,12 @@ export default {
   data() {
     return {
       activity: null,
-      space: null,
+      spaces: [],
     };
   },
   computed: {
-    spaceId() {
-      return this.properties?.spaceId;
+    spaceIds() {
+      return this.properties?.spaceIds;
     },
     spaceName() {
       return this.space?.displayName;
@@ -90,7 +79,7 @@ export default {
       return this.properties?.activityId;
     },
     activityTitle() {
-      return this.activity?.title;
+      return this.activity?.poll?.question || this.activity?.title;
     },
     activityUrl() {
       return this.activityId && `${eXo.env.portal.context}/${eXo.env.portal.metaPortalName}/activity?id=${this.activityId}`;
@@ -99,9 +88,8 @@ export default {
   created() {
     if (this.activityId) {
       this.loadActivity();
-    } else if (this.spaceId) {
-      this.$spaceService.getSpaceById(this.spaceId)
-        .then(space => this.space = space);
+    } else if (this.spaceIds) {
+      this.loadSpaces();
     }
   },
   methods: {
@@ -110,6 +98,18 @@ export default {
         .then(fullActivity => {
           this.activity = fullActivity;
         });
+    },
+    loadSpaces() {
+      this.spaceIds.split(',').forEach((spaceId, index) => {
+        this.$spaceService.getSpaceById(spaceId)
+          .then((space) => {
+            this.spaces.push(space);
+          }).finally(() => {
+            if (index === this.spaceIds.split(',').length - 1) {
+              this.initialized = true;
+            }
+          });
+      });
     },
   }
 };
