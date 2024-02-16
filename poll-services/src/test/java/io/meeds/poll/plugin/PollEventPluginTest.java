@@ -50,7 +50,7 @@ class PollEventPluginTest {
 
     // When
     eventProperties = new HashMap<>();
-    eventProperties.put("spaceId", "1");
+    eventProperties.put("spaceIds", "1,2");
     triggerDetails = "{spaceId: 1, activityId: 2}";
 
     // Then
