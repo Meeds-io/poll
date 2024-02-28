@@ -16,22 +16,17 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
+import '../connectorEventExtensions/initComponents';
+
 export function init() {
-  extensionRegistry.registerExtension('engagementCenterActions', 'user-actions', {
-    type: 'poll',
-    options: {
-      rank: 50,
-      icon: 'fas fa-poll',
-      match: (actionLabel) => [
-        'createPoll',
-        'votePoll',
-        'receivePollVote'
-      ].includes(actionLabel),
-      getLink: (realization) => {
-        realization.link = `${eXo.env.portal.context}/${eXo.env.portal.defaultPortal}/activity?id=${realization.objectId}`;
-        return realization.link;
-      },
-      isExtensible: true
-    },
+  extensionRegistry.registerComponent('engagementCenterEvent', 'connector-event-extensions', {
+    id: 'github-event',
+    name: 'github',
+    vueComponent: Vue.options.components['poll-event-form'],
+    isEnabled: (params) => [
+      'createPoll',
+      'votePoll',
+      'receivePollVote'
+    ].includes(params?.trigger),
   });
 }
