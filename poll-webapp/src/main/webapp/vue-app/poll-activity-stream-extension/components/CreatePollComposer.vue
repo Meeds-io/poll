@@ -133,6 +133,7 @@ export default {
         .then(() => {
           document.dispatchEvent(new CustomEvent('activity-created', {detail: this.activityId}));
           this.pollAction = 'create';
+          this.updateComposerPollLabel(this.pollAction);
           this.savedPoll = {};
         })
         .catch(error => {
