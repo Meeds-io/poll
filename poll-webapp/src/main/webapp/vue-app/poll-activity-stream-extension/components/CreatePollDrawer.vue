@@ -22,7 +22,8 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     id="createPollDrawer"
     :right="!$vuetify.rtl"
     allow-expand
-    disable-pull-to-refresh>
+    disable-pull-to-refresh
+    @close="closeDrawer">
     <template slot="title">
       <div class="createPollDrawerHeader">
         <span>{{ $t('composer.poll.create.drawer.label') }}</span>
