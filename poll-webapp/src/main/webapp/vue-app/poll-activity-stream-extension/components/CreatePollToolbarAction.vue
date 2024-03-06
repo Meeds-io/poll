@@ -75,6 +75,7 @@ export default {
         document.dispatchEvent(new CustomEvent('activity-composer-edited'));
       }
     });
+    document.addEventListener('activity-composer-closed', this.reset);
   },
   methods: {
     openCreatePollDrawer() {
@@ -96,6 +97,9 @@ export default {
       document.dispatchEvent(new CustomEvent('activity-composer-edited'));
     },
     postPoll(message) {
+      if (!this.savedPoll.question || !this.savedPoll.options ) {
+        return;
+      }
       const poll = {
         question: this.savedPoll.question,
         options: this.savedPoll.options.filter(option => option.data != null && option.data !== '')
@@ -119,6 +123,7 @@ export default {
         .then(() => {
           document.dispatchEvent(new CustomEvent('activity-created', {detail: this.activityId}));
           this.pollAction = 'create';
+          document.dispatchEvent(new CustomEvent('update-composer-poll-label', {detail: 'create'}));
           this.savedPoll = {};
         })
         .catch(error => {
@@ -142,6 +147,11 @@ export default {
         });
         return Promise.all(promises).then(() => activity);
       }
+    },
+    reset() {
+      this.pollAction = 'create';
+      this.updateComposerPollLabel(this.pollAction);
+      this.savedPoll = {};
     },
   },
 };

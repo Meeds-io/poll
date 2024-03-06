@@ -95,6 +95,7 @@ export default {
     document.addEventListener('update-composer-poll-label', event => {
       this.updateComposerPollLabel(event.detail);
     });
+    document.addEventListener('activity-composer-closed', this.reset);
   },
   methods: {
     openCreatePollDrawer() {
@@ -133,6 +134,7 @@ export default {
         .then(() => {
           document.dispatchEvent(new CustomEvent('activity-created', {detail: this.activityId}));
           this.pollAction = 'create';
+          this.updateComposerPollLabel(this.pollAction);
           this.savedPoll = {};
         })
         .catch(error => {
@@ -156,6 +158,11 @@ export default {
         });
         return Promise.all(promises).then(() => activity);
       }
+    },
+    reset() {
+      this.pollAction = 'create';
+      this.updateComposerPollLabel(this.pollAction);
+      this.savedPoll = {};
     },
   },
 };
