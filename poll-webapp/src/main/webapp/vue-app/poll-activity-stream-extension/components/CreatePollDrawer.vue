@@ -195,7 +195,7 @@ export default {
         this.options = JSON.parse(JSON.stringify(this.savedPoll.options));
         Object.assign(this.poll,JSON.parse(JSON.stringify(this.savedPoll)));
       }
-      this.$refs.createPollDrawer.open();
+      this.$nextTick().then(() =>  this.$refs.createPollDrawer.open());
     },
     closeDrawer() {
       this.$refs.createPollDrawer.close();
@@ -212,9 +212,8 @@ export default {
             poll: this.poll
           }}));
           document.dispatchEvent(new CustomEvent('update-composer-poll-label', {detail: 'update'}));
-        } else {
-          this.$emit('poll-created', this.poll);
         }
+        this.$emit('poll-created', this.poll);
         this.closeDrawer();
       }
     },
