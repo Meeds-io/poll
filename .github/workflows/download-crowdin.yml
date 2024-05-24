@@ -2,7 +2,7 @@ name: Crowdin  download Action
 
 on:
   schedule:
-    - cron: "20 2 * * *"
+    - cron: "15 4 * * *"
   workflow_dispatch:
 
 jobs:
