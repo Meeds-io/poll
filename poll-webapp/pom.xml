@@ -3,7 +3,7 @@
   <parent>
     <groupId>org.exoplatform.addons.poll</groupId>
     <artifactId>poll-parent</artifactId>
-    <version>7.0.0-exo-20240529</version>
+    <version>7.0.x-exo-SNAPSHOT</version>
   </parent>
   <artifactId>poll-webapp</artifactId>
   <packaging>war</packaging>
