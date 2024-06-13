@@ -38,8 +38,8 @@ import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import org.exoplatform.analytics.model.StatisticData;
-import org.exoplatform.analytics.utils.AnalyticsUtils;
+import io.meeds.analytics.model.StatisticData;
+import io.meeds.analytics.utils.AnalyticsUtils;
 import org.exoplatform.container.ExoContainer;
 import org.exoplatform.services.listener.Asynchronous;
 import org.exoplatform.services.listener.Event;
