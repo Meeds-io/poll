@@ -4,8 +4,8 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <artifactId>addons-parent-pom</artifactId>
-    <groupId>org.exoplatform.addons</groupId>
-    <version>18-M03</version>
+    <groupId>io.meeds.addons</groupId>
+    <version>18-M04</version>
   </parent>
   <groupId>io.meeds.poll</groupId>
   <artifactId>poll-parent</artifactId>
@@ -33,7 +33,6 @@
 
     <!-- Sonar properties -->
     <sonar.organization>meeds-io</sonar.organization>
-    <exo.snapshots.repo.url>https://repository.exoplatform.org/content/repositories/meeds-snapshots</exo.snapshots.repo.url>
   </properties>
   <dependencyManagement>
     <dependencies>
