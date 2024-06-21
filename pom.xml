@@ -7,7 +7,7 @@
     <groupId>org.exoplatform.addons</groupId>
     <version>18-M03</version>
   </parent>
-  <groupId>io.meeds.addons.poll</groupId>
+  <groupId>io.meeds.poll</groupId>
   <artifactId>poll-parent</artifactId>
   <version>7.0.x-SNAPSHOT</version>
   <packaging>pom</packaging>
@@ -62,7 +62,7 @@
         <scope>import</scope>
       </dependency>
       <dependency>
-        <groupId>io.meeds.addons.gamification</groupId>
+        <groupId>io.meeds.gamification</groupId>
         <artifactId>gamification</artifactId>
         <version>${addon.meeds.gamification.version}</version>
         <type>pom</type>
