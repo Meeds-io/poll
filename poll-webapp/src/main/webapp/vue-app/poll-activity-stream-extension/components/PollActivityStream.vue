@@ -32,7 +32,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         @submit-vote="submitVote" />
     </v-card>
     <div
-      class="votes-remaining-state"
+      class="votes-remaining-state text-subtitle"
       v-text="remainingTime">
     </div>
   </div>
