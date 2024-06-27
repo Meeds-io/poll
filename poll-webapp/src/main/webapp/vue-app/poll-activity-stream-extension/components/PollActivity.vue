@@ -19,7 +19,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 <template>
   <div id="poll-activity">
     <div class="poll-content">
-      <h3 class="question" v-sanitized-html="poll.question"></h3>
+      <div class="question" v-sanitized-html="poll.question"></div>
       <div class="answer-content">
         <div
           v-for="(answer, index) in answersPercent"
@@ -117,7 +117,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
         </div>
       </div>
       <div
-        class="total-votes"
+        class="total-votes text-subtitle"
         v-if="showTotalVotes && (visibleResults || finalResults || isPollCreator)"
         v-text="totalVotesFormatted">
       </div>
