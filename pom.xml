@@ -4,14 +4,14 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <artifactId>addons-parent-pom</artifactId>
-    <groupId>org.exoplatform.addons</groupId>
-    <version>18-M03</version>
+    <groupId>io.meeds.addons</groupId>
+    <version>18-M04</version>
   </parent>
-  <groupId>org.exoplatform.addons.poll</groupId>
+  <groupId>io.meeds.poll</groupId>
   <artifactId>poll-parent</artifactId>
   <version>7.0.x-exo-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <name>eXo Poll - Parent POM</name>
+  <name>Meeds:: Poll - Parent POM</name>
   <modules>
     <module>poll-api</module>
     <module>poll-services</module>
@@ -26,10 +26,11 @@
   </scm>
   <properties>
     <!-- 3rd party libraries versions -->
-    <org.exoplatform.social.version>7.0.x-exo-SNAPSHOT</org.exoplatform.social.version>
-    <org.exoplatform.platform-ui.version>7.0.x-exo-SNAPSHOT</org.exoplatform.platform-ui.version>
+    <io.meeds.social.version>7.0.x-exo-SNAPSHOT</io.meeds.social.version>
+    <io.meeds.platform-ui.version>7.0.x-exo-SNAPSHOT</io.meeds.platform-ui.version>
     <addon.meeds.analytics.version>7.0.x-exo-SNAPSHOT</addon.meeds.analytics.version>
-    <addon.exo.gamification.version>7.0.x-exo-SNAPSHOT</addon.exo.gamification.version>
+    <addon.meeds.gamification.version>7.0.x-exo-SNAPSHOT</addon.meeds.gamification.version>
+
     <!-- Sonar properties -->
     <sonar.organization>meeds-io</sonar.organization>
   </properties>
@@ -37,17 +38,17 @@
     <dependencies>
       <!-- Import versions from platform project -->
       <dependency>
-        <groupId>org.exoplatform.social</groupId>
+        <groupId>io.meeds.social</groupId>
         <artifactId>social</artifactId>
-        <version>${org.exoplatform.social.version}</version>
+        <version>${io.meeds.social.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
       <!-- Import versions from platform-ui project -->
       <dependency>
-        <groupId>org.exoplatform.platform-ui</groupId>
+        <groupId>io.meeds.platform-ui</groupId>
         <artifactId>platform-ui</artifactId>
-        <version>${org.exoplatform.platform-ui.version}</version>
+        <version>${io.meeds.platform-ui.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -60,9 +61,9 @@
         <scope>import</scope>
       </dependency>
       <dependency>
-        <groupId>org.exoplatform.addons.gamification</groupId>
+        <groupId>io.meeds.gamification</groupId>
         <artifactId>gamification</artifactId>
-        <version>${addon.exo.gamification.version}</version>
+        <version>${addon.meeds.gamification.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
