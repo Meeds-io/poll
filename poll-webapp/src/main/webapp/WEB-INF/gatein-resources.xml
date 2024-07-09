@@ -9,7 +9,22 @@
     <skin-module>poll</skin-module>
     <css-path>/skin/css/poll.css</css-path>
     <css-priority>200</css-priority>
+    <filtered>true</filtered>
   </portal-skin>
+
+  <portlet-skin>
+    <application-name>social-portlet</application-name>
+    <portlet-name>UserActivityStreamPortlet</portlet-name>
+    <skin-name>Enterprise</skin-name>
+    <additional-module>poll</additional-module>
+  </portlet-skin>
+
+  <portlet-skin>
+    <application-name>social-portlet</application-name>
+    <portlet-name>SpaceActivityStreamPortlet</portlet-name>
+    <skin-name>Enterprise</skin-name>
+    <additional-module>poll</additional-module>
+  </portlet-skin>
 
   <module>
     <name>PollActivityStreamExtension</name>
