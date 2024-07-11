@@ -24,7 +24,7 @@ import * as pollService from './js/pollService.js';
 // getting language of the PLF
 const lang = eXo.env.portal.language || 'en';
 // init Vue app when locale resources are ready
-const url = `${eXo.env.portal.context}/${eXo.env.portal.rest}/i18n/bundle/locale.portlet.Poll-${lang}.json`;
+const url = `/poll/i18n/locale.portlet.Poll?lang=${lang}`;
 // init Vue app when locale resources are ready
 exoi18n.loadLanguageAsync(lang, url).then(i18n => new Vue({i18n}));
 
