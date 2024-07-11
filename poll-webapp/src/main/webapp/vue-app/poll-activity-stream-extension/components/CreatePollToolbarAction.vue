@@ -150,7 +150,6 @@ export default {
     },
     reset() {
       this.pollAction = 'create';
-      this.updateComposerPollLabel(this.pollAction);
       this.savedPoll = {};
     },
   },
