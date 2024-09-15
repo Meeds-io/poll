@@ -27,8 +27,7 @@ import io.meeds.spring.kernel.PortalApplicationContextInitializer;
   AvailableIntegration.KERNEL_MODULE,
   AvailableIntegration.JPA_MODULE,
   AvailableIntegration.LIQUIBASE_MODULE,
-  AvailableIntegration.WEB_SECURITY_MODULE,
-  AvailableIntegration.WEB_TRANSACTION_MODULE,
+  AvailableIntegration.WEB_MODULE,
 })
 @EnableJpaRepositories(basePackages = PollApplication.MODULE_NAME)
 @PropertySource("classpath:application.properties")
