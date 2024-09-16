@@ -20,17 +20,20 @@ package io.meeds.poll.utils;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.exoplatform.commons.utils.CommonsUtils;
+import org.exoplatform.services.security.Identity;
 import org.exoplatform.social.core.manager.IdentityManager;
 
 import io.meeds.poll.model.Poll;
 import io.meeds.poll.model.PollOption;
 import io.meeds.poll.rest.model.PollOptionRestEntity;
 import io.meeds.poll.rest.model.PollRestEntity;
+import io.meeds.poll.service.PollService;
 
 public class RestEntityBuilder {
   
@@ -44,7 +47,27 @@ public class RestEntityBuilder {
 
   private RestEntityBuilder() {
   }
-  
+
+  public static PollRestEntity fromPoll(PollService pollService,
+                                        Poll poll,
+                                        Identity currentUserIdentity) throws IllegalAccessException {
+    List<PollOption> pollOptions = pollService.getPollOptionsByPollId(poll.getId(), currentUserIdentity);
+    List<PollOptionRestEntity> pollOptionRestEntities = new ArrayList<>();
+    for (PollOption pollOption : pollOptions) {
+      int pollOptionVotes = pollService.getPollOptionTotalVotes(pollOption.getId(),
+                                                                String.valueOf(poll.getSpaceId()),
+                                                                currentUserIdentity);
+      boolean isPollOptionVoted = pollService.isPollOptionVoted(pollOption.getId(),
+                                                                String.valueOf(poll.getSpaceId()),
+                                                                currentUserIdentity);
+      PollOptionRestEntity pollOptionRestEntity = fromPollOption(pollOption,
+                                                                 pollOptionVotes,
+                                                                 isPollOptionVoted);
+      pollOptionRestEntities.add(pollOptionRestEntity);
+    }
+    return fromPoll(poll, pollOptionRestEntities);
+  }
+
   public static final PollRestEntity fromPoll(Poll poll,
                                               List<PollOptionRestEntity> pollOptionRestEntities) {
     PollRestEntity pollRestEntity = new PollRestEntity();
@@ -100,6 +123,6 @@ public class RestEntityBuilder {
       PollOption pollOption = new PollOption();
       pollOption.setDescription(pollOptionEntity.getDescription());
       return pollOption;
-    }).collect(Collectors.toList());
+    }).toList();
   }
 }
