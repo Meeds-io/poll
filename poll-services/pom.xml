@@ -3,7 +3,7 @@
   <parent>
     <groupId>io.meeds.poll</groupId>
     <artifactId>poll-parent</artifactId>
-    <version>7.0.x-exo-SNAPSHOT</version>
+    <version>7.0.0-exo-20240930</version>
   </parent>
   <artifactId>poll-services</artifactId>
   <name>Meeds:: Poll - Services</name>
