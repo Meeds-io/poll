@@ -10,6 +10,11 @@
   <name>Meeds:: Poll - Application</name>
   <dependencies>
     <dependency>
+      <groupId>io.meeds.social</groupId>
+      <artifactId>social-component-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>poll-api</artifactId>
       <scope>provided</scope>
