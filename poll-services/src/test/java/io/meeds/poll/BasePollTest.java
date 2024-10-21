@@ -90,7 +90,7 @@ public abstract class BasePollTest extends AbstractSpringTest { // NOSONAR
 
   protected void injectSpace() {
     String displayName = "testSpacePoll" + RANDOM.nextInt();
-    space = spaceService.getSpaceByDisplayName(displayName);
+    space = spaceService.getSpaceByPrettyName(displayName);
     if (space == null) {
       space = createSpace(displayName, user1Identity.getRemoteId(), user2Identity.getRemoteId());
     }
