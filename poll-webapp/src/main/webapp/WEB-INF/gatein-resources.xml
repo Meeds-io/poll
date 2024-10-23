@@ -10,14 +10,14 @@
   </portal-skin>
 
   <portlet-skin>
-    <application-name>social-portlet</application-name>
+    <application-name>social</application-name>
     <portlet-name>UserActivityStreamPortlet</portlet-name>
     <skin-name>Enterprise</skin-name>
     <additional-module>poll</additional-module>
   </portlet-skin>
 
   <portlet-skin>
-    <application-name>social-portlet</application-name>
+    <application-name>social</application-name>
     <portlet-name>SpaceActivityStreamPortlet</portlet-name>
     <skin-name>Enterprise</skin-name>
     <additional-module>poll</additional-module>
