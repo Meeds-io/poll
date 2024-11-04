@@ -17,6 +17,7 @@
  */
 package io.meeds.poll;
 
+import java.util.Arrays;
 import java.util.Random;
 
 import org.junit.jupiter.api.AfterEach;
@@ -89,7 +90,7 @@ public abstract class BasePollTest extends AbstractSpringTest { // NOSONAR
 
   protected void injectSpace() {
     String displayName = "testSpacePoll" + RANDOM.nextInt();
-    space = spaceService.getSpaceByDisplayName(displayName);
+    space = spaceService.getSpaceByPrettyName(displayName);
     if (space == null) {
       space = createSpace(displayName, user1Identity.getRemoteId(), user2Identity.getRemoteId());
     }
@@ -102,11 +103,14 @@ public abstract class BasePollTest extends AbstractSpringTest { // NOSONAR
     Space newSpace = new Space();
     newSpace.setDisplayName(displayName);
     newSpace.setPrettyName(displayName);
-    newSpace.setManagers(new String[] { "root" });
-    newSpace.setMembers(members);
     newSpace.setRegistration(Space.OPEN);
     newSpace.setVisibility(Space.PRIVATE);
-    return spaceService.createSpace(newSpace, "root");
+    newSpace = spaceService.createSpace(newSpace, "root");
+    if (members != null) {
+      Space createdSpace = newSpace;
+      Arrays.stream(members).forEach(m -> spaceService.addMember(createdSpace, m));
+    }
+    return newSpace;
   }
 
   public void testNop() {
