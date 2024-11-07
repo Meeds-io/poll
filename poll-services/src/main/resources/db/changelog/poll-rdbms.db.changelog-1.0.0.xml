@@ -33,11 +33,13 @@
   </changeSet>
 
   <changeSet author="poll" id="1.0.0-1">
+    <validCheckSum>9:6c06bd4c9da244943d8802ab0f5bdfd7</validCheckSum>
+    <validCheckSum>9:19de057d5accde689dd4a2923ba2776d</validCheckSum>
     <createTable tableName="POLL">
       <column name="POLL_ID" type="BIGINT" autoIncrement="${autoIncrement}" startWith="1">
         <constraints nullable="false" primaryKey="true" primaryKeyName="PK_POLL"/>
       </column>
-      <column name="QUESTION" type="NVARCHAR(2000)">
+      <column name="QUESTION" type="VARCHAR(2000)">
         <constraints nullable="false"/>
       </column>
       <column name="CREATED_DATE" type="TIMESTAMP" defaultValueComputed="NULL"/>
@@ -54,12 +56,12 @@
       <column name="POLL_ID" type="BIGINT">
         <constraints foreignKeyName="FK_OPTION_POLL" references="POLL(POLL_ID)" nullable="false" />
       </column>
-      <column name="DESCRIPTION" type="NVARCHAR(2000)">
+      <column name="DESCRIPTION" type="VARCHAR(2000)">
         <constraints nullable="false"/>
       </column>
     </createTable>
     <modifySql dbms="mysql">
-      <append value=" ENGINE=INNODB CHARSET=UTF8 COLLATE utf8_general_ci"/>
+      <append value=" ENGINE=INNODB CHARSET=UTF8MB4 COLLATE utf8mb4_0900_ai_ci"/>
     </modifySql>
   </changeSet>
 
@@ -75,6 +77,7 @@
   </changeSet>
 
   <changeSet author="poll" id="1.0.0-4">
+    <validCheckSum>9:15180130844bb18ab33da5d7a650dafd</validCheckSum>
     <createTable tableName="POLL_VOTE">
       <column name="POLL_VOTE_ID" type="BIGINT" autoIncrement="${autoIncrement}" startWith="1">
         <constraints nullable="false" primaryKey="true" primaryKeyName="PK_POLL_VOTE"/>
@@ -88,12 +91,17 @@
       </column>
     </createTable>
     <modifySql dbms="mysql">
-      <append value=" ENGINE=INNODB CHARSET=UTF8 COLLATE utf8_general_ci"/>
+      <append value=" ENGINE=INNODB CHARSET=UTF8MB4 COLLATE utf8mb4_0900_ai_ci"/>
     </modifySql>
   </changeSet>
 
   <changeSet author="poll" id="1.0.0-6">
     <addUniqueConstraint columnNames="POLL_OPTION_ID,VOTER_ID" tableName="POLL_VOTE" />
   </changeSet>
-
+  <changeSet author="poll" id="1.0.0-7" >
+    <sql dbms="mysql">
+      ALTER TABLE POLL_OPTION CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+      ALTER TABLE POLL_VOTE CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+    </sql>
+  </changeSet>
 </databaseChangeLog>
