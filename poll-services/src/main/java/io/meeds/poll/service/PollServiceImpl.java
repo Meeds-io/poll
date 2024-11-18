@@ -228,9 +228,9 @@ public class PollServiceImpl implements PollService {
     return pollStorage.updatePoll(createdPoll);
   }
 
-  private boolean canViewPoll(Space pollSpace, org.exoplatform.services.security.Identity currentIdentity) {
-    return spaceService.isMember(pollSpace, currentIdentity.getUserId()) || currentIdentity.isMemberOf(userACL.getAdminGroups())
+  private boolean canViewPoll(Space space, org.exoplatform.services.security.Identity currentIdentity) {
+    return spaceService.isMember(space, currentIdentity.getUserId()) || currentIdentity.isMemberOf(userACL.getAdminGroups())
         || StringUtils.equals(userACL.getSuperUser(), currentIdentity.getUserId())
-        || spaceService.isSuperManager(currentIdentity.getUserId());
+        || spaceService.isSuperManager(space, currentIdentity.getUserId());
   }
 }
