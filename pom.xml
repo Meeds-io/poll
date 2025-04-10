@@ -8,7 +8,7 @@
   </parent>
   <groupId>io.meeds.poll</groupId>
   <artifactId>poll-parent</artifactId>
-  <version>7.0.x-SNAPSHOT</version>
+  <version>7.0.0</version>
   <packaging>pom</packaging>
   <name>Meeds:: Poll - Parent POM</name>
   <modules>
@@ -21,7 +21,7 @@
     <connection>scm:git:git://github.com/meeds-io/poll.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/meeds-io/poll.git</developerConnection>
     <url>https://github.com/meeds-io/poll</url>
-    <tag>HEAD</tag>
+    <tag>7.0.0</tag>
   </scm>
   <properties>
     <!-- 3rd party libraries versions -->
