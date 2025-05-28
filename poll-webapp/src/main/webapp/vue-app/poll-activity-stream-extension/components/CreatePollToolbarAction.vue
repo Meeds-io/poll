@@ -85,7 +85,10 @@ export default {
         activityParams: this.templateParams,
         files: this.files,
         activityType: this.pollActivity,
-        activityToolbarAction: true
+        activityToolbarAction: true,
+        allowFilteringPerCategory: this.$root.allowFilteringPerCategory,
+        isFilteredStream: this.$root.isFilteredStream,
+        filteredCategoryIds: this.$root.preselectedCategoryIds,
       }}));
       window.setTimeout(() => {
         document.dispatchEvent(new CustomEvent('exo-poll-open-drawer', {detail: {activityToolbarAction: true}}));
