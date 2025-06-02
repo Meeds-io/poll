@@ -23,6 +23,13 @@
     <additional-module>poll</additional-module>
   </portlet-skin>
 
+  <portlet-skin>
+    <application-name>social</application-name>
+    <portlet-name>ActivitySearch</portlet-name>
+    <skin-name>Enterprise</skin-name>
+    <additional-module>poll</additional-module>
+  </portlet-skin>
+
   <module>
     <name>PollActivityStreamExtension</name>
     <load-group>ActivityStreamGRP</load-group>
