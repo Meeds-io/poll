@@ -29,7 +29,7 @@ import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import org.exoplatform.services.listener.Event;
 import org.exoplatform.services.listener.ListenerService;
@@ -53,19 +53,19 @@ public class GamificationPollListenerTest {
 
   private static final String      EVENT_DETAILS = "{spaceId: " + SPACE_ID + ", activityId: " + ACTIVITY_ID + "}";
 
-  @MockBean
+  @MockitoBean
   private ListenerService          listenerService;
 
-  @MockBean
+  @MockitoBean
   private IdentityManager          identityManager;
 
-  @MockBean
+  @MockitoBean
   private Poll                     poll;
 
-  @MockBean
+  @MockitoBean
   private Identity                 modifierIdentity;
 
-  @MockBean
+  @MockitoBean
   private Event<String, Poll>      event;
 
   @Autowired
