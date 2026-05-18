@@ -22,12 +22,10 @@ import static io.meeds.poll.utils.RestEntityBuilder.fromPoll;
 
 import java.util.List;
 
-import javax.ws.rs.core.Application;
-import javax.ws.rs.core.MediaType;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -61,14 +59,14 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RestController
 @RequestMapping("/polls")
 @Tag(name = "/polls", description = "Managing poll")
-public class PollRest extends Application {
+public class PollRest  {
 
   private static final Log LOG = ExoLogger.getLogger(PollRest.class);
 
   @Autowired
   private PollService      pollService;
 
-  @PostMapping(consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
+  @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   @Secured("users")
   @Operation(summary = "Create a new poll", method = "POST", description = "Create a new poll")
   @ApiResponses(value = { @ApiResponse(responseCode = "401", description = "Unauthorized operation"),
@@ -106,7 +104,7 @@ public class PollRest extends Application {
     }
   }
 
-  @GetMapping(path = "{id}", produces = MediaType.APPLICATION_JSON)
+  @GetMapping(path = "{id}", produces = MediaType.APPLICATION_JSON_VALUE)
   @Secured("users")
   @Operation(summary = "Get a poll", method = "GET",
              description = "This gets the poll with the given id if the authenticated user is a member of the space.")
@@ -136,7 +134,7 @@ public class PollRest extends Application {
     }
   }
 
-  @PostMapping(path = "/vote/{optionId}", consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
+  @PostMapping(path = "/vote/{optionId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
   @Secured("users")
   @Operation(summary = "Vote in a poll", method = "POST", description = "Vote in a poll")
   @ApiResponses(value = { @ApiResponse(responseCode = "400", description = "Invalid query input"),

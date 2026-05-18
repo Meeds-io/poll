@@ -25,7 +25,7 @@ import static io.meeds.poll.utils.PollUtils.POLL_PUBLICATION_DURATION;
 import java.util.Date;
 import java.util.Map;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;

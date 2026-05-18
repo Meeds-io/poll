@@ -23,10 +23,8 @@ import java.util.Date;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.SequenceGenerator;
+import io.meeds.common.persistence.PortableSequence;
 import jakarta.persistence.Table;
 import lombok.Data;
 
@@ -38,8 +36,7 @@ public class PollEntity implements Serializable {
   private static final long serialVersionUID = 5290107403575974438L;
 
   @Id
-  @SequenceGenerator(name = "SEQ_POLL_ID", sequenceName = "SEQ_POLL_ID", allocationSize = 1)
-  @GeneratedValue(strategy = GenerationType.AUTO, generator = "SEQ_POLL_ID")
+  @PortableSequence(name = "SEQ_POLL_ID")
   @Column(name = "POLL_ID", nullable = false)
   private Long              id;
 
