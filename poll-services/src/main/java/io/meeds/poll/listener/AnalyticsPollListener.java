@@ -104,16 +104,16 @@ public class AnalyticsPollListener extends Listener<String, Poll> {
     statisticData.setSubModule(POLL_MODULE);
     statisticData.setOperation(operation);
     statisticData.setUserId(userId);
-    statisticData.addParameter(POLL_ID, poll.getId());
-    statisticData.addParameter(POLL_ACTIVITY_ID, poll.getActivityId());
-    statisticData.addParameter(POLL_OPTIONS_NUMBER,
-                               pollService.getPollOptionsNumber(poll.getId(),
-                                                                new org.exoplatform.services.security.Identity(userName)));
-    statisticData.addParameter(POLL_DURATION, getPollDuration(poll));
-    statisticData.addParameter(POLL_TOTAL_VOTES,
-                               pollService.getPollTotalVotes(poll.getId(),
-                                                             new org.exoplatform.services.security.Identity(userName)));
-    statisticData.addParameter(POLL_SPACE_MEMBERS_COUNT, getSize(space.getMembers()));
+    statisticData.addKeyword(POLL_ID, poll.getId());
+    statisticData.addKeyword(POLL_ACTIVITY_ID, poll.getActivityId());
+    statisticData.addLong(POLL_OPTIONS_NUMBER,
+                          pollService.getPollOptionsNumber(poll.getId(),
+                                                           new org.exoplatform.services.security.Identity(userName)));
+    statisticData.addLong(POLL_DURATION, getPollDuration(poll));
+    statisticData.addLong(POLL_TOTAL_VOTES,
+                          pollService.getPollTotalVotes(poll.getId(),
+                                                        new org.exoplatform.services.security.Identity(userName)));
+    statisticData.addLong(POLL_SPACE_MEMBERS_COUNT, getSize(space.getMembers()));
 
     AnalyticsUtils.addStatisticData(statisticData);
   }
