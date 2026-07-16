@@ -18,9 +18,12 @@
  */
 package io.meeds.poll.utils;
 
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
+
+import org.apache.commons.lang3.StringUtils;
 
 import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.services.listener.ListenerService;
@@ -34,6 +37,14 @@ import io.meeds.poll.model.Poll;
 public class PollUtils {
 
   private static final Log   LOG                               = ExoLogger.getLogger(PollUtils.class);
+
+  public static final String ONE_DAY_DURATION                 = "1day";
+
+  public static final String THREE_DAYS_DURATION              = "3days";
+
+  public static final String ONE_WEEK_DURATION                = "1week";
+
+  public static final String TWO_WEEKS_DURATION               = "2weeks";
 
   public static final String POLL_ACTIVITY_TYPE                = "poll";
 
@@ -112,5 +123,28 @@ public class PollUtils {
   public static long getPollDuration(Poll poll) {
     long duration = Math.abs(poll.getEndDate().getTime() - poll.getCreatedDate().getTime());
     return TimeUnit.DAYS.convert(duration, TimeUnit.MILLISECONDS);
+  }
+
+  public static Date computeEndDate(Date fromDate, String duration) {
+    ZonedDateTime start = ZonedDateTime.ofInstant(fromDate.toInstant(), ZoneOffset.UTC);
+    ZonedDateTime end;
+    switch (StringUtils.trimToEmpty(duration)) {
+    case ONE_DAY_DURATION:
+      end = start.plusDays(1);
+      break;
+    case THREE_DAYS_DURATION:
+      end = start.plusDays(3);
+      break;
+    case ONE_WEEK_DURATION:
+      end = start.plusDays(7);
+      break;
+    case TWO_WEEKS_DURATION:
+      end = start.plusDays(14);
+      break;
+    default:
+      throw new IllegalArgumentException("Invalid duration '" + duration
+          + "'. Allowed values are: 1day, 3days, 1week, 2weeks.");
+    }
+    return toDate(end);
   }
 }

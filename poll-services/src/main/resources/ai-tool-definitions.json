@@ -1,0 +1,130 @@
+{
+  "tools": [
+    {
+      "name": "create_poll",
+      "title": "Create a poll",
+      "description": "Create a poll (a question with at least two options) and post it to a space activity stream. The current user must be a member who can post (redactor) in the target space. Returns the created poll with its option ids.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "space_id": {
+            "type": "integer",
+            "description": "Identifier of the space where the poll activity is posted (required). Resolve it first with get_my_spaces or get_all_spaces."
+          },
+          "question": {
+            "type": "string",
+            "description": "The poll question (required)."
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "The answer options, at least two non-empty entries (required)."
+          },
+          "duration": {
+            "type": "string",
+            "enum": [
+              "1day",
+              "3days",
+              "1week",
+              "2weeks"
+            ],
+            "description": "How long the poll stays open before it closes (required)."
+          },
+          "message": {
+            "type": "string",
+            "description": "Optional message shown on the poll activity. Defaults to the question when omitted."
+          }
+        },
+        "required": [
+          "space_id",
+          "question",
+          "options",
+          "duration"
+        ]
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "require_approval": true
+    },
+    {
+      "name": "vote_in_poll",
+      "title": "Vote in a poll",
+      "description": "Cast the current user's vote for a poll option and return the updated results. The user must be a member of the poll's space, the poll must still be open, and each user can vote only once. Get the option ids from get_poll_results first.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "poll_option_id": {
+            "type": "integer",
+            "description": "Identifier of the poll option to vote for (required). Obtain it from get_poll_results."
+          }
+        },
+        "required": [
+          "poll_option_id"
+        ]
+      },
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      },
+      "require_approval": true
+    },
+    {
+      "name": "get_poll_results",
+      "title": "Get poll results",
+      "description": "Get a poll's question, options and current vote tallies (per-option counts and percentages, total votes, whether the poll is closed and whether the current user has already voted) from its poll id. The user must be a member of the poll's space. If you do not know the poll id, call list_space_polls first to find it.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "poll_id": {
+            "type": "integer",
+            "description": "Identifier of the poll (required)."
+          }
+        },
+        "required": [
+          "poll_id"
+        ]
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "list_space_polls",
+      "title": "List polls in a space",
+      "description": "List the polls posted in a space (most recent first), each with its poll id, question, options (with their option ids) and current results. Use this to find a poll's id and its option ids from a space name or id before calling get_poll_results or vote_in_poll. The current user must be a member of the space.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "space_id": {
+            "type": "integer",
+            "description": "Identifier of the space whose polls to list (required). Resolve it first with get_my_spaces or get_all_spaces."
+          },
+          "limit": {
+            "type": "integer",
+            "description": "Maximum number of polls to return (default 10, max 20)."
+          }
+        },
+        "required": [
+          "space_id"
+        ]
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    }
+  ]
+}
