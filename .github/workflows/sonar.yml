@@ -13,4 +13,3 @@ jobs:
         with:
           jdk_major_version: 21
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          extra_maven_opts: -Dsonar.scanner.skipJreProvisioning=true
