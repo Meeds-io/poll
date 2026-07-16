@@ -46,12 +46,12 @@ import org.exoplatform.social.core.manager.ActivityManager;
 import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
-import io.meeds.poll.utils.PollUtils;
 
 import io.meeds.poll.mcp.model.PollResultModel;
 import io.meeds.poll.model.Poll;
 import io.meeds.poll.model.PollOption;
 import io.meeds.poll.service.PollService;
+import io.meeds.poll.utils.PollUtils;
 
 class PollMcpToolTest {
 
@@ -178,6 +178,22 @@ class PollMcpToolTest {
                  () -> pollMcpTool.createPoll(SPACE_ID, "Q", List.of("a", "b"), "1day", null));
   }
 
+  @Test
+  void createPollDoesNotMaskResultBuildingFailureAsCreationFailure() throws Exception {
+    Space space = new Space();
+    space.setId(String.valueOf(SPACE_ID));
+    space.setDisplayName("Engineering");
+    when(spaceService.getSpaceById(String.valueOf(SPACE_ID))).thenReturn(space);
+    Poll created = openPoll();
+    when(pollService.createPoll(any(), any(), eq(space.getId()), any(), any(), any())).thenReturn(created);
+    when(pollService.getPollOptionsByPollId(eq(created.getId()), any()))
+        .thenThrow(new IllegalAccessException("transient read failure after successful creation"));
+
+    assertThrows(IllegalAccessException.class,
+                 () -> pollMcpTool.createPoll(SPACE_ID, "Best day for the offsite?",
+                                              List.of("Monday", "Friday"), "1week", null));
+  }
+
   // --- vote_in_poll --------------------------------------------------------
 
   @Test
@@ -271,7 +287,7 @@ class PollMcpToolTest {
     space.setPrettyName("engineering");
     space.setDisplayName("Engineering");
     when(spaceService.getSpaceById(String.valueOf(SPACE_ID))).thenReturn(space);
-    when(spaceService.canViewSpace(eq(space), eq(USERNAME))).thenReturn(true);
+    when(spaceService.isMember(eq(space), eq(USERNAME))).thenReturn(true);
     when(identityManager.getOrCreateIdentity(any(), any()))
         .thenReturn(new org.exoplatform.social.core.identity.model.Identity("1"));
 
@@ -310,7 +326,7 @@ class PollMcpToolTest {
     space.setId(String.valueOf(SPACE_ID));
     space.setDisplayName("Engineering");
     when(spaceService.getSpaceById(String.valueOf(SPACE_ID))).thenReturn(space);
-    when(spaceService.canViewSpace(eq(space), eq(USERNAME))).thenReturn(false);
+    when(spaceService.isMember(eq(space), eq(USERNAME))).thenReturn(false);
     assertThrows(IllegalStateException.class, () -> pollMcpTool.listSpacePolls(SPACE_ID, null));
   }
 

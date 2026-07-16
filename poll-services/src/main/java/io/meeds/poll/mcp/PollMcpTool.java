@@ -20,8 +20,6 @@ package io.meeds.poll.mcp;
 
 import static io.meeds.mcp.server.util.McpToolUtils.formatDate;
 
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -57,14 +55,6 @@ import io.meeds.poll.utils.PollUtils;
 @Service
 @Profile("mcp-server")
 public class PollMcpTool implements McpToolPlugin {
-
-  private static final String ONE_DAY_DURATION    = "1day";
-
-  private static final String THREE_DAYS_DURATION = "3days";
-
-  private static final String ONE_WEEK_DURATION   = "1week";
-
-  private static final String TWO_WEEKS_DURATION  = "2weeks";
 
   private static final int    DEFAULT_LIST_LIMIT  = 10;
 
@@ -109,7 +99,7 @@ public class PollMcpTool implements McpToolPlugin {
     if (cleanOptions.size() < 2) {
       throw new IllegalArgumentException("A poll needs at least 2 non-empty options.");
     }
-    Date endDate = computeEndDate(duration);
+    Date endDate = PollUtils.computeEndDate(new Date(), duration);
 
     Identity identity = getCurrentUserAclIdentity();
     Space space = spaceService.getSpaceById(String.valueOf(spaceId));
@@ -129,13 +119,14 @@ public class PollMcpTool implements McpToolPlugin {
     }).toList();
     String activityMessage = StringUtils.isBlank(message) ? question.trim() : message.trim();
 
+    Poll created;
     try {
-      Poll created = pollService.createPoll(poll, pollOptions, space.getId(), activityMessage, identity, new ArrayList<>());
-      return buildResult(created, identity);
+      created = pollService.createPoll(poll, pollOptions, space.getId(), activityMessage, identity, new ArrayList<>());
     } catch (IllegalAccessException e) {
       throw new IllegalStateException("You are not allowed to create a poll in space '" + space.getDisplayName()
           + "'. Only space members who can post (redactors) may create polls. Tell the user they need redactor rights in that space.");
     }
+    return buildResult(created, identity);
   }
 
   /**
@@ -210,7 +201,7 @@ public class PollMcpTool implements McpToolPlugin {
     if (space == null) {
       throw new IllegalArgumentException("No space found with id " + spaceId + ".");
     }
-    if (!spaceService.canViewSpace(space, identity.getUserId())) {
+    if (!spaceService.isMember(space, identity.getUserId())) {
       throw new IllegalStateException("You are not allowed to view space '" + space.getDisplayName()
           + "'. You must be a member of the space to list its polls.");
     }
@@ -279,29 +270,6 @@ public class PollMcpTool implements McpToolPlugin {
     } catch (RuntimeException e) {
       return null;
     }
-  }
-
-  private Date computeEndDate(String duration) {
-    ZonedDateTime now = ZonedDateTime.now(ZoneOffset.UTC);
-    ZonedDateTime end;
-    switch (StringUtils.trimToEmpty(duration)) {
-    case ONE_DAY_DURATION:
-      end = now.plusDays(1);
-      break;
-    case THREE_DAYS_DURATION:
-      end = now.plusDays(3);
-      break;
-    case ONE_WEEK_DURATION:
-      end = now.plusDays(7);
-      break;
-    case TWO_WEEKS_DURATION:
-      end = now.plusDays(14);
-      break;
-    default:
-      throw new IllegalArgumentException("Invalid duration '" + duration
-          + "'. Allowed values are: 1day, 3days, 1week, 2weeks.");
-    }
-    return Date.from(end.toInstant());
   }
 
 }

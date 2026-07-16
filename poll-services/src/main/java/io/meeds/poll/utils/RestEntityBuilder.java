@@ -18,8 +18,6 @@
  */
 package io.meeds.poll.utils;
 
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -36,14 +34,6 @@ import io.meeds.poll.rest.model.PollRestEntity;
 import io.meeds.poll.service.PollService;
 
 public class RestEntityBuilder {
-  
-  private static final String ONE_DAY_DURATION = "1day";
-  
-  private static final String THREE_DAYS_DURATION = "3days";
-  
-  private static final String ONE_WEEK_DURATION = "1week";
-  
-  private static final String TWO_WEEKS_DURATION = "2weeks";
 
   private RestEntityBuilder() {
   }
@@ -93,28 +83,14 @@ public class RestEntityBuilder {
 
   public static final Poll toPoll(PollRestEntity pollRestEntity) {
     Date createdDate = new Date();
-    ZonedDateTime createdZonedDateTime = ZonedDateTime.ofInstant(createdDate.toInstant(), ZoneOffset.UTC);
-    ZonedDateTime endZonedDateTime = null;
-    switch (pollRestEntity.getDuration()) {
-    case ONE_DAY_DURATION:
-      endZonedDateTime = createdZonedDateTime.plusDays(1);
-      break;
-    case THREE_DAYS_DURATION:
-      endZonedDateTime = createdZonedDateTime.plusDays(3);
-      break;
-    case ONE_WEEK_DURATION:
-      endZonedDateTime = createdZonedDateTime.plusDays(7);
-      break;
-    case TWO_WEEKS_DURATION:
-      endZonedDateTime = createdZonedDateTime.plusDays(14);
-      break;
-    default:
-      throw new IllegalStateException("Unexpected value: " + pollRestEntity.getDuration());
-    }
     Poll poll = new Poll();
     poll.setQuestion(pollRestEntity.getQuestion());
     poll.setCreatedDate(createdDate);
-    poll.setEndDate(PollUtils.toDate(endZonedDateTime));
+    try {
+      poll.setEndDate(PollUtils.computeEndDate(createdDate, pollRestEntity.getDuration()));
+    } catch (IllegalArgumentException e) {
+      throw new IllegalStateException(e.getMessage());
+    }
     return poll;
   }
 
