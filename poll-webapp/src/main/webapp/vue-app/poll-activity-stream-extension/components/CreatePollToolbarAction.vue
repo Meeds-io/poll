@@ -99,10 +99,14 @@ export default {
       this.pollActivity.push('poll');
       document.dispatchEvent(new CustomEvent('activity-composer-edited'));
     },
-    postPoll(message) {
+    postPoll(detail) {
       if (!this.savedPoll.question || !this.savedPoll.options ) {
         return;
       }
+      // The composer shares the requested scheduling by sending an object
+      // instead of the message itself
+      const scheduled = !!detail && typeof detail === 'object';
+      const publicationStartTime = scheduled && detail.publicationStartTime || null;
       const poll = {
         question: this.savedPoll.question,
         options: this.savedPoll.options.filter(option => option.data != null && option.data !== '')
@@ -112,8 +116,9 @@ export default {
             };
           }),
         duration: this.savedPoll.duration,
-        message: message,
-        files: this.files
+        message: scheduled ? detail.message : detail,
+        files: this.files,
+        publicationStartTime,
       };
       this.$pollService.postPoll(poll, eXo.env.portal.spaceId)
         .then((poll) => {
@@ -125,6 +130,9 @@ export default {
         })
         .then(() => {
           document.dispatchEvent(new CustomEvent('activity-created', {detail: this.activityId}));
+          if (publicationStartTime) {
+            this.$root.$emit('alert-message', this.$t('composer.poll.scheduled.success.message'), 'success');
+          }
           this.pollAction = 'create';
           document.dispatchEvent(new CustomEvent('update-composer-poll-label', {detail: 'create'}));
           this.savedPoll = {};
