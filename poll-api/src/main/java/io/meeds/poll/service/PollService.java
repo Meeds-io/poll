@@ -40,7 +40,32 @@ public interface PollService {
    * @return created {@link Poll} with generated technical identifier
    * @throws IllegalAccessException when the current user is not authorized to create a {@link Poll}
    */
-  Poll createPoll(Poll poll, List<PollOption> pollOptions, String spaceId, String message, Identity currentIdentity, List<ActivityFile> files) throws IllegalAccessException;
+  default Poll createPoll(Poll poll, List<PollOption> pollOptions, String spaceId, String message, Identity currentIdentity, List<ActivityFile> files) throws IllegalAccessException {
+    return createPoll(poll, pollOptions, spaceId, message, currentIdentity, files, null);
+  }
+
+  /**
+   * Creates a new poll, which activity can be scheduled
+   *
+   * @param poll {@link Poll} object to create
+   * @param pollOptions {@link Poll} options objects to create
+   * @param spaceId {@link Space} id related to the {@link Poll} to be created
+   * @param message Message of {@link Poll} activity to be created
+   * @param currentIdentity User identity creating the {@link Poll}
+   * @param files Files attached to the {@link Poll} activity to be created
+   * @param publicationStartTime publication start time in milliseconds of the
+   *          {@link Poll} activity to schedule, else null to post it
+   *          immediately
+   * @return created {@link Poll} with generated technical identifier
+   * @throws IllegalAccessException when the current user is not authorized to create a {@link Poll}
+   */
+  Poll createPoll(Poll poll, // NOSONAR
+                  List<PollOption> pollOptions,
+                  String spaceId,
+                  String message,
+                  Identity currentIdentity,
+                  List<ActivityFile> files,
+                  Long publicationStartTime) throws IllegalAccessException;
 
   /**
    * Retrieves a poll identified by its technical identifier.

@@ -64,12 +64,13 @@ public class PollServiceImpl implements PollService {
   private UserACL userACL;
 
   @Override
-  public Poll createPoll(Poll poll,
+  public Poll createPoll(Poll poll, // NOSONAR
                          List<PollOption> pollOptions,
                          String spaceId,
                          String message,
                          org.exoplatform.services.security.Identity currentIdentity,
-                         List<ActivityFile> files) throws IllegalAccessException {
+                         List<ActivityFile> files,
+                         Long publicationStartTime) throws IllegalAccessException {
     Space space = spaceService.getSpaceById(spaceId);
     if (!spaceService.canRedactOnSpace(space, currentIdentity)) {
       throw new IllegalAccessException(String.format("User %s is not allowed to create a poll with question %s in space %s",
@@ -81,7 +82,7 @@ public class PollServiceImpl implements PollService {
     poll.setCreatorId(currentUserIdentityId);
     poll.setSpaceId(Long.parseLong(spaceId));
     Poll createdPoll = pollStorage.createPoll(poll, pollOptions);
-    createdPoll =  postPollActivity(message, spaceId, currentIdentity, createdPoll, files);
+    createdPoll =  postPollActivity(message, spaceId, currentIdentity, createdPoll, files, publicationStartTime);
     PollUtils.broadcastEvent(PollUtils.CREATE_POLL, currentIdentity.getUserId(), createdPoll);//Analytics
     return createdPoll;
   }
@@ -209,7 +210,8 @@ public class PollServiceImpl implements PollService {
                                 String spaceId,
                                 org.exoplatform.services.security.Identity currentIdentity,
                                 Poll createdPoll,
-                                List<ActivityFile> files) {
+                                List<ActivityFile> files,
+                                Long publicationStartTime) {
     Space space = spaceService.getSpaceById(spaceId);
     Identity spaceIdentity = identityManager.getOrCreateIdentity(SpaceIdentityProvider.NAME, space.getPrettyName());
     Identity pollActivityCreatorIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, currentIdentity.getUserId());
@@ -221,6 +223,16 @@ public class PollServiceImpl implements PollService {
     activity.setFiles(files);
     Map<String, String> templateParams = new HashMap<>();
     templateParams.put(PollUtils.POLL_ID, String.valueOf(createdPoll.getId()));
+    if (publicationStartTime != null && publicationStartTime > 0) {
+      // The poll activity stays hidden from the streams, the search and the
+      // notifications until its publication time
+      activity.setPublicationStartTime(publicationStartTime);
+      // The poll dates are computed again from the effective publication time,
+      // so that the poll runs its whole duration once published, whatever it
+      // has been rescheduled or published immediately meanwhile
+      templateParams.put(PollUtils.POLL_PUBLICATION_DURATION,
+                         String.valueOf(createdPoll.getEndDate().getTime() - createdPoll.getCreatedDate().getTime()));
+    }
     activity.setTemplateParams(templateParams);
 
     activityManager.saveActivityNoReturn(spaceIdentity, activity);
