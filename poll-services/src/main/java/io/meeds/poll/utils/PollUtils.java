@@ -68,6 +68,13 @@ public class PollUtils {
 
   public static final String POLL_DURATION                     = "PollDuration";
 
+  /**
+   * Activity template param holding the duration in milliseconds of a poll
+   * which activity is scheduled, used to compute the poll dates from its
+   * effective publication time
+   */
+  public static final String POLL_PUBLICATION_DURATION         = "pollPublicationDuration";
+
   public static final String POLL_TOTAL_VOTES                  = "PollTotalVotes";
 
   public static final String POLL_SPACE_MEMBERS_COUNT          = "PollSpaceMembersCount";
