@@ -46,4 +46,10 @@ public class PollRestEntity {
   private String                     message;
 
   private List<ActivityFile>         files;
+
+  /**
+   * Publication start time in milliseconds when the poll activity has to be
+   * scheduled, else null to post it immediately
+   */
+  private Long                       publicationStartTime;
 }

@@ -84,6 +84,10 @@ public class PollRest extends Application {
     if (pollRestEntity == null) {
       return ResponseEntity.badRequest().build();
     }
+    Long publicationStartTime = pollRestEntity.getPublicationStartTime();
+    if (publicationStartTime != null && publicationStartTime > 0 && publicationStartTime <= System.currentTimeMillis()) {
+      return ResponseEntity.badRequest().body(null);
+    }
     Identity currentIdentity = ConversationState.getCurrent().getIdentity();
     try {
       Poll poll = RestEntityBuilder.toPoll(pollRestEntity);
@@ -93,7 +97,8 @@ public class PollRest extends Application {
                                     spaceId,
                                     pollRestEntity.getMessage(),
                                     currentIdentity,
-                                    pollRestEntity.getFiles());
+                                    pollRestEntity.getFiles(),
+                                    publicationStartTime);
       return ResponseEntity.ok(fromPoll(pollService, poll, currentIdentity));
     } catch (IllegalAccessException e) {
       LOG.warn("User '{}' attempts to create a non authorized poll", currentIdentity.getUserId(), e);

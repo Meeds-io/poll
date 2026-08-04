@@ -38,6 +38,9 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import org.exoplatform.social.core.activity.model.ExoSocialActivity;
+import org.exoplatform.social.core.manager.ActivityManager;
+
 import io.meeds.kernel.test.KernelExtension;
 import io.meeds.poll.BasePollTest;
 import io.meeds.poll.dao.PollDAO;
@@ -46,6 +49,7 @@ import io.meeds.poll.dao.PollVoteDAO;
 import io.meeds.poll.model.Poll;
 import io.meeds.poll.model.PollOption;
 import io.meeds.poll.model.PollVote;
+import io.meeds.poll.utils.PollUtils;
 import io.meeds.spring.AvailableIntegration;
 
 @ExtendWith({ SpringExtension.class, KernelExtension.class })
@@ -76,6 +80,9 @@ public class PollServiceTest extends BasePollTest { // NOSONAR
 
   @Autowired
   private PollVoteDAO         pollVoteDAO;
+
+  @Autowired
+  private ActivityManager     activityManager;
 
   private Date                createdDate             = new Date(1508484583259L);
 
@@ -126,6 +133,59 @@ public class PollServiceTest extends BasePollTest { // NOSONAR
 
     // When
     assertThrows(IllegalAccessException.class, () -> pollService.createPoll(poll1, pollOptionList, space.getId(), MESSAGE, testuser2Identity, new ArrayList<>()));
+  }
+
+  @Test
+  public void createScheduledPoll() throws IllegalAccessException {
+    // Given
+    org.exoplatform.services.security.Identity testUser1Identity = new org.exoplatform.services.security.Identity(TESTUSER_1);
+    Poll poll = new Poll();
+    poll.setQuestion("scheduled poll");
+    poll.setCreatedDate(createdDate);
+    poll.setEndDate(endDate);
+    poll.setCreatorId(Long.parseLong(user1Identity.getId()));
+    PollOption pollOption = new PollOption();
+    pollOption.setDescription(POLL_OPTION_DESCRIPTION);
+    List<PollOption> pollOptionList = new ArrayList<>();
+    pollOptionList.add(pollOption);
+    spaceService.addRedactor(space, user1Identity.getRemoteId());
+    long creationTime = System.currentTimeMillis();
+    long publicationStartTime = creationTime + 3600000l;
+
+    // When
+    Poll createdPoll = pollService.createPoll(poll,
+                                              pollOptionList,
+                                              space.getId(),
+                                              MESSAGE,
+                                              testUser1Identity,
+                                              new ArrayList<>(),
+                                              publicationStartTime);
+
+    // Then
+    assertNotNull(createdPoll);
+    ExoSocialActivity activity = activityManager.getActivity(String.valueOf(createdPoll.getActivityId()));
+    assertNotNull(activity);
+    assertEquals(Long.valueOf(publicationStartTime),
+                 activity.getPublicationStartTime(),
+                 "The poll activity must be scheduled");
+    assertTrue(activity.isHidden(), "The poll activity must stay hidden until its publication");
+    assertEquals(String.valueOf(endDate.getTime() - createdDate.getTime()),
+                 activity.getTemplateParams().get(PollUtils.POLL_PUBLICATION_DURATION),
+                 "The chosen duration must be kept to compute the poll dates at publication");
+
+    // When the scheduled poll activity is published
+    ExoSocialActivity publishedActivity = activityManager.publishScheduledActivity(activity.getId());
+
+    // Then
+    assertNotNull(publishedActivity);
+    Poll publishedPoll = pollService.getPollById(createdPoll.getId(), testUser1Identity);
+    assertTrue(publishedPoll.getCreatedDate().getTime() >= creationTime,
+               "The published poll must start at its publication instead of its creation");
+    assertEquals(endDate.getTime() - createdDate.getTime(),
+                 publishedPoll.getEndDate().getTime() - publishedPoll.getCreatedDate().getTime(),
+                 "The poll must run its whole chosen duration from its publication");
+    assertTrue(publishedPoll.getEndDate().getTime() > System.currentTimeMillis(),
+               "The poll must not be closed once published");
   }
 
   @Test
