@@ -224,7 +224,9 @@ public class PollMcpTool implements McpToolPlugin {
       }
       try {
         Poll poll = pollService.getPollById(Long.parseLong(params.get(PollUtils.POLL_ID)), identity);
-        if (poll != null) {
+        // A poll-typed activity may reference the poll of another space, which
+        // isn't listed as a poll of this one
+        if (poll != null && poll.getSpaceId() == spaceId) {
           polls.add(buildResult(poll, identity));
         }
       } catch (NumberFormatException | IllegalAccessException e) {
