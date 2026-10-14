@@ -102,6 +102,15 @@ public class PollServiceImpl implements PollService {
     return poll;
   }
   
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public long getPollSpaceId(long pollId) {
+    Poll poll = pollStorage.getPollById(pollId);
+    return poll == null ? 0L : poll.getSpaceId();
+  }
+
   @Override
   public PollOption getPollOptionById(long pollOptionId, org.exoplatform.services.security.Identity currentIdentity) throws IllegalAccessException {
     PollOption pollOption = pollStorage.getPollOptionById(pollOptionId);
