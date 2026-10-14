@@ -50,7 +50,7 @@ import io.meeds.poll.model.Poll;
 import io.meeds.poll.storage.PollStorage;
 
 /**
- * Pins that a poll activity only acts on the poll of the space it is posted in.
+ * Pins that a poll activity only acts on the poll it is the activity of.
  */
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -58,6 +58,9 @@ class PollActivityPublicationListenerTest {
 
   /** The id of the poll the activities reference. */
   private static final long               POLL_ID_VALUE = 7L;
+
+  /** The id of the activity the poll was posted with. */
+  private static final long               ACTIVITY_ID   = 99L;
 
   /** The id of the space the poll belongs to. */
   private static final long               SPACE_ID      = 3L;
@@ -83,7 +86,7 @@ class PollActivityPublicationListenerTest {
 
   /**
    * The activity of a poll posted in the poll's own space sets the dates of
-   * that poll from its publication. Mutant: the space comparison inverted.
+   * that poll from its publication. Mutant: the activity id comparison inverted.
    */
   @Test
   void activityOfTheSpaceOfThePollUpdatesItsDates() {
@@ -103,7 +106,7 @@ class PollActivityPublicationListenerTest {
 
   /**
    * A forged activity of another space referencing the poll of a space leaves
-   * that poll untouched. Mutant: the space comparison removed.
+   * that poll untouched. Mutant: the activity id comparison removed.
    */
   @Test
   void activityOfAnotherSpaceLeavesThePollUntouched() {
@@ -111,7 +114,9 @@ class PollActivityPublicationListenerTest {
     Date createdDate = poll.getCreatedDate();
     Date endDate = poll.getEndDate();
     when(pollStorage.getPollById(POLL_ID_VALUE)).thenReturn(poll);
-    when(event.getActivity()).thenReturn(activity(String.valueOf(SPACE_ID + 1)));
+    ExoSocialActivity forged = activity(String.valueOf(SPACE_ID + 1));
+    forged.setId(String.valueOf(ACTIVITY_ID + 1));
+    when(event.getActivity()).thenReturn(forged);
 
     listener.saveActivity(event);
 
@@ -122,13 +127,74 @@ class PollActivityPublicationListenerTest {
   }
 
   /**
+   * A forged activity of the very space of the poll, which is not the activity
+   * of the poll, leaves the poll untouched. Mutants: the activity id comparison
+   * removed, inverted, or replaced by the space comparison alone.
+   */
+  @Test
+  void otherActivityOfTheSpaceOfThePollLeavesThePollUntouched() {
+    Poll poll = poll(SPACE_ID);
+    Date createdDate = poll.getCreatedDate();
+    Date endDate = poll.getEndDate();
+    when(pollStorage.getPollById(POLL_ID_VALUE)).thenReturn(poll);
+    ExoSocialActivity forged = activity(String.valueOf(SPACE_ID));
+    forged.setId(String.valueOf(ACTIVITY_ID + 1));
+    when(event.getActivity()).thenReturn(forged);
+
+    listener.saveActivity(event);
+
+    verify(pollStorage, never()).updatePoll(any());
+    assertEquals(createdDate, poll.getCreatedDate());
+    assertEquals(endDate, poll.getEndDate());
+    verify(activityManager, never()).updateActivity(any(), anyBoolean());
+  }
+
+  /**
+   * An activity with a blank or non numeric id leaves the poll untouched.
+   */
+  @Test
+  void activityWithoutNumericIdLeavesThePollUntouched() {
+    when(pollStorage.getPollById(POLL_ID_VALUE)).thenReturn(poll(SPACE_ID));
+    for (String id : new String[] { null, "", "abc", "99a" }) {
+      ExoSocialActivity activity = activity(String.valueOf(SPACE_ID));
+      activity.setId(id);
+      when(event.getActivity()).thenReturn(activity);
+
+      listener.saveActivity(event);
+    }
+
+    verify(pollStorage, never()).updatePoll(any());
+    verify(activityManager, never()).updateActivity(any(), anyBoolean());
+  }
+
+  /**
+   * A poll that has no activity id yet is left untouched, whatever the id of
+   * the activity referencing it.
+   */
+  @Test
+  void pollWithoutActivityLeavesThePollUntouched() {
+    Poll poll = poll(SPACE_ID);
+    poll.setActivityId(0L);
+    when(pollStorage.getPollById(POLL_ID_VALUE)).thenReturn(poll);
+    ExoSocialActivity activity = activity(String.valueOf(SPACE_ID));
+    activity.setId("0");
+    when(event.getActivity()).thenReturn(activity);
+
+    listener.saveActivity(event);
+
+    verify(pollStorage, never()).updatePoll(any());
+  }
+
+  /**
    * An activity on no space stream leaves the poll of a space untouched.
-   * Mutant: a blank activity space treated as a match.
+   * Mutant: the activity id comparison removed.
    */
   @Test
   void activityOnNoSpaceStreamLeavesThePollOfASpaceUntouched() {
     when(pollStorage.getPollById(POLL_ID_VALUE)).thenReturn(poll(SPACE_ID));
-    when(event.getActivity()).thenReturn(activity(null));
+    ExoSocialActivity forged = activity(null);
+    forged.setId(String.valueOf(ACTIVITY_ID + 1));
+    when(event.getActivity()).thenReturn(forged);
 
     listener.saveActivity(event);
 
@@ -156,6 +222,7 @@ class PollActivityPublicationListenerTest {
     Poll poll = new Poll();
     poll.setId(POLL_ID_VALUE);
     poll.setSpaceId(spaceId);
+    poll.setActivityId(ACTIVITY_ID);
     poll.setCreatedDate(new Date(1_000L));
     poll.setEndDate(new Date(2_000L));
     return poll;
@@ -168,7 +235,7 @@ class PollActivityPublicationListenerTest {
    */
   private static ExoSocialActivity activity(String spaceId) {
     ExoSocialActivity activity = new ExoSocialActivityImpl();
-    activity.setId("99");
+    activity.setId(String.valueOf(ACTIVITY_ID));
     activity.setType(POLL_ACTIVITY_TYPE);
     activity.setSpaceId(spaceId);
     Map<String, String> params = new HashMap<>();
