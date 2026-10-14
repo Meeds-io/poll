@@ -29,25 +29,24 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import io.meeds.poll.model.Poll;
-import io.meeds.poll.storage.PollStorage;
+import io.meeds.poll.service.PollService;
 
 /**
  * Pins which space a poll belongs to for the space scope decision.
  */
 class PollSpaceScopeResolverTest {
 
-  private PollStorage            pollStorage;
+  private PollService            pollService;
 
   private PollSpaceScopeResolver resolver;
 
   /**
-   * Creates the resolver over a mocked storage.
+   * Creates the resolver over a mocked service.
    */
   @BeforeEach
   void setUp() {
-    pollStorage = Mockito.mock(PollStorage.class);
-    resolver = new PollSpaceScopeResolver(pollStorage);
+    pollService = Mockito.mock(PollService.class);
+    resolver = new PollSpaceScopeResolver(pollService);
   }
 
   /**
@@ -57,7 +56,7 @@ class PollSpaceScopeResolverTest {
    */
   @Test
   void pollOfASpaceBelongsToThatSpace() {
-    when(pollStorage.getPollById(7L)).thenReturn(poll(12L));
+    when(pollService.getPollSpaceId(7L)).thenReturn(12L);
 
     assertEquals("poll", resolver.getName());
     assertEquals(PollSpaceScopeResolver.NAME, resolver.getName());
@@ -70,17 +69,17 @@ class PollSpaceScopeResolverTest {
    */
   @Test
   void pollOfNoSpaceBelongsToNone() {
-    when(pollStorage.getPollById(7L)).thenReturn(poll(0L));
+    when(pollService.getPollSpaceId(7L)).thenReturn(0L);
 
     assertNull(resolver.spaceOf("7"));
   }
 
   /**
-   * A missing poll belongs to no space.
+   * A missing poll (the service answers 0) belongs to no space.
    */
   @Test
   void missingPollBelongsToNone() {
-    when(pollStorage.getPollById(8L)).thenReturn(null);
+    when(pollService.getPollSpaceId(8L)).thenReturn(0L);
 
     assertNull(resolver.spaceOf("8"));
   }
@@ -96,7 +95,7 @@ class PollSpaceScopeResolverTest {
     assertNull(resolver.spaceOf("-7"));
     assertNull(resolver.spaceOf(""));
     assertNull(resolver.spaceOf(null));
-    verify(pollStorage, never()).getPollById(anyLong());
+    verify(pollService, never()).getPollSpaceId(anyLong());
   }
 
   /**
@@ -105,20 +104,10 @@ class PollSpaceScopeResolverTest {
    */
   @Test
   void failingLookupBelongsToNone() {
-    when(pollStorage.getPollById(9L)).thenThrow(new IllegalStateException("database down"));
+    when(pollService.getPollSpaceId(9L)).thenThrow(new IllegalStateException("database down"));
 
     assertNull(resolver.spaceOf("9"));
     assertNull(resolver.spaceOf("99999999999999999999999"));
-  }
-
-  /**
-   * @param spaceId the id of the space the poll is posted in
-   * @return a poll
-   */
-  private static Poll poll(long spaceId) {
-    Poll poll = new Poll();
-    poll.setSpaceId(spaceId);
-    return poll;
   }
 
 }
