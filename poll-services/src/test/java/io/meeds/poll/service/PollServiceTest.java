@@ -220,6 +220,29 @@ public class PollServiceTest extends BasePollTest { // NOSONAR
     assertThrows(IllegalAccessException.class, () -> pollService.getPollById(retrievedPoll.getId(), testUser3Identity));
   }
 
+  /**
+   * The space of a poll is the space it was created in, read without any
+   * access check, and a missing poll has none (0). Mutant: the space id not
+   * read.
+   */
+  @Test
+  public void getPollSpaceId() throws IllegalAccessException {
+    org.exoplatform.services.security.Identity testUser1Identity = new org.exoplatform.services.security.Identity(TESTUSER_1);
+    Poll poll = new Poll();
+    poll.setQuestion("q1");
+    poll.setCreatedDate(createdDate);
+    poll.setEndDate(endDate);
+    poll.setCreatorId(Long.parseLong(user1Identity.getId()));
+    PollOption pollOption = new PollOption();
+    pollOption.setDescription(POLL_OPTION_DESCRIPTION);
+    List<PollOption> pollOptionList = new ArrayList<>();
+    pollOptionList.add(pollOption);
+    Poll createdPoll = pollService.createPoll(poll, pollOptionList, space.getId(), MESSAGE, testUser1Identity, new ArrayList<>());
+
+    assertEquals(Long.parseLong(space.getId()), pollService.getPollSpaceId(createdPoll.getId()));
+    assertEquals(0L, pollService.getPollSpaceId(createdPoll.getId() + 1000L));
+  }
+
   @Test
   public void getPollOptionById() throws IllegalAccessException {
     // Given
