@@ -43,7 +43,7 @@ import io.meeds.poll.storage.PollStorage;
 
 /**
  * Computes the dates of a scheduled poll when its activity is published,
- * for the poll of the space the activity is posted in only.
+ * for the activity of that poll only.
  */
 @Component
 public class PollActivityPublicationListener extends ActivityListenerPlugin {
@@ -69,8 +69,8 @@ public class PollActivityPublicationListener extends ActivityListenerPlugin {
 
   /**
    * Computes the dates of the poll of a scheduled poll activity from its
-   * effective publication, when the poll belongs to the space the activity is
-   * posted in. Any other poll activity is ignored.
+   * effective publication, when the activity is the one of that poll. Any other
+   * poll activity is ignored.
    *
    * @param event the activity creation event
    */
@@ -90,22 +90,23 @@ public class PollActivityPublicationListener extends ActivityListenerPlugin {
     try {
       long durationMillis = Long.parseLong(templateParams.get(POLL_PUBLICATION_DURATION));
       Poll poll = pollStorage.getPollById(Long.parseLong(templateParams.get(POLL_ID)));
-      if (poll != null && !isPostedInSpaceOfPoll(activity, poll)) {
-        // A poll activity only acts on the poll of the space it was posted in
-        LOG.debug("Ignoring the poll activity with id {} referencing the poll {}, which belongs to another space",
+      if (poll == null) {
+        return;
+      }
+      if (!isActivityOfPoll(activity, poll)) {
+        // A poll activity only acts on the poll it is the activity of
+        LOG.debug("Ignoring the poll activity with id {} referencing the poll {}, whose activity is another one",
                   activity.getId(),
                   poll.getId());
         return;
       }
-      if (poll != null) {
-        // The poll starts when it is effectively published, thus its duration
-        // stays the chosen one, for the poll itself as well as for the
-        // statistics computing it from its dates
-        Date publicationDate = new Date();
-        poll.setCreatedDate(publicationDate);
-        poll.setEndDate(new Date(publicationDate.getTime() + durationMillis));
-        pollStorage.updatePoll(poll);
-      }
+      // The poll starts when it is effectively published, thus its duration
+      // stays the chosen one, for the poll itself as well as for the
+      // statistics computing it from its dates
+      Date publicationDate = new Date();
+      poll.setCreatedDate(publicationDate);
+      poll.setEndDate(new Date(publicationDate.getTime() + durationMillis));
+      pollStorage.updatePoll(poll);
       // The param is blanked instead of being removed, since the activity
       // update merges the template params and thus doesn't persist a removal
       templateParams.put(POLL_PUBLICATION_DURATION, "");
@@ -118,14 +119,15 @@ public class PollActivityPublicationListener extends ActivityListenerPlugin {
   /**
    * @param activity the poll activity being published
    * @param poll the poll the activity references
-   * @return true when the activity is on the stream of the space the poll
-   *         belongs to, false otherwise, including when the activity is on no
-   *         space stream while the poll has a space
+   * @return true when the activity id is the id of the activity the poll was
+   *         posted with, false otherwise, including when the activity id is
+   *         blank or not numeric or when the poll has no activity yet
    */
-  private boolean isPostedInSpaceOfPoll(ExoSocialActivity activity, Poll poll) {
-    String activitySpaceId = activity.getSpaceId();
-    long spaceId = StringUtils.isNumeric(activitySpaceId) ? Long.parseLong(activitySpaceId) : 0L;
-    return spaceId == poll.getSpaceId();
+  private boolean isActivityOfPoll(ExoSocialActivity activity, Poll poll) {
+    String activityId = activity.getId();
+    return poll.getActivityId() > 0
+           && StringUtils.isNumeric(activityId)
+           && Long.parseLong(activityId) == poll.getActivityId();
   }
 
 }
