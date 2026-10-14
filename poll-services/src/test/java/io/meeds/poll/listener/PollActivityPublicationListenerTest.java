@@ -59,7 +59,7 @@ class PollActivityPublicationListenerTest {
   /** The id of the activity the poll was posted with. */
   private static final long               ACTIVITY_ID   = 99L;
 
-  /** The id of the space the poll belongs to. */
+  /** The id of the space the poll belongs to; it doesn't decide the outcome. */
   private static final long               SPACE_ID      = 3L;
 
   /** The chosen duration of the poll, in milliseconds. */
@@ -82,11 +82,11 @@ class PollActivityPublicationListenerTest {
   private PollActivityPublicationListener listener;
 
   /**
-   * The activity of a poll posted in the poll's own space sets the dates of
-   * that poll from its publication. Mutant: the activity id comparison inverted.
+   * The activity the poll was posted with sets the dates of that poll from
+   * its publication. Mutant: the activity id comparison inverted.
    */
   @Test
-  void activityOfTheSpaceOfThePollUpdatesItsDates() {
+  void activityOfThePollUpdatesItsDates() {
     Poll poll = poll(SPACE_ID);
     when(pollStorage.getPollById(POLL_ID_VALUE)).thenReturn(poll);
     ExoSocialActivity activity = activity(String.valueOf(SPACE_ID));
@@ -102,11 +102,12 @@ class PollActivityPublicationListenerTest {
   }
 
   /**
-   * A forged activity of another space referencing the poll of a space leaves
-   * that poll untouched. Mutant: the activity id comparison removed.
+   * A forged activity, here posted in another space, referencing a poll by
+   * its id leaves that poll untouched: its activity id isn't the poll's.
+   * Mutant: the activity id comparison removed.
    */
   @Test
-  void activityOfAnotherSpaceLeavesThePollUntouched() {
+  void forgedActivityOfAnotherSpaceLeavesThePollUntouched() {
     Poll poll = poll(SPACE_ID);
     Date createdDate = poll.getCreatedDate();
     Date endDate = poll.getEndDate();
@@ -183,11 +184,12 @@ class PollActivityPublicationListenerTest {
   }
 
   /**
-   * An activity on no space stream leaves the poll of a space untouched.
-   * Mutant: the activity id comparison removed.
+   * A forged activity, here on no space stream, referencing a poll leaves it
+   * untouched: its activity id isn't the poll's. Mutant: the activity id
+   * comparison removed.
    */
   @Test
-  void activityOnNoSpaceStreamLeavesThePollOfASpaceUntouched() {
+  void forgedActivityOnNoSpaceStreamLeavesThePollUntouched() {
     when(pollStorage.getPollById(POLL_ID_VALUE)).thenReturn(poll(SPACE_ID));
     ExoSocialActivity forged = activity(null);
     forged.setId(String.valueOf(ACTIVITY_ID + 1));
@@ -199,7 +201,9 @@ class PollActivityPublicationListenerTest {
   }
 
   /**
-   * An activity referencing a missing poll updates nothing.
+   * An activity referencing a missing poll updates nothing, neither a poll
+   * nor the activity. Mutant: the activity's duration param blanked and the
+   * activity updated when its poll is missing.
    */
   @Test
   void activityOfAMissingPollUpdatesNothing() {
@@ -209,6 +213,7 @@ class PollActivityPublicationListenerTest {
     listener.saveActivity(event);
 
     verify(pollStorage, never()).updatePoll(any());
+    verify(activityManager, never()).updateActivity(any(), anyBoolean());
   }
 
   /**
