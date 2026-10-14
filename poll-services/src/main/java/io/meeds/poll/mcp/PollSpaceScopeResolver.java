@@ -23,14 +23,13 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import io.meeds.mcp.server.plugin.SpaceScopeResolver;
-import io.meeds.poll.model.Poll;
-import io.meeds.poll.storage.PollStorage;
+import io.meeds.poll.service.PollService;
 
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * Tells which space a poll belongs to: the space it was posted in. Read as
- * the system, without any access check, for the space scope decision only.
+ * Tells which space a poll belongs to: the space it was posted in. Read
+ * without any access check, for the space scope decision only.
  */
 @Service("pollSpaceScopeResolver")
 @Profile("mcp-server")
@@ -40,14 +39,14 @@ public class PollSpaceScopeResolver implements SpaceScopeResolver {
   /** The name the poll tools' {@code space_scope.resolver} gives. */
   public static final String NAME = "poll";
 
-  /** The storage the poll is read from, bypassing the service's access check. */
-  private final PollStorage  pollStorage;
+  /** The service the space of the poll is read from, without access check. */
+  private final PollService  pollService;
 
   /**
-   * @param pollStorage the poll storage
+   * @param pollService the poll service
    */
-  public PollSpaceScopeResolver(PollStorage pollStorage) {
-    this.pollStorage = pollStorage;
+  public PollSpaceScopeResolver(PollService pollService) {
+    this.pollService = pollService;
   }
 
   /**
@@ -70,8 +69,8 @@ public class PollSpaceScopeResolver implements SpaceScopeResolver {
       return null;
     }
     try {
-      Poll poll = pollStorage.getPollById(Long.parseLong(objectId));
-      return poll != null && poll.getSpaceId() > 0 ? poll.getSpaceId() : null;
+      long spaceId = pollService.getPollSpaceId(Long.parseLong(objectId));
+      return spaceId > 0 ? spaceId : null;
     } catch (RuntimeException e) {
       log.debug("The space of poll '{}' couldn't be read", objectId, e);
       return null;
