@@ -38,8 +38,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.junit.jupiter.MockitoSettings;
-import org.mockito.quality.Strictness;
 
 import org.exoplatform.social.core.activity.ActivityLifeCycleEvent;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
@@ -53,7 +51,6 @@ import io.meeds.poll.storage.PollStorage;
  * Pins that a poll activity only acts on the poll it is the activity of.
  */
 @ExtendWith(MockitoExtension.class)
-@MockitoSettings(strictness = Strictness.LENIENT)
 class PollActivityPublicationListenerTest {
 
   /** The id of the poll the activities reference. */
