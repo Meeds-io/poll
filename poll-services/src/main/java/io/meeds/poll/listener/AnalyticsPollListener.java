@@ -30,8 +30,6 @@ import static io.meeds.poll.utils.PollUtils.VOTE_POLL;
 import static io.meeds.poll.utils.PollUtils.VOTE_POLL_OPERATION_NAME;
 import static io.meeds.poll.utils.PollUtils.getPollDuration;
 
-import static io.meeds.analytics.utils.AnalyticsUtils.addSpaceStatistics;
-
 import java.util.Arrays;
 import java.util.HashSet;
 
@@ -102,7 +100,7 @@ public class AnalyticsPollListener extends Listener<String, Poll> {
     }
     StatisticData statisticData = new StatisticData();
     Space space = spaceService.getSpaceById(String.valueOf(poll.getSpaceId()));
-    addSpaceStatistics(statisticData, space);
+    AnalyticsUtils.addSpaceStatistics(statisticData, space);
     statisticData.setModule(POLL_MODULE);
     statisticData.setSubModule(POLL_MODULE);
     statisticData.setOperation(operation);

@@ -21,6 +21,7 @@ package io.meeds.poll.listener;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
 
@@ -91,6 +92,7 @@ class AnalyticsPollListenerTest {
       analytics.when(() -> AnalyticsUtils.addSpaceStatistics(any(), any())).thenCallRealMethod();
       listener.onEvent(new Event<>(PollUtils.VOTE_POLL, "john", poll));
       analytics.verify(() -> AnalyticsUtils.addStatisticData(stored.capture()));
+      analytics.verify(() -> AnalyticsUtils.addSpaceStatistics(any(StatisticData.class), same(space)));
     }
 
     StatisticData data = stored.getValue();
