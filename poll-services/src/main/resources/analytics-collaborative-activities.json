@@ -2,6 +2,7 @@
   "modules": ["Poll"],
   "operations": ["votePoll"],
   "labels": {
-    "counted": ["poll.collaborativeActivity.help.counted.vote"]
+    "title": "poll.collaborativeActivity.help.title",
+    "counted": ["poll.collaborativeActivity.help.counted"]
   }
 }

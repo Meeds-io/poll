@@ -62,7 +62,8 @@ class CollaborativeActivityDeclarationTest {
     assertFalse(declaration.containsKey("browserOperations"));
 
     Map<String, Object> labels = (Map<String, Object>) declaration.get("labels");
-    assertEquals(List.of("poll.collaborativeActivity.help.counted.vote"), labels.get("counted"));
+    assertEquals("poll.collaborativeActivity.help.title", labels.get("title"));
+    assertEquals(List.of("poll.collaborativeActivity.help.counted"), labels.get("counted"));
   }
 
 }
