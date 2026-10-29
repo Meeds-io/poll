@@ -100,6 +100,7 @@ public class AnalyticsPollListener extends Listener<String, Poll> {
     }
     StatisticData statisticData = new StatisticData();
     Space space = spaceService.getSpaceById(String.valueOf(poll.getSpaceId()));
+    AnalyticsUtils.addSpaceStatistics(statisticData, space);
     statisticData.setModule(POLL_MODULE);
     statisticData.setSubModule(POLL_MODULE);
     statisticData.setOperation(operation);
