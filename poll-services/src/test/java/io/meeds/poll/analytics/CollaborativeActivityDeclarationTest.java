@@ -63,9 +63,6 @@ class CollaborativeActivityDeclarationTest {
 
     Map<String, Object> labels = (Map<String, Object>) declaration.get("labels");
     assertEquals(List.of("poll.collaborativeActivity.help.counted.vote"), labels.get("counted"));
-    assertEquals(List.of("poll.collaborativeActivity.help.notCounted.createPoll"),
-                 labels.get("notCounted"),
-                 "a date poll is an agenda action, declared by agenda");
   }
 
 }

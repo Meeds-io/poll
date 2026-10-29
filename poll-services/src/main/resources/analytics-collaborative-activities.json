@@ -2,7 +2,6 @@
   "modules": ["Poll"],
   "operations": ["votePoll"],
   "labels": {
-    "counted": ["poll.collaborativeActivity.help.counted.vote"],
-    "notCounted": ["poll.collaborativeActivity.help.notCounted.createPoll"]
+    "counted": ["poll.collaborativeActivity.help.counted.vote"]
   }
 }
