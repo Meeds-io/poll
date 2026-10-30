@@ -316,8 +316,10 @@ class PollMcpToolTest {
 
   /**
    * A poll-typed activity of the listed space that references a poll of another
-   * space is left out, and the poll of the space itself is still listed.
-   * Mutant: the space comparison removed.
+   * space is left out, a forged one of the same space that references a poll
+   * already listed leaves it listed once and takes no slot of the limit, and the
+   * poll of the space itself is still listed.
+   * Mutants: the space comparison removed, or the poll id not deduplicated.
    */
   @Test
   @SuppressWarnings("unchecked")
@@ -338,10 +340,20 @@ class PollMcpToolTest {
     ExoSocialActivity ownActivity = new ExoSocialActivityImpl();
     ownActivity.setType(PollUtils.POLL_ACTIVITY_TYPE);
     ownActivity.setTemplateParams(java.util.Map.of(PollUtils.POLL_ID, String.valueOf(POLL_ID)));
+    ExoSocialActivity forgedSameSpaceActivity = new ExoSocialActivityImpl();
+    forgedSameSpaceActivity.setType(PollUtils.POLL_ACTIVITY_TYPE);
+    forgedSameSpaceActivity.setTemplateParams(java.util.Map.of(PollUtils.POLL_ID, String.valueOf(POLL_ID)));
+    long otherPollId = POLL_ID + 2;
+    ExoSocialActivity otherActivity = new ExoSocialActivityImpl();
+    otherActivity.setType(PollUtils.POLL_ACTIVITY_TYPE);
+    otherActivity.setTemplateParams(java.util.Map.of(PollUtils.POLL_ID, String.valueOf(otherPollId)));
 
     RealtimeListAccess<ExoSocialActivity> listAccess = Mockito.mock(RealtimeListAccess.class);
-    when(listAccess.getSize()).thenReturn(2);
-    when(listAccess.loadAsList(eq(0), Mockito.anyInt())).thenReturn(List.of(forgedActivity, ownActivity));
+    when(listAccess.getSize()).thenReturn(4);
+    when(listAccess.loadAsList(eq(0), Mockito.anyInt())).thenReturn(List.of(forgedActivity,
+                                                                            ownActivity,
+                                                                            forgedSameSpaceActivity,
+                                                                            otherActivity));
     when(activityManager.getActivitiesOfSpaceWithListAccess(any())).thenReturn(listAccess);
 
     Poll foreignPoll = openPoll();
@@ -351,11 +363,16 @@ class PollMcpToolTest {
     Poll poll = openPoll();
     when(pollService.getPollById(eq(POLL_ID), any())).thenReturn(poll);
     stubResults(poll, 2, 1, true);
+    Poll otherPoll = openPoll();
+    otherPoll.setId(otherPollId);
+    when(pollService.getPollById(eq(otherPollId), any())).thenReturn(otherPoll);
+    stubResults(otherPoll, 0, 0, false);
 
-    List<PollResultModel> polls = pollMcpTool.listSpacePolls(SPACE_ID, null);
+    List<PollResultModel> polls = pollMcpTool.listSpacePolls(SPACE_ID, 2);
 
-    assertEquals(1, polls.size());
+    assertEquals(2, polls.size());
     assertEquals(POLL_ID, polls.get(0).getId());
+    assertEquals(otherPollId, polls.get(1).getId());
   }
 
   @Test
