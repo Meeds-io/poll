@@ -22,8 +22,10 @@ import static io.meeds.mcp.server.util.McpToolUtils.formatDate;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Profile;
@@ -201,7 +203,11 @@ public class PollMcpTool implements McpToolPlugin {
     if (space == null) {
       throw new IllegalArgumentException("No space found with id " + spaceId + ".");
     }
-    if (!spaceService.isMember(space, identity.getUserId())) {
+    // Never looser than the poll service's own read gate, so the per-poll
+    // refusals swallowed below can't turn a refused space into an empty list.
+    // It still refuses a non-manager member of the administrators group who
+    // isn't a member of the space, whom the service lets read a poll.
+    if (!spaceService.canViewSpace(space, identity.getUserId())) {
       throw new IllegalStateException("You are not allowed to view space '" + space.getDisplayName()
           + "'. You must be a member of the space to list its polls.");
     }
@@ -213,6 +219,7 @@ public class PollMcpTool implements McpToolPlugin {
     List<ExoSocialActivity> activities = scan == 0 ? List.of() : listAccess.loadAsList(0, scan);
 
     List<PollResultModel> polls = new ArrayList<>();
+    Set<Long> listed = new HashSet<>();
     for (ExoSocialActivity activity : activities) {
       if (polls.size() >= max) {
         break;
@@ -224,7 +231,10 @@ public class PollMcpTool implements McpToolPlugin {
       }
       try {
         Poll poll = pollService.getPollById(Long.parseLong(params.get(PollUtils.POLL_ID)), identity);
-        if (poll != null) {
+        // A poll-typed activity may reference the poll of another space, which
+        // isn't listed as a poll of this one, or a poll already listed, which
+        // any member who can post in the space can forge
+        if (poll != null && poll.getSpaceId() == spaceId && listed.add(poll.getId())) {
           polls.add(buildResult(poll, identity));
         }
       } catch (NumberFormatException | IllegalAccessException e) {

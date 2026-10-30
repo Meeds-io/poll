@@ -287,7 +287,7 @@ class PollMcpToolTest {
     space.setPrettyName("engineering");
     space.setDisplayName("Engineering");
     when(spaceService.getSpaceById(String.valueOf(SPACE_ID))).thenReturn(space);
-    when(spaceService.isMember(eq(space), eq(USERNAME))).thenReturn(true);
+    when(spaceService.canViewSpace(eq(space), eq(USERNAME))).thenReturn(true);
     when(identityManager.getOrCreateIdentity(any(), any()))
         .thenReturn(new org.exoplatform.social.core.identity.model.Identity("1"));
 
@@ -314,20 +314,121 @@ class PollMcpToolTest {
     assertEquals(3, polls.get(0).getTotalVotes());
   }
 
+  /**
+   * A poll-typed activity of the listed space that references a poll of another
+   * space is left out, a forged one of the same space that references a poll
+   * already listed leaves it listed once and takes no slot of the limit, and the
+   * poll of the space itself is still listed.
+   * Mutants: the space comparison removed, or the poll id not deduplicated.
+   */
+  @Test
+  @SuppressWarnings("unchecked")
+  void listSpacePollsLeavesOutPollOfAnotherSpace() throws Exception {
+    long foreignPollId = POLL_ID + 1;
+    Space space = new Space();
+    space.setId(String.valueOf(SPACE_ID));
+    space.setPrettyName("engineering");
+    space.setDisplayName("Engineering");
+    when(spaceService.getSpaceById(String.valueOf(SPACE_ID))).thenReturn(space);
+    when(spaceService.canViewSpace(eq(space), eq(USERNAME))).thenReturn(true);
+    when(identityManager.getOrCreateIdentity(any(), any()))
+        .thenReturn(new org.exoplatform.social.core.identity.model.Identity("1"));
+
+    ExoSocialActivity forgedActivity = new ExoSocialActivityImpl();
+    forgedActivity.setType(PollUtils.POLL_ACTIVITY_TYPE);
+    forgedActivity.setTemplateParams(java.util.Map.of(PollUtils.POLL_ID, String.valueOf(foreignPollId)));
+    ExoSocialActivity ownActivity = new ExoSocialActivityImpl();
+    ownActivity.setType(PollUtils.POLL_ACTIVITY_TYPE);
+    ownActivity.setTemplateParams(java.util.Map.of(PollUtils.POLL_ID, String.valueOf(POLL_ID)));
+    ExoSocialActivity forgedSameSpaceActivity = new ExoSocialActivityImpl();
+    forgedSameSpaceActivity.setType(PollUtils.POLL_ACTIVITY_TYPE);
+    forgedSameSpaceActivity.setTemplateParams(java.util.Map.of(PollUtils.POLL_ID, String.valueOf(POLL_ID)));
+    long otherPollId = POLL_ID + 2;
+    ExoSocialActivity otherActivity = new ExoSocialActivityImpl();
+    otherActivity.setType(PollUtils.POLL_ACTIVITY_TYPE);
+    otherActivity.setTemplateParams(java.util.Map.of(PollUtils.POLL_ID, String.valueOf(otherPollId)));
+
+    RealtimeListAccess<ExoSocialActivity> listAccess = Mockito.mock(RealtimeListAccess.class);
+    when(listAccess.getSize()).thenReturn(4);
+    when(listAccess.loadAsList(eq(0), Mockito.anyInt())).thenReturn(List.of(forgedActivity,
+                                                                            ownActivity,
+                                                                            forgedSameSpaceActivity,
+                                                                            otherActivity));
+    when(activityManager.getActivitiesOfSpaceWithListAccess(any())).thenReturn(listAccess);
+
+    Poll foreignPoll = openPoll();
+    foreignPoll.setId(foreignPollId);
+    foreignPoll.setSpaceId(SPACE_ID + 1);
+    when(pollService.getPollById(eq(foreignPollId), any())).thenReturn(foreignPoll);
+    Poll poll = openPoll();
+    when(pollService.getPollById(eq(POLL_ID), any())).thenReturn(poll);
+    stubResults(poll, 2, 1, true);
+    Poll otherPoll = openPoll();
+    otherPoll.setId(otherPollId);
+    when(pollService.getPollById(eq(otherPollId), any())).thenReturn(otherPoll);
+    stubResults(otherPoll, 0, 0, false);
+
+    List<PollResultModel> polls = pollMcpTool.listSpacePolls(SPACE_ID, 2);
+
+    assertEquals(2, polls.size());
+    assertEquals(POLL_ID, polls.get(0).getId());
+    assertEquals(otherPollId, polls.get(1).getId());
+  }
+
   @Test
   void listSpacePollsUnknownSpaceFails() {
     when(spaceService.getSpaceById(String.valueOf(SPACE_ID))).thenReturn(null);
     assertThrows(IllegalArgumentException.class, () -> pollMcpTool.listSpacePolls(SPACE_ID, null));
   }
 
+  /**
+   * A user the space doesn't let view it is refused the listing, a member
+   * included when the space says so.
+   * Mutant: the space gate removed.
+   */
   @Test
-  void listSpacePollsNotMemberFails() {
+  void listSpacePollsFailsWhenTheSpaceRefusesTheView() {
     Space space = new Space();
     space.setId(String.valueOf(SPACE_ID));
     space.setDisplayName("Engineering");
     when(spaceService.getSpaceById(String.valueOf(SPACE_ID))).thenReturn(space);
-    when(spaceService.isMember(eq(space), eq(USERNAME))).thenReturn(false);
+    lenient().when(spaceService.isMember(eq(space), eq(USERNAME))).thenReturn(true);
+    when(spaceService.canViewSpace(eq(space), eq(USERNAME))).thenReturn(false);
     assertThrows(IllegalStateException.class, () -> pollMcpTool.listSpacePolls(SPACE_ID, null));
+  }
+
+  /**
+   * A super manager of the space who isn't a member lists its polls, as the
+   * poll service lets them read each one.
+   * Mutant: the gate on the space membership alone.
+   */
+  @Test
+  @SuppressWarnings("unchecked")
+  void listSpacePollsLetsASuperManagerWhoIsNoMember() throws Exception {
+    Space space = new Space();
+    space.setId(String.valueOf(SPACE_ID));
+    space.setPrettyName("engineering");
+    space.setDisplayName("Engineering");
+    when(spaceService.getSpaceById(String.valueOf(SPACE_ID))).thenReturn(space);
+    lenient().when(spaceService.isMember(eq(space), eq(USERNAME))).thenReturn(false);
+    when(spaceService.canViewSpace(eq(space), eq(USERNAME))).thenReturn(true);
+    when(identityManager.getOrCreateIdentity(any(), any()))
+        .thenReturn(new org.exoplatform.social.core.identity.model.Identity("1"));
+    ExoSocialActivity pollActivity = new ExoSocialActivityImpl();
+    pollActivity.setType(PollUtils.POLL_ACTIVITY_TYPE);
+    pollActivity.setTemplateParams(java.util.Map.of(PollUtils.POLL_ID, String.valueOf(POLL_ID)));
+    RealtimeListAccess<ExoSocialActivity> listAccess = Mockito.mock(RealtimeListAccess.class);
+    when(listAccess.getSize()).thenReturn(1);
+    when(listAccess.loadAsList(eq(0), Mockito.anyInt())).thenReturn(List.of(pollActivity));
+    when(activityManager.getActivitiesOfSpaceWithListAccess(any())).thenReturn(listAccess);
+    Poll poll = openPoll();
+    when(pollService.getPollById(eq(POLL_ID), any())).thenReturn(poll);
+    stubResults(poll, 2, 1, true);
+
+    List<PollResultModel> polls = pollMcpTool.listSpacePolls(SPACE_ID, null);
+
+    assertEquals(1, polls.size());
+    assertEquals(POLL_ID, polls.get(0).getId());
   }
 
 }

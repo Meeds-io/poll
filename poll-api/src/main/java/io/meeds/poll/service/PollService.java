@@ -76,6 +76,17 @@ public interface PollService {
    * @throws IllegalAccessException when the current user is not authorized to get a {@link Poll}
    */
   Poll getPollById(long pollId, Identity currentIdentity) throws IllegalAccessException;
+
+  /**
+   * Retrieves the identifier of the space a poll was posted in. No access
+   * check is applied and nothing but the space identifier is returned: this
+   * exists for the space scope decision, not to read a poll.
+   *
+   * @param pollId technical identifier of a {@link Poll}
+   * @return the identifier of the space of the poll, or 0 when the poll doesn't
+   *         exist
+   */
+  long getPollSpaceId(long pollId);
   
   /**
    * Retrieves a poll option identified by its technical identifier.
