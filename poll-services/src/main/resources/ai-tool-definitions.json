@@ -52,7 +52,8 @@
       },
       "space_scope": {
         "space_arg": "space_id",
-        "allowed_args": ["question", "options", "duration", "message"]
+        "allowed_args": ["question", "options", "duration", "message"],
+        "space_role": "redactor"
       },
       "require_approval": true
     },
