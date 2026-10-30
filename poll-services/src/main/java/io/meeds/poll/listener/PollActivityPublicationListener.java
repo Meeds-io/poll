@@ -123,7 +123,7 @@ public class PollActivityPublicationListener extends ActivityListenerPlugin {
    *         posted with, false otherwise, including when the activity id is
    *         blank or not numeric or when the poll has no activity yet
    */
-  private boolean isActivityOfPoll(ExoSocialActivity activity, Poll poll) {
+  boolean isActivityOfPoll(ExoSocialActivity activity, Poll poll) {
     String activityId = activity.getId();
     return poll.getActivityId() > 0
            && StringUtils.isNumeric(activityId)
