@@ -28,6 +28,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.net.URL;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -72,6 +73,9 @@ class PollToolDefinitionSpaceScopeTest {
   private static final Pattern      REFERENCE_SHAPED = Pattern.compile("(^|_)ids?$|[a-z]Ids?$|(?i:folder|space)");
 
   private static final JsonMapper   MAPPER           = JsonMapper.builder().build();
+
+  /** The role each space-scoped write declares in {@code space_role}. */
+  private static final Map<String, String> SPACE_ROLES = Map.of("create_poll", "redactor");
 
   /**
    * Exactly the expected tools declare a space scope, each of the expected
@@ -277,6 +281,39 @@ class PollToolDefinitionSpaceScopeTest {
                        .stream()
                        .filter(tool -> tool.getSpaceScope() != null)
                        .collect(Collectors.toMap(SimpleToolDefinition::getName, tool -> tool));
+  }
+
+  /**
+   * Each space-scoped write declares in {@code space_role} the role the member
+   * who asks a digital worker for it must hold in the call's space
+   * (EXO-91405), and no space-scoped read declares one: a poll is created by
+   * whoever {@code canRedactOnSpace} ({@code PollServiceImpl#createPoll}), so
+   * {@code redactor}.
+   * Mutants: a write's role dropped or changed, or a read given one.
+   *
+   * @throws Exception when the shipped definitions can't be read
+   */
+  @Test
+  void spaceScopedWritesDeclareTheAskersSpaceRole() throws Exception {
+    Map<String, String> roles = new HashMap<>();
+    JsonNode definitions = MAPPER.readTree(definitionsUrl().openStream());
+    for (JsonNode tool : definitions.path("tools")) {
+      String name = tool.path("name").asString();
+      JsonNode scope = tool.path("space_scope");
+      if (!scope.isObject()) {
+        continue;
+      }
+      if (tool.path("annotations").path("readOnlyHint").asBoolean(false)) {
+        assertFalse(scope.has("space_role"), name);
+      } else {
+        assertTrue(scope.has("space_role"), name);
+        roles.put(name, scope.path("space_role").asString());
+        if (scope.path("space_admin").asBoolean(false)) {
+          assertEquals("manager", roles.get(name), name);
+        }
+      }
+    }
+    assertEquals(SPACE_ROLES, roles);
   }
 
 }
