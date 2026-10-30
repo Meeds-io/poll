@@ -22,6 +22,7 @@ import static io.meeds.poll.utils.PollUtils.POLL_ACTIVITY_TYPE;
 import static io.meeds.poll.utils.PollUtils.POLL_ID;
 import static io.meeds.poll.utils.PollUtils.POLL_PUBLICATION_DURATION;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
@@ -148,18 +149,26 @@ class PollActivityPublicationListenerTest {
   }
 
   /**
-   * An activity with a blank or non numeric id leaves the poll untouched.
+   * An activity with a blank or non numeric id leaves the poll untouched, and
+   * the activity rule tells it isn't the poll's without failing on its id: the
+   * listener would swallow that failure, so the outcome alone can't tell the
+   * guard from a parse error. The poll's own activity id is the poll's.
+   * Mutants: the numeric guard removed, or the rule answering false whatever
+   * the id.
    */
   @Test
   void activityWithoutNumericIdLeavesThePollUntouched() {
-    when(pollStorage.getPollById(POLL_ID_VALUE)).thenReturn(poll(SPACE_ID));
+    Poll poll = poll(SPACE_ID);
+    when(pollStorage.getPollById(POLL_ID_VALUE)).thenReturn(poll);
     for (String id : new String[] { null, "", "abc", "99a" }) {
       ExoSocialActivity activity = activity(String.valueOf(SPACE_ID));
       activity.setId(id);
       when(event.getActivity()).thenReturn(activity);
 
       listener.saveActivity(event);
+      assertFalse(listener.isActivityOfPoll(activity, poll), "activity id " + id);
     }
+    assertTrue(listener.isActivityOfPoll(activity(String.valueOf(SPACE_ID)), poll));
 
     verify(pollStorage, never()).updatePoll(any());
     verify(activityManager, never()).updateActivity(any(), anyBoolean());
