@@ -201,7 +201,11 @@ public class PollMcpTool implements McpToolPlugin {
     if (space == null) {
       throw new IllegalArgumentException("No space found with id " + spaceId + ".");
     }
-    if (!spaceService.isMember(space, identity.getUserId())) {
+    // Never looser than the poll service's own read gate, so the per-poll
+    // refusals swallowed below can't turn a refused space into an empty list.
+    // It still refuses a non-manager member of the administrators group who
+    // isn't a member of the space, whom the service lets read a poll.
+    if (!spaceService.canViewSpace(space, identity.getUserId())) {
       throw new IllegalStateException("You are not allowed to view space '" + space.getDisplayName()
           + "'. You must be a member of the space to list its polls.");
     }
