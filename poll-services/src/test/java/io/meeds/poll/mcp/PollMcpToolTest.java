@@ -287,7 +287,7 @@ class PollMcpToolTest {
     space.setPrettyName("engineering");
     space.setDisplayName("Engineering");
     when(spaceService.getSpaceById(String.valueOf(SPACE_ID))).thenReturn(space);
-    when(spaceService.isMember(eq(space), eq(USERNAME))).thenReturn(true);
+    when(spaceService.canViewSpace(eq(space), eq(USERNAME))).thenReturn(true);
     when(identityManager.getOrCreateIdentity(any(), any()))
         .thenReturn(new org.exoplatform.social.core.identity.model.Identity("1"));
 
@@ -328,7 +328,7 @@ class PollMcpToolTest {
     space.setPrettyName("engineering");
     space.setDisplayName("Engineering");
     when(spaceService.getSpaceById(String.valueOf(SPACE_ID))).thenReturn(space);
-    when(spaceService.isMember(eq(space), eq(USERNAME))).thenReturn(true);
+    when(spaceService.canViewSpace(eq(space), eq(USERNAME))).thenReturn(true);
     when(identityManager.getOrCreateIdentity(any(), any()))
         .thenReturn(new org.exoplatform.social.core.identity.model.Identity("1"));
 
@@ -364,14 +364,54 @@ class PollMcpToolTest {
     assertThrows(IllegalArgumentException.class, () -> pollMcpTool.listSpacePolls(SPACE_ID, null));
   }
 
+  /**
+   * A user the space doesn't let view it is refused the listing, a member
+   * included when the space says so.
+   * Mutant: the space gate removed.
+   */
   @Test
-  void listSpacePollsNotMemberFails() {
+  void listSpacePollsFailsWhenTheSpaceRefusesTheView() {
     Space space = new Space();
     space.setId(String.valueOf(SPACE_ID));
     space.setDisplayName("Engineering");
     when(spaceService.getSpaceById(String.valueOf(SPACE_ID))).thenReturn(space);
-    when(spaceService.isMember(eq(space), eq(USERNAME))).thenReturn(false);
+    lenient().when(spaceService.isMember(eq(space), eq(USERNAME))).thenReturn(true);
+    when(spaceService.canViewSpace(eq(space), eq(USERNAME))).thenReturn(false);
     assertThrows(IllegalStateException.class, () -> pollMcpTool.listSpacePolls(SPACE_ID, null));
+  }
+
+  /**
+   * A super manager of the space who isn't a member lists its polls, as the
+   * poll service lets them read each one.
+   * Mutant: the gate on the space membership alone.
+   */
+  @Test
+  @SuppressWarnings("unchecked")
+  void listSpacePollsLetsASuperManagerWhoIsNoMember() throws Exception {
+    Space space = new Space();
+    space.setId(String.valueOf(SPACE_ID));
+    space.setPrettyName("engineering");
+    space.setDisplayName("Engineering");
+    when(spaceService.getSpaceById(String.valueOf(SPACE_ID))).thenReturn(space);
+    lenient().when(spaceService.isMember(eq(space), eq(USERNAME))).thenReturn(false);
+    when(spaceService.canViewSpace(eq(space), eq(USERNAME))).thenReturn(true);
+    when(identityManager.getOrCreateIdentity(any(), any()))
+        .thenReturn(new org.exoplatform.social.core.identity.model.Identity("1"));
+    ExoSocialActivity pollActivity = new ExoSocialActivityImpl();
+    pollActivity.setType(PollUtils.POLL_ACTIVITY_TYPE);
+    pollActivity.setTemplateParams(java.util.Map.of(PollUtils.POLL_ID, String.valueOf(POLL_ID)));
+    RealtimeListAccess<ExoSocialActivity> listAccess = Mockito.mock(RealtimeListAccess.class);
+    when(listAccess.getSize()).thenReturn(1);
+    when(listAccess.loadAsList(eq(0), Mockito.anyInt())).thenReturn(List.of(pollActivity));
+    when(activityManager.getActivitiesOfSpaceWithListAccess(any())).thenReturn(listAccess);
+    Poll poll = openPoll();
+    when(pollService.getPollById(eq(POLL_ID), any())).thenReturn(poll);
+    stubResults(poll, 2, 1, true);
+
+    List<PollResultModel> polls = pollMcpTool.listSpacePolls(SPACE_ID, null);
+
+    assertEquals(1, polls.size());
+    assertEquals(POLL_ID, polls.get(0).getId());
   }
 
 }
