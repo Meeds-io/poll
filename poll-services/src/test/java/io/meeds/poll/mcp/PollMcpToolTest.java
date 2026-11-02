@@ -384,7 +384,7 @@ class PollMcpToolTest {
   /**
    * A user the space doesn't let view it is refused the listing, a member
    * included when the space says so, and the refusal names who may list:
-   * a member or a spaces super manager.
+   * a member or a super manager of the space.
    * Mutants: the space gate removed; the refusal naming membership alone.
    */
   @Test
@@ -397,7 +397,7 @@ class PollMcpToolTest {
     when(spaceService.canViewSpace(eq(space), eq(USERNAME))).thenReturn(false);
     IllegalStateException refusal = assertThrows(IllegalStateException.class,
                                                  () -> pollMcpTool.listSpacePolls(SPACE_ID, null));
-    assertTrue(refusal.getMessage().contains("a member of the space or a spaces super manager"), refusal.getMessage());
+    assertTrue(refusal.getMessage().contains("a member of the space or a super manager of the space"), refusal.getMessage());
   }
 
   /**
