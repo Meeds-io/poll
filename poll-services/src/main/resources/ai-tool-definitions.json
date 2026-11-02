@@ -111,7 +111,7 @@
     {
       "name": "list_space_polls",
       "title": "List polls in a space",
-      "description": "List the polls posted in a space (most recent first), each with its poll id, question, options (with their option ids) and current results. Use this to find a poll's id and its option ids from a space name or id before calling get_poll_results or vote_in_poll. The current user must be a member of the space.",
+      "description": "List the polls posted in a space (most recent first), each with its poll id, question, options (with their option ids) and current results. Use this to find a poll's id and its option ids from a space name or id before calling get_poll_results or vote_in_poll. The current user must be a member of the space or a super manager of the space.",
       "input_schema": {
         "type": "object",
         "properties": {
