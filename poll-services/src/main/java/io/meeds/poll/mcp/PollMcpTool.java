@@ -209,7 +209,7 @@ public class PollMcpTool implements McpToolPlugin {
     // isn't a member of the space, whom the service lets read a poll.
     if (!spaceService.canViewSpace(space, identity.getUserId())) {
       throw new IllegalStateException("You are not allowed to view space '" + space.getDisplayName()
-          + "'. You must be a member of the space or a spaces super manager to list its polls.");
+          + "'. You must be a member of the space or a super manager of the space to list its polls.");
     }
     int max = (limit == null || limit <= 0) ? DEFAULT_LIST_LIMIT : Math.min(limit, MAX_LIST_LIMIT);
     org.exoplatform.social.core.identity.model.Identity spaceIdentity =
