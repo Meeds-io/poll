@@ -36,7 +36,7 @@ import tools.jackson.databind.ObjectMapper;
 /**
  * The collaborative activity declaration analytics reads from this jar: a
  * vote counts; creating a poll counts through the post it creates, so it is
- * not declared (D11). The strings are read from PollUtils, where the listener
+ * not declared. The strings are read from PollUtils, where the listener
  * takes them; the label keys are matched by hand against poll-webapp's
  * Portlets_en.properties.
  */
