@@ -125,7 +125,7 @@ public interface PollService {
    * @param pollOptionId {@link Poll} option technical identifier to be checked if it is voted
    * @param spaceId {@link Space} id related to the {@link Poll} option
    * @param currentIdentity User identity to be checked if he has voted the {@link Poll} option
-   * @return A {@link boolean} which indicates if the current identity has voted the {@link Poll} option
+   * @return A {@code boolean} which indicates if the current identity has voted the {@link Poll} option
    * @throws IllegalAccessException when the current user is not authorized to check if the {@link Poll} option is voted
    */
   boolean isPollOptionVoted(long pollOptionId, String spaceId, Identity currentIdentity) throws IllegalAccessException;
