@@ -1,0 +1,8 @@
+{
+  "modules": ["Poll"],
+  "operations": ["votePoll"],
+  "labels": {
+    "title": "poll.collaborativeActivity.help.title",
+    "counted": ["poll.collaborativeActivity.help.counted"]
+  }
+}
