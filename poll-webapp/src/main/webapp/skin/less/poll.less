@@ -117,14 +117,14 @@
           left: 0;
           bottom: 0;
           z-index: 0;
-          background-color: @greyColorDefault;
+          background-color: var(--allPagesBorderColorDark, @greyColorDefault);
           border-top-left-radius: 5px;
           border-bottom-left-radius: 5px;
           transition: all .3s cubic-bezier(0.5,1.2,.5,1.2);
           -webkit-transition: all .3s cubic-bezier(0.5,1.2,.5,1.2);
           -moz-transition: all .3s cubic-bezier(0.5,1.2,.5,1.2);
           &.selected {
-            background-color: #C7D2E1;
+            background-color: var(--skinGreyLighten1, #C7D2E1);
           }
         }
         .voteBackgroundPollCreator {
